@@ -1,0 +1,34 @@
+{
+ "attach_print": 0,
+ "channel": "System Notification",
+ "condition": "doc.docstatus == 1 and doc.exim_is_import",
+ "condition_type": "Python",
+ "creation": "2026-11-20 10:00:00.000000",
+ "date_changed": "exim_free_time_ends",
+ "days_in_advance": 2,
+ "docstatus": 0,
+ "doctype": "Notification",
+ "document_type": "Purchase Invoice",
+ "enabled": 1,
+ "event": "Days Before",
+ "idx": 0,
+ "is_standard": 1,
+ "message_type": "Markdown",
+ "minutes_offset": 0,
+ "modified": "2026-11-20 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Imports",
+ "name": "Import Free Time Ending",
+ "owner": "Administrator",
+ "recipients": [
+  {
+   "receiver_by_role": "EXIM Manager"
+  },
+  {
+   "receiver_by_role": "EXIM User"
+  }
+ ],
+ "send_system_notification": 0,
+ "send_to_all_assignees": 0,
+ "subject": "Free time ends in 2 days: {{ doc.supplier_name }} ({{ doc.exim_bl_number or doc.name }})"
+}

@@ -82,5 +82,6 @@ scheduler_events = {
 	"daily": [
 		"india_exim.export_incentives.doctype.rodtep_scrip.rodtep_scrip.mark_expired_scrips",
 		"india_exim.fema.payments.refresh_open_documents",
+		"india_exim.alerts.send_daily_alerts",
 	],
 }
