@@ -61,6 +61,7 @@ ignore = [
     "UP032", # Use f-string instead of `format` call (translations)
     "UP037", # quoted annotations
     "UP040", # Use type aliases instead of type annotations
+    "RUF005", # list concatenation reads better for custom field blocks
 ]
 typing-modules = ["frappe.types.DF"]
 
