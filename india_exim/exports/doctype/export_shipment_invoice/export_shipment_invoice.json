@@ -1,0 +1,65 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "creation": "2026-11-19 13:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "sales_invoice",
+  "posting_date",
+  "currency",
+  "grand_total"
+ ],
+ "fields": [
+  {
+   "columns": 3,
+   "fieldname": "sales_invoice",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Sales Invoice",
+   "options": "Sales Invoice",
+   "reqd": 1
+  },
+  {
+   "columns": 2,
+   "fetch_from": "sales_invoice.posting_date",
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Invoice Date",
+   "read_only": 1
+  },
+  {
+   "columns": 1,
+   "fetch_from": "sales_invoice.currency",
+   "fieldname": "currency",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Currency",
+   "options": "Currency",
+   "read_only": 1
+  },
+  {
+   "columns": 2,
+   "fetch_from": "sales_invoice.grand_total",
+   "fieldname": "grand_total",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Invoice Value",
+   "options": "currency",
+   "read_only": 1
+  }
+ ],
+ "istable": 1,
+ "links": [],
+ "modified": "2026-11-19 13:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Exports",
+ "name": "Export Shipment Invoice",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

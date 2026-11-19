@@ -1,0 +1,147 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "creation": "2026-11-19 13:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "document_type",
+  "mandatory",
+  "stage",
+  "status",
+  "due_date",
+  "responsible",
+  "issued_by",
+  "document_number",
+  "document_date",
+  "attachment",
+  "originals_required",
+  "courier_reference",
+  "source",
+  "due_event",
+  "due_offset_days",
+  "instructions",
+  "remarks"
+ ],
+ "fields": [
+  {
+   "columns": 3,
+   "fieldname": "document_type",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Document",
+   "options": "Trade Document Type",
+   "reqd": 1
+  },
+  {
+   "columns": 1,
+   "fieldname": "mandatory",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Mandatory"
+  },
+  {
+   "columns": 1,
+   "default": "Pre-shipment",
+   "fieldname": "stage",
+   "fieldtype": "Select",
+   "label": "Stage",
+   "options": "Order\nPre-shipment\nAt Shipment\nPost-shipment"
+  },
+  {
+   "columns": 2,
+   "default": "Pending",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Pending\nApplied\nReceived\nChecked\nSent\nAccepted\nDiscrepancy\nNot Required"
+  },
+  {
+   "columns": 1,
+   "fieldname": "due_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Due Date"
+  },
+  {
+   "fieldname": "responsible",
+   "fieldtype": "Link",
+   "label": "Responsible",
+   "options": "User"
+  },
+  {
+   "fieldname": "issued_by",
+   "fieldtype": "Data",
+   "label": "Issued By",
+   "read_only": 1
+  },
+  {
+   "fieldname": "document_number",
+   "fieldtype": "Data",
+   "label": "Document No."
+  },
+  {
+   "fieldname": "document_date",
+   "fieldtype": "Date",
+   "label": "Document Date"
+  },
+  {
+   "columns": 1,
+   "fieldname": "attachment",
+   "fieldtype": "Attach",
+   "in_list_view": 1,
+   "label": "Attachment"
+  },
+  {
+   "fieldname": "originals_required",
+   "fieldtype": "Int",
+   "label": "Originals"
+  },
+  {
+   "fieldname": "courier_reference",
+   "fieldtype": "Data",
+   "label": "Courier AWB (Originals)"
+  },
+  {
+   "fieldname": "source",
+   "fieldtype": "Data",
+   "label": "Added By Rule",
+   "read_only": 1
+  },
+  {
+   "fieldname": "due_event",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Due Event"
+  },
+  {
+   "fieldname": "due_offset_days",
+   "fieldtype": "Int",
+   "hidden": 1,
+   "label": "Due Offset"
+  },
+  {
+   "fieldname": "instructions",
+   "fieldtype": "Small Text",
+   "label": "Instructions"
+  },
+  {
+   "fieldname": "remarks",
+   "fieldtype": "Small Text",
+   "label": "Remarks"
+  }
+ ],
+ "istable": 1,
+ "links": [],
+ "modified": "2026-11-19 13:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Trade Documents",
+ "name": "Shipment Document",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

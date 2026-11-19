@@ -1,0 +1,492 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "naming_series:",
+ "creation": "2026-11-19 13:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "company",
+  "customer",
+  "customer_name",
+  "column_break_head",
+  "status",
+  "destination_country",
+  "readiness_percent",
+  "terms_section",
+  "incoterm",
+  "payment_terms_type",
+  "column_break_terms",
+  "mode_of_transport",
+  "currency",
+  "route_section",
+  "port_of_loading",
+  "port_of_discharge",
+  "column_break_route",
+  "final_destination",
+  "transhipment_allowed",
+  "carrier_section",
+  "freight_forwarder",
+  "cha",
+  "shipping_line",
+  "column_break_carrier",
+  "booking_number",
+  "vessel_voyage",
+  "schedule_section",
+  "cutoff_documents",
+  "cutoff_vgm",
+  "cutoff_gate_in",
+  "column_break_schedule",
+  "etd",
+  "eta",
+  "atd",
+  "ata",
+  "transport_document_section",
+  "bl_number",
+  "bl_date",
+  "column_break_bl",
+  "bl_type",
+  "cargo_section",
+  "is_dangerous_goods",
+  "un_number",
+  "column_break_cargo",
+  "is_reefer",
+  "temperature_setting",
+  "invoices_tab",
+  "invoices",
+  "containers",
+  "total_gross_weight",
+  "total_packages",
+  "documents_tab",
+  "document_template",
+  "documents",
+  "charges_tab",
+  "charges",
+  "total_charges",
+  "notes_tab",
+  "marks_and_numbers",
+  "remarks"
+ ],
+ "fields": [
+  {
+   "default": "EXS-.YYYY.-.#####",
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "EXS-.YYYY.-.#####",
+   "print_hide": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Company",
+   "options": "Company",
+   "reqd": 1
+  },
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Customer",
+   "options": "Customer",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "customer.customer_name",
+   "fieldname": "customer_name",
+   "fieldtype": "Data",
+   "label": "Customer Name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_head",
+   "fieldtype": "Column Break"
+  },
+  {
+   "bold": 1,
+   "default": "Planned",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "options": "Planned\nBooked\nStuffed\nCustoms Cleared\nShipped\nDocuments Sent\nDelivered\nClosed\nCancelled"
+  },
+  {
+   "fieldname": "destination_country",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Destination Country",
+   "options": "Country",
+   "reqd": 1
+  },
+  {
+   "fieldname": "readiness_percent",
+   "fieldtype": "Percent",
+   "in_list_view": 1,
+   "label": "Document Readiness",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "terms_section",
+   "fieldtype": "Section Break",
+   "label": "Terms"
+  },
+  {
+   "fieldname": "incoterm",
+   "fieldtype": "Link",
+   "label": "Incoterm",
+   "options": "Incoterm"
+  },
+  {
+   "fieldname": "payment_terms_type",
+   "fieldtype": "Select",
+   "label": "Payment Terms",
+   "options": "Advance\nLetter of Credit\nDocuments against Payment (DP)\nDocuments against Acceptance (DA)\nOpen Account"
+  },
+  {
+   "fieldname": "column_break_terms",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Sea FCL",
+   "fieldname": "mode_of_transport",
+   "fieldtype": "Select",
+   "label": "Mode",
+   "options": "Sea FCL\nSea LCL\nAir\nCourier\nRoad\nRail"
+  },
+  {
+   "fieldname": "currency",
+   "fieldtype": "Link",
+   "label": "Currency",
+   "options": "Currency"
+  },
+  {
+   "fieldname": "route_section",
+   "fieldtype": "Section Break",
+   "label": "Route"
+  },
+  {
+   "fieldname": "port_of_loading",
+   "fieldtype": "Data",
+   "label": "Port of Loading (Port Code)",
+   "length": 15
+  },
+  {
+   "fieldname": "port_of_discharge",
+   "fieldtype": "Data",
+   "label": "Port of Discharge"
+  },
+  {
+   "fieldname": "column_break_route",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "final_destination",
+   "fieldtype": "Data",
+   "label": "Final Destination"
+  },
+  {
+   "fieldname": "transhipment_allowed",
+   "fieldtype": "Check",
+   "label": "Transhipment Allowed"
+  },
+  {
+   "fieldname": "carrier_section",
+   "fieldtype": "Section Break",
+   "label": "Carrier and Booking"
+  },
+  {
+   "fieldname": "freight_forwarder",
+   "fieldtype": "Link",
+   "label": "Freight Forwarder",
+   "options": "Supplier"
+  },
+  {
+   "fieldname": "cha",
+   "fieldtype": "Link",
+   "label": "Customs Broker (CHA)",
+   "options": "Supplier"
+  },
+  {
+   "fieldname": "shipping_line",
+   "fieldtype": "Data",
+   "label": "Shipping Line / Airline"
+  },
+  {
+   "fieldname": "column_break_carrier",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "booking_number",
+   "fieldtype": "Data",
+   "label": "Booking No."
+  },
+  {
+   "fieldname": "vessel_voyage",
+   "fieldtype": "Data",
+   "label": "Vessel / Voyage or Flight"
+  },
+  {
+   "fieldname": "schedule_section",
+   "fieldtype": "Section Break",
+   "label": "Cut-offs and Schedule"
+  },
+  {
+   "fieldname": "cutoff_documents",
+   "fieldtype": "Datetime",
+   "label": "Documents / SI Cut-off"
+  },
+  {
+   "fieldname": "cutoff_vgm",
+   "fieldtype": "Datetime",
+   "label": "VGM Cut-off"
+  },
+  {
+   "fieldname": "cutoff_gate_in",
+   "fieldtype": "Datetime",
+   "label": "Gate-in Cut-off"
+  },
+  {
+   "fieldname": "column_break_schedule",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "etd",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "ETD"
+  },
+  {
+   "fieldname": "eta",
+   "fieldtype": "Date",
+   "label": "ETA"
+  },
+  {
+   "fieldname": "atd",
+   "fieldtype": "Date",
+   "label": "Actual Departure"
+  },
+  {
+   "fieldname": "ata",
+   "fieldtype": "Date",
+   "label": "Actual Arrival"
+  },
+  {
+   "fieldname": "transport_document_section",
+   "fieldtype": "Section Break",
+   "label": "Bill of Lading / Airway Bill"
+  },
+  {
+   "fieldname": "bl_number",
+   "fieldtype": "Data",
+   "label": "BL / AWB No."
+  },
+  {
+   "fieldname": "bl_date",
+   "fieldtype": "Date",
+   "label": "BL / AWB Date"
+  },
+  {
+   "fieldname": "column_break_bl",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "bl_type",
+   "fieldtype": "Select",
+   "label": "BL Type",
+   "options": "\nOriginal BL\nTelex Release\nSeaway Bill\nAir Waybill\nCourier Waybill"
+  },
+  {
+   "fieldname": "cargo_section",
+   "fieldtype": "Section Break",
+   "label": "Cargo"
+  },
+  {
+   "fieldname": "is_dangerous_goods",
+   "fieldtype": "Check",
+   "label": "Dangerous Goods"
+  },
+  {
+   "depends_on": "is_dangerous_goods",
+   "fieldname": "un_number",
+   "fieldtype": "Data",
+   "label": "UN No. / IMDG Class"
+  },
+  {
+   "fieldname": "column_break_cargo",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "is_reefer",
+   "fieldtype": "Check",
+   "label": "Temperature Controlled (Reefer)"
+  },
+  {
+   "depends_on": "is_reefer",
+   "fieldname": "temperature_setting",
+   "fieldtype": "Data",
+   "label": "Temperature Setting"
+  },
+  {
+   "fieldname": "invoices_tab",
+   "fieldtype": "Tab Break",
+   "label": "Invoices and Containers"
+  },
+  {
+   "fieldname": "invoices",
+   "fieldtype": "Table",
+   "label": "Sales Invoices",
+   "options": "Export Shipment Invoice"
+  },
+  {
+   "fieldname": "containers",
+   "fieldtype": "Table",
+   "label": "Containers / Packages",
+   "options": "Shipment Container"
+  },
+  {
+   "fieldname": "total_gross_weight",
+   "fieldtype": "Float",
+   "label": "Total Gross Weight (kg)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_packages",
+   "fieldtype": "Int",
+   "label": "Total Packages",
+   "read_only": 1
+  },
+  {
+   "fieldname": "documents_tab",
+   "fieldtype": "Tab Break",
+   "label": "Documents"
+  },
+  {
+   "fieldname": "document_template",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Checklist Rule Applied",
+   "no_copy": 1,
+   "options": "Document Requirement Template",
+   "read_only": 1
+  },
+  {
+   "fieldname": "documents",
+   "fieldtype": "Table",
+   "label": "Document Checklist",
+   "options": "Shipment Document"
+  },
+  {
+   "fieldname": "charges_tab",
+   "fieldtype": "Tab Break",
+   "label": "Charges"
+  },
+  {
+   "fieldname": "charges",
+   "fieldtype": "Table",
+   "label": "Shipment Charges",
+   "options": "Shipment Charge"
+  },
+  {
+   "fieldname": "total_charges",
+   "fieldtype": "Currency",
+   "label": "Total Charges",
+   "options": "Company:company:default_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "notes_tab",
+   "fieldtype": "Tab Break",
+   "label": "Notes"
+  },
+  {
+   "fieldname": "marks_and_numbers",
+   "fieldtype": "Small Text",
+   "label": "Marks and Numbers"
+  },
+  {
+   "fieldname": "remarks",
+   "fieldtype": "Text Editor",
+   "label": "Remarks"
+  }
+ ],
+ "links": [],
+ "modified": "2026-11-19 13:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Exports",
+ "name": "Export Shipment",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "EXIM Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "EXIM User",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts User",
+   "share": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts Manager",
+   "share": 1
+  }
+ ],
+ "search_fields": "customer,destination_country,booking_number,bl_number",
+ "show_name_in_global_search": 1,
+ "show_title_field_in_link": 1,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "customer_name",
+ "track_changes": 1,
+ "track_seen": 0
+}

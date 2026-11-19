@@ -1,0 +1,225 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "creation": "2026-11-19 13:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "sales_invoice",
+  "sales_invoice_item",
+  "item_code",
+  "item_name",
+  "customs_tariff_item",
+  "qty",
+  "uom",
+  "uqc_qty",
+  "value_section",
+  "invoice_value",
+  "freight",
+  "insurance",
+  "fob_value",
+  "fob_value_inr",
+  "igst_amount",
+  "currency",
+  "drawback_section",
+  "claim_drawback",
+  "drawback_rate",
+  "drawback_cap",
+  "drawback_amount",
+  "column_break_incentives",
+  "claim_rodtep",
+  "rodtep_rate",
+  "rodtep_cap",
+  "rodtep_amount"
+ ],
+ "fields": [
+  {
+   "columns": 2,
+   "fieldname": "sales_invoice",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Sales Invoice",
+   "options": "Sales Invoice"
+  },
+  {
+   "fieldname": "sales_invoice_item",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Sales Invoice Item",
+   "no_copy": 1
+  },
+  {
+   "columns": 2,
+   "fieldname": "item_code",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Item",
+   "options": "Item",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "item_code.item_name",
+   "fieldname": "item_name",
+   "fieldtype": "Data",
+   "label": "Item Name",
+   "read_only": 1
+  },
+  {
+   "columns": 1,
+   "fetch_from": "item_code.exim_customs_tariff_item",
+   "fetch_if_empty": 1,
+   "fieldname": "customs_tariff_item",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Tariff Item",
+   "options": "Customs Tariff Item",
+   "reqd": 1
+  },
+  {
+   "columns": 1,
+   "fieldname": "qty",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Qty",
+   "reqd": 1
+  },
+  {
+   "fieldname": "uom",
+   "fieldtype": "Link",
+   "label": "UOM",
+   "options": "UOM"
+  },
+  {
+   "description": "Quantity in the unit the incentive cap is defined in (e.g. kg). Defaults to Qty.",
+   "fieldname": "uqc_qty",
+   "fieldtype": "Float",
+   "label": "Qty in Cap Unit"
+  },
+  {
+   "fieldname": "value_section",
+   "fieldtype": "Section Break",
+   "label": "Value"
+  },
+  {
+   "columns": 2,
+   "fieldname": "invoice_value",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Invoice Value",
+   "options": "currency",
+   "reqd": 1
+  },
+  {
+   "fieldname": "freight",
+   "fieldtype": "Currency",
+   "label": "Freight",
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "insurance",
+   "fieldtype": "Currency",
+   "label": "Insurance",
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "fob_value",
+   "fieldtype": "Currency",
+   "label": "FOB Value",
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "fob_value_inr",
+   "fieldtype": "Currency",
+   "label": "FOB Value (INR)",
+   "options": "Company:company:default_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "igst_amount",
+   "fieldtype": "Currency",
+   "label": "IGST Paid (INR)",
+   "options": "Company:company:default_currency"
+  },
+  {
+   "fieldname": "currency",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Currency",
+   "options": "Currency"
+  },
+  {
+   "fieldname": "drawback_section",
+   "fieldtype": "Section Break",
+   "label": "Duty Drawback"
+  },
+  {
+   "default": "1",
+   "fieldname": "claim_drawback",
+   "fieldtype": "Check",
+   "label": "Claim Drawback"
+  },
+  {
+   "fieldname": "drawback_rate",
+   "fieldtype": "Percent",
+   "label": "Drawback %",
+   "read_only": 1
+  },
+  {
+   "fieldname": "drawback_cap",
+   "fieldtype": "Currency",
+   "label": "Drawback Cap / Unit",
+   "read_only": 1
+  },
+  {
+   "fieldname": "drawback_amount",
+   "fieldtype": "Currency",
+   "label": "Drawback Amount",
+   "options": "Company:company:default_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_incentives",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "1",
+   "fieldname": "claim_rodtep",
+   "fieldtype": "Check",
+   "label": "Claim RoDTEP"
+  },
+  {
+   "fieldname": "rodtep_rate",
+   "fieldtype": "Percent",
+   "label": "RoDTEP %",
+   "read_only": 1
+  },
+  {
+   "fieldname": "rodtep_cap",
+   "fieldtype": "Currency",
+   "label": "RoDTEP Cap / Unit",
+   "read_only": 1
+  },
+  {
+   "fieldname": "rodtep_amount",
+   "fieldtype": "Currency",
+   "label": "RoDTEP Amount",
+   "options": "Company:company:default_currency",
+   "read_only": 1
+  }
+ ],
+ "istable": 1,
+ "links": [],
+ "modified": "2026-11-19 13:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Exports",
+ "name": "Shipping Bill Item",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

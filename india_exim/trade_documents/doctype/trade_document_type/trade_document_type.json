@@ -1,0 +1,175 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "field:document_name",
+ "creation": "2026-11-19 13:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "document_name",
+  "category",
+  "direction",
+  "issued_by",
+  "column_break_1",
+  "originals",
+  "copies",
+  "needs_legalisation",
+  "lead_time_days",
+  "validity_days",
+  "generation_section",
+  "generated_in_system",
+  "print_format",
+  "instructions",
+  "disabled"
+ ],
+ "fields": [
+  {
+   "fieldname": "document_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Document Name",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "category",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Category",
+   "options": "Commercial\nTransport\nOrigin\nRegulatory\nFinancial\nProduct Certificate\nCustoms\nInsurance",
+   "reqd": 1
+  },
+  {
+   "default": "Both",
+   "fieldname": "direction",
+   "fieldtype": "Select",
+   "in_standard_filter": 1,
+   "label": "Used For",
+   "options": "Export\nImport\nBoth"
+  },
+  {
+   "fieldname": "issued_by",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Issued By",
+   "options": "Self\nCHA\nFreight Forwarder\nShipping Line / Airline\nChamber of Commerce\nDGFT\nCustoms\nExport Inspection Council\nGovernment Lab / Authority\nThird-party Inspection Agency\nEmbassy / Consulate\nInsurance Company\nBank\nBuyer",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "1",
+   "fieldname": "originals",
+   "fieldtype": "Int",
+   "label": "Originals Required"
+  },
+  {
+   "default": "0",
+   "fieldname": "copies",
+   "fieldtype": "Int",
+   "label": "Copies Required"
+  },
+  {
+   "fieldname": "needs_legalisation",
+   "fieldtype": "Check",
+   "label": "Needs Legalisation / Apostille"
+  },
+  {
+   "fieldname": "lead_time_days",
+   "fieldtype": "Int",
+   "label": "Typical Lead Time (Days)"
+  },
+  {
+   "fieldname": "validity_days",
+   "fieldtype": "Int",
+   "label": "Validity (Days)"
+  },
+  {
+   "fieldname": "generation_section",
+   "fieldtype": "Section Break",
+   "label": "Generation"
+  },
+  {
+   "fieldname": "generated_in_system",
+   "fieldtype": "Check",
+   "label": "Generated in ERPNext"
+  },
+  {
+   "depends_on": "generated_in_system",
+   "fieldname": "print_format",
+   "fieldtype": "Link",
+   "label": "Print Format",
+   "options": "Print Format"
+  },
+  {
+   "fieldname": "instructions",
+   "fieldtype": "Text Editor",
+   "label": "Instructions"
+  },
+  {
+   "fieldname": "disabled",
+   "fieldtype": "Check",
+   "label": "Disabled"
+  }
+ ],
+ "links": [],
+ "modified": "2026-11-19 13:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Trade Documents",
+ "name": "Trade Document Type",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "EXIM Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "EXIM User",
+   "share": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts User",
+   "share": 1
+  }
+ ],
+ "search_fields": "category,issued_by",
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

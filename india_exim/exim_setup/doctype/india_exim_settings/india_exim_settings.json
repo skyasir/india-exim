@@ -1,0 +1,172 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "creation": "2026-11-19 13:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "incentives_section",
+  "incentive_accrual_point",
+  "column_break_inc",
+  "incentive_unclaimed_alert_days",
+  "scrip_validity_months",
+  "fema_section",
+  "export_realisation_months",
+  "import_payment_months",
+  "column_break_fema",
+  "realisation_alert_days",
+  "gst_section",
+  "lut_check",
+  "imports_section",
+  "capitalise_customs_duty",
+  "documents_section",
+  "checklist_gate"
+ ],
+ "fields": [
+  {
+   "fieldname": "incentives_section",
+   "fieldtype": "Section Break",
+   "label": "Export Incentives"
+  },
+  {
+   "default": "On LEO",
+   "description": "When Duty Drawback / RoDTEP is recognised as income. LEO is the usual choice because the entitlement is reasonably certain once the shipping bill carries the claim; confirm with your auditor.",
+   "fieldname": "incentive_accrual_point",
+   "fieldtype": "Select",
+   "label": "Book Incentive Income On",
+   "options": "On LEO\nOn Scroll\nOn Receipt"
+  },
+  {
+   "fieldname": "column_break_inc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "60",
+   "fieldname": "incentive_unclaimed_alert_days",
+   "fieldtype": "Int",
+   "label": "Alert When Incentive Unclaimed For (Days)"
+  },
+  {
+   "default": "12",
+   "description": "Default validity used when recording an e-scrip. Check the validity printed on the scrip.",
+   "fieldname": "scrip_validity_months",
+   "fieldtype": "Int",
+   "label": "RoDTEP Scrip Validity (Months)"
+  },
+  {
+   "fieldname": "fema_section",
+   "fieldtype": "Section Break",
+   "label": "FEMA / RBI"
+  },
+  {
+   "default": "9",
+   "description": "Period from shipment within which export proceeds must be realised under the RBI Master Direction in force. Update this if RBI changes it.",
+   "fieldname": "export_realisation_months",
+   "fieldtype": "Int",
+   "label": "Export Realisation Period (Months)",
+   "reqd": 1
+  },
+  {
+   "default": "6",
+   "description": "Period from shipment within which import payments are expected to be settled.",
+   "fieldname": "import_payment_months",
+   "fieldtype": "Int",
+   "label": "Import Payment Period (Months)",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_fema",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "30",
+   "fieldname": "realisation_alert_days",
+   "fieldtype": "Int",
+   "label": "Alert Before Realisation Due (Days)"
+  },
+  {
+   "fieldname": "gst_section",
+   "fieldtype": "Section Break",
+   "label": "GST on Exports"
+  },
+  {
+   "default": "Block",
+   "description": "Exports without IGST (Overseas / SEZ) require a valid Letter of Undertaking for the invoice date.",
+   "fieldname": "lut_check",
+   "fieldtype": "Select",
+   "label": "Check LUT on Zero-rated Exports",
+   "options": "Block\nWarn\nOff"
+  },
+  {
+   "fieldname": "imports_section",
+   "fieldtype": "Section Break",
+   "label": "Imports"
+  },
+  {
+   "default": "1",
+   "description": "BCD, SWS and other non-creditable duties computed on the Bill of Entry are moved into item valuation through a Landed Cost Voucher.",
+   "fieldname": "capitalise_customs_duty",
+   "fieldtype": "Check",
+   "label": "Add Non-creditable Customs Duty to Stock Value"
+  },
+  {
+   "fieldname": "documents_section",
+   "fieldtype": "Section Break",
+   "label": "Trade Documents"
+  },
+  {
+   "default": "Warn",
+   "fieldname": "checklist_gate",
+   "fieldtype": "Select",
+   "label": "When Mandatory Documents Are Pending",
+   "options": "Warn\nBlock\nOff"
+  }
+ ],
+ "issingle": 1,
+ "links": [],
+ "modified": "2026-11-19 13:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "EXIM Setup",
+ "name": "India EXIM Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 0,
+   "print": 1,
+   "read": 1,
+   "report": 0,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 0,
+   "print": 1,
+   "read": 1,
+   "report": 0,
+   "role": "EXIM Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 0,
+   "print": 1,
+   "read": 1,
+   "report": 0,
+   "role": "EXIM User",
+   "share": 1
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

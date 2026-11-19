@@ -1,0 +1,461 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "naming_series:",
+ "creation": "2026-11-19 13:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "company",
+  "customer",
+  "customer_name",
+  "export_shipment",
+  "column_break_head",
+  "shipping_bill_number",
+  "shipping_bill_date",
+  "status",
+  "customs_section",
+  "port_code",
+  "port_name",
+  "ad_code",
+  "column_break_customs",
+  "iec",
+  "export_type",
+  "destination_country",
+  "value_section",
+  "currency",
+  "customs_exchange_rate",
+  "incoterm",
+  "column_break_value",
+  "freight",
+  "insurance",
+  "items_section",
+  "get_items_from_invoices",
+  "items",
+  "totals_section",
+  "total_invoice_value",
+  "total_fob_value",
+  "total_fob_value_inr",
+  "column_break_totals",
+  "total_drawback",
+  "total_rodtep",
+  "total_igst",
+  "lifecycle_tab",
+  "leo_date",
+  "egm_number",
+  "egm_date",
+  "column_break_lifecycle",
+  "accrual_journal_entry",
+  "realisation_section",
+  "realisation_due_date",
+  "realisation_status",
+  "column_break_realisation",
+  "realised_value",
+  "outstanding_value",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "default": "SB-.YYYY.-.#####",
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "SB-.YYYY.-.#####",
+   "print_hide": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Company",
+   "options": "Company",
+   "reqd": 1
+  },
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Customer",
+   "options": "Customer",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "customer.customer_name",
+   "fieldname": "customer_name",
+   "fieldtype": "Data",
+   "label": "Customer Name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "export_shipment",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Export Shipment",
+   "options": "Export Shipment"
+  },
+  {
+   "fieldname": "column_break_head",
+   "fieldtype": "Column Break"
+  },
+  {
+   "bold": 1,
+   "fieldname": "shipping_bill_number",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Shipping Bill No.",
+   "length": 20,
+   "mandatory_depends_on": "eval:doc.docstatus==0"
+  },
+  {
+   "fieldname": "shipping_bill_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Shipping Bill Date",
+   "reqd": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "Draft",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "no_copy": 1,
+   "options": "Draft\nFiled\nLEO Granted\nEGM Filed\nCancelled",
+   "read_only": 1
+  },
+  {
+   "fieldname": "customs_section",
+   "fieldtype": "Section Break",
+   "label": "Customs"
+  },
+  {
+   "fieldname": "port_code",
+   "fieldtype": "Data",
+   "label": "Port Code",
+   "length": 15,
+   "reqd": 1
+  },
+  {
+   "fieldname": "port_name",
+   "fieldtype": "Data",
+   "label": "Port Name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "ad_code",
+   "fieldtype": "Data",
+   "label": "AD Code",
+   "length": 20
+  },
+  {
+   "fieldname": "column_break_customs",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "company.exim_iec",
+   "fieldname": "iec",
+   "fieldtype": "Data",
+   "label": "IEC",
+   "read_only": 1
+  },
+  {
+   "default": "Under LUT / Bond (without IGST)",
+   "fieldname": "export_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Export Type",
+   "options": "Under LUT / Bond (without IGST)\nWith Payment of IGST\nFree of Cost / Sample",
+   "reqd": 1
+  },
+  {
+   "fieldname": "destination_country",
+   "fieldtype": "Link",
+   "label": "Destination Country",
+   "options": "Country"
+  },
+  {
+   "fieldname": "value_section",
+   "fieldtype": "Section Break",
+   "label": "Value"
+  },
+  {
+   "fieldname": "currency",
+   "fieldtype": "Link",
+   "label": "Invoice Currency",
+   "options": "Currency",
+   "reqd": 1
+  },
+  {
+   "description": "CBIC export rate in force on the shipping bill date.",
+   "fieldname": "customs_exchange_rate",
+   "fieldtype": "Float",
+   "label": "Customs Exchange Rate",
+   "precision": "4",
+   "read_only": 1
+  },
+  {
+   "fieldname": "incoterm",
+   "fieldtype": "Link",
+   "label": "Incoterm",
+   "options": "Incoterm"
+  },
+  {
+   "fieldname": "column_break_value",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "Deducted from the invoice value to arrive at FOB for CFR / CIF / CPT / CIP and D-terms.",
+   "fieldname": "freight",
+   "fieldtype": "Currency",
+   "label": "Freight (Invoice Currency)",
+   "options": "currency"
+  },
+  {
+   "fieldname": "insurance",
+   "fieldtype": "Currency",
+   "label": "Insurance (Invoice Currency)",
+   "options": "currency"
+  },
+  {
+   "fieldname": "items_section",
+   "fieldtype": "Section Break",
+   "label": "Items"
+  },
+  {
+   "fieldname": "get_items_from_invoices",
+   "fieldtype": "Button",
+   "label": "Get Items from Sales Invoices"
+  },
+  {
+   "fieldname": "items",
+   "fieldtype": "Table",
+   "label": "Items",
+   "options": "Shipping Bill Item",
+   "reqd": 1
+  },
+  {
+   "fieldname": "totals_section",
+   "fieldtype": "Section Break",
+   "label": "Totals"
+  },
+  {
+   "fieldname": "total_invoice_value",
+   "fieldtype": "Currency",
+   "label": "Invoice Value",
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_fob_value",
+   "fieldtype": "Currency",
+   "label": "FOB Value",
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_fob_value_inr",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "FOB Value (INR)",
+   "options": "Company:company:default_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_totals",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_drawback",
+   "fieldtype": "Currency",
+   "label": "Duty Drawback",
+   "options": "Company:company:default_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_rodtep",
+   "fieldtype": "Currency",
+   "label": "RoDTEP",
+   "options": "Company:company:default_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_igst",
+   "fieldtype": "Currency",
+   "label": "IGST Paid",
+   "options": "Company:company:default_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "lifecycle_tab",
+   "fieldtype": "Tab Break",
+   "label": "Customs Progress"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "leo_date",
+   "fieldtype": "Date",
+   "label": "Let Export Order (LEO) Date",
+   "no_copy": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "egm_number",
+   "fieldtype": "Data",
+   "label": "EGM No.",
+   "no_copy": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "egm_date",
+   "fieldtype": "Date",
+   "label": "EGM Date",
+   "no_copy": 1
+  },
+  {
+   "fieldname": "column_break_lifecycle",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "accrual_journal_entry",
+   "fieldtype": "Link",
+   "label": "Incentive Accrual Entry",
+   "no_copy": 1,
+   "options": "Journal Entry",
+   "read_only": 1
+  },
+  {
+   "fieldname": "realisation_section",
+   "fieldtype": "Section Break",
+   "label": "Realisation (FEMA)"
+  },
+  {
+   "fieldname": "realisation_due_date",
+   "fieldtype": "Date",
+   "label": "Realisation Due Date",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "default": "Pending",
+   "fieldname": "realisation_status",
+   "fieldtype": "Select",
+   "in_standard_filter": 1,
+   "label": "Realisation Status",
+   "no_copy": 1,
+   "options": "Pending\nPartly Realised\nFully Realised\nWritten Off\nNot Required",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_realisation",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "realised_value",
+   "fieldtype": "Currency",
+   "label": "Realised (Invoice Currency)",
+   "no_copy": 1,
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "outstanding_value",
+   "fieldtype": "Currency",
+   "label": "Outstanding (Invoice Currency)",
+   "no_copy": 1,
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Shipping Bill",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  }
+ ],
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2026-11-19 13:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Exports",
+ "name": "Shipping Bill",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "EXIM Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "EXIM User",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts User",
+   "share": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts Manager",
+   "share": 1
+  }
+ ],
+ "search_fields": "shipping_bill_number,customer,port_code",
+ "show_title_field_in_link": 1,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "shipping_bill_number",
+ "track_changes": 1
+}

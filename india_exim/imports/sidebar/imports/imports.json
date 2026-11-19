@@ -1,0 +1,63 @@
+{
+ "app": "india_exim",
+ "creation": "2026-11-19 13:00:00.000000",
+ "docstatus": 0,
+ "doctype": "Sidebar",
+ "header_icon": "package-open",
+ "idx": 0,
+ "items": [
+  {
+   "added": 0,
+   "child": 0,
+   "collapsible": 1,
+   "hidden": 0,
+   "icon": "file-input",
+   "indent": 0,
+   "is_default_module": 0,
+   "keep_closed": 0,
+   "label": "Bill of Entry",
+   "link_to": "Bill of Entry",
+   "link_type": "DocType",
+   "open_in_new_tab": 0,
+   "show_arrow": 0,
+   "type": "Link"
+  },
+  {
+   "added": 0,
+   "child": 0,
+   "collapsible": 1,
+   "hidden": 0,
+   "icon": "notepad-text",
+   "indent": 1,
+   "is_default_module": 0,
+   "keep_closed": 1,
+   "label": "Reports",
+   "link_type": "DocType",
+   "open_in_new_tab": 0,
+   "show_arrow": 0,
+   "type": "Section Break"
+  },
+  {
+   "added": 0,
+   "child": 1,
+   "collapsible": 1,
+   "hidden": 0,
+   "indent": 0,
+   "is_default_module": 0,
+   "keep_closed": 0,
+   "label": "Bill of Entry Summary",
+   "link_to": "Bill of Entry Summary",
+   "link_type": "Report",
+   "open_in_new_tab": 0,
+   "show_arrow": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2026-11-19 13:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Imports",
+ "name": "Imports",
+ "owner": "Administrator",
+ "standard": 1,
+ "title": "Imports"
+}

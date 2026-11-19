@@ -1,0 +1,117 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "format:{currency}-{effective_from}",
+ "creation": "2026-11-19 13:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "currency",
+  "effective_from",
+  "notification",
+  "column_break_1",
+  "export_rate",
+  "import_rate"
+ ],
+ "fields": [
+  {
+   "fieldname": "currency",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Currency",
+   "options": "Currency",
+   "reqd": 1
+  },
+  {
+   "fieldname": "effective_from",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Effective From",
+   "reqd": 1
+  },
+  {
+   "fieldname": "notification",
+   "fieldtype": "Data",
+   "label": "CBIC Notification No."
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "Rate notified by CBIC for exported goods; used for FOB in INR on shipping bills.",
+   "fieldname": "export_rate",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Export Rate (INR)",
+   "precision": "4",
+   "reqd": 1
+  },
+  {
+   "description": "Rate notified by CBIC for imported goods; used for assessable value on bills of entry.",
+   "fieldname": "import_rate",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Import Rate (INR)",
+   "precision": "4",
+   "reqd": 1
+  }
+ ],
+ "links": [],
+ "modified": "2026-11-19 13:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "EXIM Setup",
+ "name": "Customs Exchange Rate",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "EXIM Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "EXIM User",
+   "share": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts User",
+   "share": 1
+  }
+ ],
+ "sort_field": "effective_from",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

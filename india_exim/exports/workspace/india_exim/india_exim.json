@@ -1,0 +1,70 @@
+{
+ "app": "india_exim",
+ "charts": [],
+ "content": "[{\"id\": \"quick_head\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Quick Access</b></span>\", \"col\": 12}}, {\"id\": \"customs_ta\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Customs Tariff Item\", \"col\": 3}}, {\"id\": \"letter_of_\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Letter of Undertaking\", \"col\": 3}}, {\"id\": \"trade_docu\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Trade Document Type\", \"col\": 3}}, {\"id\": \"bill_of_en\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Bill of Entry\", \"col\": 3}}]",
+ "creation": "2026-11-19 13:00:00.000000",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "ship",
+ "idx": 0,
+ "is_hidden": 0,
+ "label": "India EXIM",
+ "links": [],
+ "modified": "2026-11-19 13:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Exports",
+ "name": "India EXIM",
+ "number_cards": [],
+ "owner": "Administrator",
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [],
+ "restrict_to_domain": "",
+ "roles": [
+  {
+   "role": "EXIM Manager"
+  },
+  {
+   "role": "EXIM User"
+  },
+  {
+   "role": "System Manager"
+  }
+ ],
+ "sequence_id": 30.0,
+ "shortcuts": [
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Customs Tariff Item",
+   "link_to": "Customs Tariff Item",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Letter of Undertaking",
+   "link_to": "Letter of Undertaking",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Trade Document Type",
+   "link_to": "Trade Document Type",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Bill of Entry",
+   "link_to": "Bill of Entry",
+   "type": "DocType"
+  }
+ ],
+ "title": "India EXIM",
+ "type": "Workspace"
+}

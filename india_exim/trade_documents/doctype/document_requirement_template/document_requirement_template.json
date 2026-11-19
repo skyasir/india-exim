@@ -1,0 +1,208 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "field:template_name",
+ "creation": "2026-11-19 13:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "template_name",
+  "direction",
+  "enabled",
+  "column_break_head",
+  "is_statutory",
+  "verify_note",
+  "match_section",
+  "country",
+  "country_group",
+  "tariff_prefixes",
+  "item_group",
+  "column_break_match",
+  "incoterm",
+  "payment_terms_type",
+  "mode_of_transport",
+  "customer",
+  "supplier",
+  "requirements_section",
+  "requirements"
+ ],
+ "fields": [
+  {
+   "fieldname": "template_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Rule Name",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "default": "Export",
+   "fieldname": "direction",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Applies To",
+   "options": "Export\nImport",
+   "reqd": 1
+  },
+  {
+   "default": "1",
+   "fieldname": "enabled",
+   "fieldtype": "Check",
+   "label": "Enabled"
+  },
+  {
+   "fieldname": "column_break_head",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "Applies to every shipment in this direction, before any country or buyer rule.",
+   "fieldname": "is_statutory",
+   "fieldtype": "Check",
+   "label": "Indian Statutory Set"
+  },
+  {
+   "description": "Where this requirement comes from and when it was last verified with the buyer, forwarder or embassy.",
+   "fieldname": "verify_note",
+   "fieldtype": "Small Text",
+   "label": "Source / Verification Note"
+  },
+  {
+   "description": "Leave a condition empty to match any value. The more conditions a rule has, the higher its priority when two rules ask for the same document.",
+   "fieldname": "match_section",
+   "fieldtype": "Section Break",
+   "label": "Applies When"
+  },
+  {
+   "depends_on": "eval:!doc.is_statutory",
+   "fieldname": "country",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Country",
+   "options": "Country"
+  },
+  {
+   "depends_on": "eval:!doc.is_statutory",
+   "fieldname": "country_group",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Country Group",
+   "options": "Country Group"
+  },
+  {
+   "depends_on": "eval:!doc.is_statutory",
+   "description": "Comma-separated ITC-HS prefixes, e.g. 09, 1006, 52",
+   "fieldname": "tariff_prefixes",
+   "fieldtype": "Data",
+   "label": "Tariff Chapters / Prefixes"
+  },
+  {
+   "depends_on": "eval:!doc.is_statutory",
+   "fieldname": "item_group",
+   "fieldtype": "Link",
+   "label": "Item Group",
+   "options": "Item Group"
+  },
+  {
+   "fieldname": "column_break_match",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval:!doc.is_statutory",
+   "fieldname": "incoterm",
+   "fieldtype": "Link",
+   "label": "Incoterm",
+   "options": "Incoterm"
+  },
+  {
+   "depends_on": "eval:!doc.is_statutory",
+   "fieldname": "payment_terms_type",
+   "fieldtype": "Select",
+   "label": "Payment Terms",
+   "options": "\nAdvance\nLetter of Credit\nDocuments against Payment (DP)\nDocuments against Acceptance (DA)\nOpen Account"
+  },
+  {
+   "depends_on": "eval:!doc.is_statutory",
+   "fieldname": "mode_of_transport",
+   "fieldtype": "Select",
+   "label": "Mode",
+   "options": "\nSea FCL\nSea LCL\nAir\nCourier\nRoad\nRail"
+  },
+  {
+   "depends_on": "eval:!doc.is_statutory && doc.direction=='Export'",
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "label": "Customer",
+   "options": "Customer"
+  },
+  {
+   "depends_on": "eval:!doc.is_statutory && doc.direction=='Import'",
+   "fieldname": "supplier",
+   "fieldtype": "Link",
+   "label": "Supplier",
+   "options": "Supplier"
+  },
+  {
+   "fieldname": "requirements_section",
+   "fieldtype": "Section Break",
+   "label": "Required Documents"
+  },
+  {
+   "fieldname": "requirements",
+   "fieldtype": "Table",
+   "label": "Documents",
+   "options": "Document Requirement",
+   "reqd": 1
+  }
+ ],
+ "links": [],
+ "modified": "2026-11-19 13:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Trade Documents",
+ "name": "Document Requirement Template",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "EXIM Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "EXIM User",
+   "share": 1
+  }
+ ],
+ "search_fields": "direction,country,country_group",
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

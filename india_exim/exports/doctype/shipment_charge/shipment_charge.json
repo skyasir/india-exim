@@ -1,0 +1,66 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "creation": "2026-11-19 13:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "charge_type",
+  "supplier",
+  "amount",
+  "purchase_invoice",
+  "description"
+ ],
+ "fields": [
+  {
+   "columns": 2,
+   "fieldname": "charge_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Charge",
+   "options": "Freight\nInsurance\nCHA / Clearing\nTerminal Handling (THC)\nCFS / ICD\nDocumentation\nInspection / Certification\nInland Transport\nDetention / Demurrage\nBank Charges\nOther",
+   "reqd": 1
+  },
+  {
+   "columns": 2,
+   "fieldname": "supplier",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Supplier",
+   "options": "Supplier"
+  },
+  {
+   "columns": 2,
+   "fieldname": "amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Amount (Company Currency)",
+   "reqd": 1
+  },
+  {
+   "columns": 2,
+   "fieldname": "purchase_invoice",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Purchase Invoice",
+   "options": "Purchase Invoice"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Data",
+   "label": "Description"
+  }
+ ],
+ "istable": 1,
+ "links": [],
+ "modified": "2026-11-19 13:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Exports",
+ "name": "Shipment Charge",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

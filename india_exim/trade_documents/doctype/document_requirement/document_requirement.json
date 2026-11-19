@@ -1,0 +1,84 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "creation": "2026-11-19 13:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "document_type",
+  "mandatory",
+  "stage",
+  "due_event",
+  "due_offset_days",
+  "responsible",
+  "instructions"
+ ],
+ "fields": [
+  {
+   "columns": 3,
+   "fieldname": "document_type",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Document",
+   "options": "Trade Document Type",
+   "reqd": 1
+  },
+  {
+   "columns": 1,
+   "default": "1",
+   "fieldname": "mandatory",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Mandatory"
+  },
+  {
+   "columns": 1,
+   "default": "Pre-shipment",
+   "fieldname": "stage",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Stage",
+   "options": "Order\nPre-shipment\nAt Shipment\nPost-shipment"
+  },
+  {
+   "columns": 1,
+   "fieldname": "due_event",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Due Relative To",
+   "options": "\nOrder Date\nETD\nBL Date\nETA"
+  },
+  {
+   "columns": 1,
+   "description": "Negative = before the event, e.g. -5 for five days before ETD.",
+   "fieldname": "due_offset_days",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Offset (Days)"
+  },
+  {
+   "columns": 1,
+   "fieldname": "responsible",
+   "fieldtype": "Link",
+   "label": "Responsible",
+   "options": "User"
+  },
+  {
+   "fieldname": "instructions",
+   "fieldtype": "Small Text",
+   "label": "Instructions"
+  }
+ ],
+ "istable": 1,
+ "links": [],
+ "modified": "2026-11-19 13:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Trade Documents",
+ "name": "Document Requirement",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

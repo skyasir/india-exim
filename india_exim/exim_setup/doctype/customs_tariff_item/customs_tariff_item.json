@@ -1,0 +1,172 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "field:tariff_code",
+ "creation": "2026-11-19 13:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "tariff_code",
+  "description",
+  "column_break_1",
+  "chapter",
+  "uqc",
+  "gst_hsn_code",
+  "policy_section",
+  "export_policy",
+  "import_policy",
+  "column_break_2",
+  "is_scomet",
+  "policy_notes",
+  "rates_section",
+  "rates"
+ ],
+ "fields": [
+  {
+   "description": "8-digit ITC-HS / Customs Tariff code.",
+   "fieldname": "tariff_code",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Tariff Code (ITC-HS)",
+   "length": 8,
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Small Text",
+   "in_list_view": 1,
+   "label": "Description",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "chapter",
+   "fieldtype": "Data",
+   "in_standard_filter": 1,
+   "label": "Chapter",
+   "length": 2,
+   "read_only": 1
+  },
+  {
+   "fieldname": "uqc",
+   "fieldtype": "Link",
+   "label": "Unit Quantity Code (UQC)",
+   "options": "UOM"
+  },
+  {
+   "fieldname": "gst_hsn_code",
+   "fieldtype": "Link",
+   "label": "GST HSN Code",
+   "options": "GST HSN Code"
+  },
+  {
+   "fieldname": "policy_section",
+   "fieldtype": "Section Break",
+   "label": "Trade Policy"
+  },
+  {
+   "default": "Free",
+   "fieldname": "export_policy",
+   "fieldtype": "Select",
+   "in_standard_filter": 1,
+   "label": "Export Policy",
+   "options": "Free\nRestricted\nProhibited\nSTE"
+  },
+  {
+   "default": "Free",
+   "fieldname": "import_policy",
+   "fieldtype": "Select",
+   "in_standard_filter": 1,
+   "label": "Import Policy",
+   "options": "Free\nRestricted\nProhibited\nSTE"
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "is_scomet",
+   "fieldtype": "Check",
+   "label": "SCOMET / Dual-use Item"
+  },
+  {
+   "fieldname": "policy_notes",
+   "fieldtype": "Small Text",
+   "label": "Policy Conditions"
+  },
+  {
+   "fieldname": "rates_section",
+   "fieldtype": "Section Break",
+   "label": "Customs Duty Rates"
+  },
+  {
+   "fieldname": "rates",
+   "fieldtype": "Table",
+   "label": "Rates",
+   "options": "Customs Tariff Rate"
+  }
+ ],
+ "links": [],
+ "modified": "2026-11-19 13:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "EXIM Setup",
+ "name": "Customs Tariff Item",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "EXIM Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "EXIM User",
+   "share": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts User",
+   "share": 1
+  }
+ ],
+ "search_fields": "description,chapter",
+ "show_title_field_in_link": 1,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "description",
+ "track_changes": 1
+}

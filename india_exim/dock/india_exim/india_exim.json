@@ -1,0 +1,55 @@
+{
+ "app": "india_exim",
+ "creation": "2026-11-19 13:00:00.000000",
+ "docstatus": 0,
+ "doctype": "Dock",
+ "idx": 0,
+ "items": [
+  {
+   "added": 0,
+   "hidden": 0,
+   "icon": "ship",
+   "link_to": "Exports",
+   "link_type": "Sidebar",
+   "title": "Exports"
+  },
+  {
+   "added": 0,
+   "hidden": 0,
+   "icon": "package-open",
+   "link_to": "Imports",
+   "link_type": "Sidebar",
+   "title": "Imports"
+  },
+  {
+   "added": 0,
+   "hidden": 0,
+   "icon": "badge-indian-rupee",
+   "link_to": "Export Incentives",
+   "link_type": "Sidebar",
+   "title": "Export Incentives"
+  },
+  {
+   "added": 0,
+   "hidden": 0,
+   "icon": "files",
+   "link_to": "Trade Documents",
+   "link_type": "Sidebar",
+   "title": "Trade Documents"
+  },
+  {
+   "added": 0,
+   "hidden": 0,
+   "icon": "settings",
+   "link_to": "EXIM Setup",
+   "link_type": "Sidebar",
+   "title": "EXIM Setup"
+  }
+ ],
+ "modified": "2026-11-19 13:00:00.000000",
+ "modified_by": "Administrator",
+ "name": "india_exim",
+ "owner": "Administrator",
+ "standard": 1,
+ "user": ""
+}
