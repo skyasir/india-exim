@@ -10,6 +10,7 @@ from india_exim.export_incentives.doctype.export_incentive_claim.export_incentiv
 from india_exim.export_incentives.doctype.rodtep_scrip.rodtep_scrip import utilise_scrip
 from india_exim.tests.fixtures import (
 	COMPANY,
+	bank_account,
 	make_exchange_rate,
 	make_export_invoice,
 	make_incentive_rate,
@@ -25,27 +26,6 @@ def get_balance(account: str, voucher_no: str | None = None) -> float:
 		filters["voucher_no"] = voucher_no
 	rows = frappe.get_all("GL Entry", filters=filters, fields=["debit", "credit"])
 	return sum(row.debit - row.credit for row in rows)
-
-
-def bank_account() -> str:
-	abbr = frappe.get_cached_value("Company", COMPANY, "abbr")
-	name = f"EXIM Test Bank - {abbr}"
-	if not frappe.db.exists("Account", name):
-		parent = frappe.db.get_value(
-			"Account", {"company": COMPANY, "is_group": 1, "account_type": "Bank"}
-		) or frappe.db.get_value(
-			"Account", {"company": COMPANY, "is_group": 1, "account_name": "Current Assets"}
-		)
-		frappe.get_doc(
-			{
-				"doctype": "Account",
-				"account_name": "EXIM Test Bank",
-				"company": COMPANY,
-				"parent_account": parent,
-				"account_type": "Bank",
-			}
-		).insert(ignore_permissions=True)
-	return name
 
 
 class TestExportIncentives(IntegrationTestCase):

@@ -2,7 +2,7 @@
  "actions": [],
  "allow_rename": 0,
  "autoname": "naming_series:",
- "creation": "2026-11-19 13:00:00.000000",
+ "creation": "2026-11-19 18:00:00.000000",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
@@ -53,7 +53,10 @@
   "realisation_status",
   "column_break_realisation",
   "realised_value",
+  "credit_note_value",
   "outstanding_value",
+  "realisation_actions_section",
+  "realisation_actions",
   "amended_from"
  ],
  "fields": [
@@ -335,6 +338,7 @@
    "label": "Realisation (FEMA)"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "realisation_due_date",
    "fieldtype": "Date",
    "label": "Realisation Due Date",
@@ -342,6 +346,7 @@
    "read_only": 1
   },
   {
+   "allow_on_submit": 1,
    "default": "Pending",
    "fieldname": "realisation_status",
    "fieldtype": "Select",
@@ -364,12 +369,34 @@
    "read_only": 1
   },
   {
+   "fieldname": "credit_note_value",
+   "fieldtype": "Currency",
+   "label": "Reduced by Credit Notes",
+   "no_copy": 1,
+   "options": "currency",
+   "read_only": 1
+  },
+  {
    "fieldname": "outstanding_value",
    "fieldtype": "Currency",
    "label": "Outstanding (Invoice Currency)",
    "no_copy": 1,
    "options": "currency",
    "read_only": 1
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "realisation_actions_section",
+   "fieldtype": "Section Break",
+   "label": "Extensions and Write-offs"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "realisation_actions",
+   "fieldtype": "Table",
+   "label": "Extensions / Write-offs",
+   "no_copy": 1,
+   "options": "Realisation Action"
   },
   {
    "fieldname": "amended_from",
@@ -384,7 +411,7 @@
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2026-11-19 13:00:00.000000",
+ "modified": "2026-11-19 18:00:00.000000",
  "modified_by": "Administrator",
  "module": "Exports",
  "name": "Shipping Bill",

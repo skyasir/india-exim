@@ -54,10 +54,54 @@ def make_export_shipment(source_name: str):
 			"incoterm": invoice.get("incoterm"),
 			"currency": invoice.currency,
 			"port_of_loading": invoice.get("port_code"),
-			"destination_country": frappe.db.get_value("Address", invoice.customer_address, "country")
-			if invoice.customer_address
-			else None,
+			"port_of_discharge": invoice.get("exim_port_of_discharge"),
+			"final_destination": invoice.get("exim_final_destination"),
+			"payment_terms_type": invoice.get("exim_payment_terms_type"),
+			"mode_of_transport": invoice.get("exim_mode_of_transport") or "Sea FCL",
+			"marks_and_numbers": invoice.get("exim_marks_and_numbers"),
+			"destination_country": invoice.get("exim_destination_country")
+			or (
+				frappe.db.get_value("Address", invoice.customer_address, "country")
+				if invoice.customer_address
+				else None
+			),
 		}
 	)
 	shipment.append("invoices", {"sales_invoice": invoice.name})
 	return shipment
+
+
+@frappe.whitelist()
+def get_export_status(sales_invoice: str) -> dict:
+	"""Read-only summary for the invoice's EXIM tab: shipping bills and shipments covering it."""
+	frappe.has_permission("Sales Invoice", "read", sales_invoice, throw=True)
+	shipping_bills = frappe.get_all(
+		"Shipping Bill",
+		filters={
+			"name": ("in", get_parents("Shipping Bill Item", "sales_invoice", sales_invoice)),
+			"docstatus": ("<", 2),
+		},
+		fields=[
+			"name",
+			"shipping_bill_number",
+			"shipping_bill_date",
+			"status",
+			"leo_date",
+			"currency",
+			"realisation_status",
+			"realisation_due_date",
+			"outstanding_value",
+			"total_drawback",
+			"total_rodtep",
+		],
+	)
+	shipments = frappe.get_all(
+		"Export Shipment",
+		filters={"name": ("in", get_parents("Export Shipment Invoice", "sales_invoice", sales_invoice))},
+		fields=["name", "status", "readiness_percent", "etd", "bl_number"],
+	)
+	return {"shipping_bills": shipping_bills, "shipments": shipments}
+
+
+def get_parents(child_doctype: str, fieldname: str, value: str) -> list[str]:
+	return list(set(frappe.get_all(child_doctype, filters={fieldname: value}, pluck="parent"))) or [""]

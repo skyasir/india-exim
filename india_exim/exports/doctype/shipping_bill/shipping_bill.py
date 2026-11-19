@@ -9,6 +9,7 @@ from india_compliance.gst_india.constants import PORT_CODES
 
 from india_exim.exim_setup.doctype.ad_code_registration.ad_code_registration import get_ad_code
 from india_exim.export_incentives.accounting import cancel_accrual, make_incentive_accrual
+from india_exim.fema.payments import update_shipping_bill_realisation
 from india_exim.utils.rates import get_customs_exchange_rate, get_incentive_rate
 
 FOB_TYPE_INCOTERMS = ("EXW", "FCA", "FAS", "FOB")
@@ -38,6 +39,7 @@ class ShippingBill(Document):
 		self.set_status(update=True)
 		self.update_sales_invoice_export_details()
 		self.accrue_incentives_if_due()
+		update_shipping_bill_realisation(self.name)
 
 	def before_update_after_submit(self):
 		self.validate_dates()
@@ -45,6 +47,7 @@ class ShippingBill(Document):
 
 	def on_update_after_submit(self):
 		self.accrue_incentives_if_due()
+		update_shipping_bill_realisation(self.name)
 
 	def on_cancel(self):
 		self.ignore_linked_doctypes = ("Journal Entry", "GL Entry", "Payment Ledger Entry")

@@ -30,6 +30,16 @@ doctype_js = {
 	"Sales Invoice": "public/js/sales_invoice.js",
 }
 
+extend_doctype_class = {
+	"Bill of Entry": ["india_exim.overrides.bill_of_entry.BillOfEntryEXIM"],
+}
+
+SETTLEMENT_EVENTS = {
+	"on_submit": "india_exim.fema.payments.on_settlement_change",
+	"on_cancel": "india_exim.fema.payments.on_settlement_change",
+	"on_update_after_submit": "india_exim.fema.payments.on_settlement_change",
+}
+
 doc_events = {
 	"Company": {
 		"after_insert": "india_exim.overrides.company.after_insert",
@@ -39,6 +49,20 @@ doc_events = {
 	},
 	"Sales Invoice": {
 		"validate": "india_exim.overrides.sales_invoice.validate",
+		"on_submit": "india_exim.fema.payments.on_settlement_change",
+		"on_cancel": "india_exim.fema.payments.on_settlement_change",
+	},
+	"Purchase Invoice": {
+		"validate": "india_exim.overrides.purchase_invoice.set_free_time_end",
+		"before_update_after_submit": "india_exim.overrides.purchase_invoice.set_free_time_end",
+		"on_submit": "india_exim.fema.payments.on_settlement_change",
+		"on_cancel": "india_exim.fema.payments.on_settlement_change",
+	},
+	"Payment Entry": SETTLEMENT_EVENTS,
+	"Journal Entry": SETTLEMENT_EVENTS,
+	"Bill of Entry": {
+		"on_submit": "india_exim.overrides.bill_of_entry.on_submit",
+		"before_cancel": "india_exim.overrides.bill_of_entry.before_cancel",
 	},
 }
 
@@ -47,5 +71,6 @@ export_python_type_annotations = True
 scheduler_events = {
 	"daily": [
 		"india_exim.export_incentives.doctype.rodtep_scrip.rodtep_scrip.mark_expired_scrips",
+		"india_exim.fema.payments.refresh_open_documents",
 	],
 }

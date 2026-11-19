@@ -7,11 +7,9 @@ const EXIM_ROOT_TYPES = {
 		"exim_igst_refund_receivable_account",
 	],
 	Income: ["exim_drawback_income_account", "exim_rodtep_income_account", "exim_rosctl_income_account"],
-	Liability: ["exim_customs_duty_payable_account"],
 	Expense: [
 		"exim_scrip_sale_loss_account",
 		"exim_incentive_recovery_account",
-		"exim_customs_duty_account",
 		"exim_freight_outward_account",
 		"exim_freight_inward_account",
 		"exim_clearing_charges_account",

@@ -130,7 +130,11 @@ class RoDTEPScrip(Document):
 		if row.utilisation_type == "Customs Duty":
 			payable = frappe.db.get_value(
 				"Bill of Entry", row.bill_of_entry, "customs_payable_account"
-			) or get_exim_account(self.company, "exim_customs_duty_payable_account")
+			) or frappe.get_cached_value("Company", self.company, "default_customs_payable_account")
+			if not payable:
+				frappe.throw(
+					_("Set the Default Customs Payable Account on Company {0}.").format(self.company)
+				)
 			return [(payable, row.amount, 0), (scrip_account, 0, row.amount)]
 
 		loss = flt(row.amount - flt(row.sale_value), 2)

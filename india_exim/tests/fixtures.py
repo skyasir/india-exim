@@ -109,26 +109,6 @@ def setup_exim_company(company: str = COMPANY) -> None:
 	frappe.clear_document_cache("Company", company)
 
 
-def make_receivable_account(currency: str = "USD", company: str = COMPANY) -> str:
-	abbr = frappe.get_cached_value("Company", company, "abbr")
-	name = f"Debtors {currency} - {abbr}"
-	if not frappe.db.exists("Account", name):
-		parent = frappe.db.get_value(
-			"Account", {"company": company, "account_type": "Receivable", "is_group": 1}
-		) or frappe.db.get_value("Account", {"company": company, "account_name": "Accounts Receivable"})
-		frappe.get_doc(
-			{
-				"doctype": "Account",
-				"account_name": f"Debtors {currency}",
-				"company": company,
-				"parent_account": parent,
-				"account_type": "Receivable",
-				"account_currency": currency,
-			}
-		).insert(ignore_permissions=True)
-	return name
-
-
 def make_export_invoice(qty: float = 10, rate: float = 100, currency: str = "USD", **extra):
 	from india_compliance.gst_india.utils.tests import create_sales_invoice
 
@@ -137,7 +117,106 @@ def make_export_invoice(qty: float = 10, rate: float = 100, currency: str = "USD
 		customer=FOREIGN_CUSTOMER,
 		currency=currency,
 		conversion_rate=83,
-		debit_to=make_receivable_account(currency),
+		debit_to=make_party_account(currency, "Receivable"),
 		items=[{"item_code": ITEM_CODE, "qty": qty, "rate": rate, "gst_hsn_code": "52083190"}],
 		**extra,
 	)
+
+
+def make_party_account(
+	currency: str = "USD", account_type: str = "Receivable", company: str = COMPANY
+) -> str:
+	abbr = frappe.get_cached_value("Company", company, "abbr")
+	label = f"{'Debtors' if account_type == 'Receivable' else 'Creditors'} {currency}"
+	name = f"{label} - {abbr}"
+	if not frappe.db.exists("Account", name):
+		parent = frappe.db.get_value(
+			"Account", {"company": company, "account_type": account_type, "is_group": 1}
+		)
+		if not parent:
+			parent = frappe.db.get_value(
+				"Account", {"company": company, "account_type": account_type, "is_group": 0}, "parent_account"
+			)
+		frappe.get_doc(
+			{
+				"doctype": "Account",
+				"account_name": label,
+				"company": company,
+				"parent_account": parent,
+				"account_type": account_type,
+				"account_currency": currency,
+			}
+		).insert(ignore_permissions=True)
+	return name
+
+
+def bank_account(company: str = COMPANY) -> str:
+	abbr = frappe.get_cached_value("Company", company, "abbr")
+	name = f"EXIM Test Bank - {abbr}"
+	if not frappe.db.exists("Account", name):
+		parent = frappe.db.get_value(
+			"Account", {"company": company, "is_group": 1, "account_type": "Bank"}
+		) or frappe.db.get_value(
+			"Account", {"company": company, "is_group": 1, "account_name": "Current Assets"}
+		)
+		frappe.get_doc(
+			{
+				"doctype": "Account",
+				"account_name": "EXIM Test Bank",
+				"company": company,
+				"parent_account": parent,
+				"account_type": "Bank",
+			}
+		).insert(ignore_permissions=True)
+	return name
+
+
+def make_import_item(code: str = "_Test EXIM Import Yarn") -> str:
+	if not frappe.db.exists("Item", code):
+		frappe.get_doc(
+			{
+				"doctype": "Item",
+				"item_code": code,
+				"item_group": "All Item Groups",
+				"stock_uom": "Nos",
+				"is_stock_item": 1,
+				"gst_hsn_code": "52083190",
+				"exim_customs_tariff_item": make_tariff_item(),
+			}
+		).insert(ignore_permissions=True)
+	return code
+
+
+def make_import_invoice(qty: float = 10, rate: float = 100, currency: str = "USD"):
+	from india_compliance.gst_india.utils.tests import create_purchase_invoice
+
+	warehouse = frappe.db.get_value("Warehouse", {"company": COMPANY, "is_group": 0})
+	return create_purchase_invoice(
+		supplier="_Test Foreign Supplier",
+		currency=currency,
+		conversion_rate=83,
+		credit_to=make_party_account(currency, "Payable"),
+		update_stock=1,
+		items=[
+			{
+				"item_code": make_import_item(),
+				"qty": qty,
+				"rate": rate,
+				"warehouse": warehouse,
+				"gst_hsn_code": "52083190",
+			}
+		],
+	)
+
+
+def make_payment(invoice, amount: float):
+	from erpnext.accounts.doctype.payment_entry.payment_entry import get_payment_entry
+
+	payment = get_payment_entry(
+		invoice.doctype, invoice.name, party_amount=amount, bank_account=bank_account()
+	)
+	payment.reference_no = frappe.generate_hash(length=8)
+	payment.reference_date = getdate()
+	payment.insert()
+	payment.submit()
+	return payment

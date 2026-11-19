@@ -50,6 +50,26 @@ def create_roles():
 
 def setup_custom_fields():
 	create_custom_fields(CUSTOM_FIELDS, ignore_validate=True)
+	delete_stale_custom_fields()
+
+
+def delete_stale_custom_fields():
+	"""Remove exim_ fields an older version created but the current definition no longer has."""
+	for doctype, fields in CUSTOM_FIELDS.items():
+		current = [field["fieldname"] for field in fields]
+		stale = frappe.get_all(
+			"Custom Field",
+			filters={
+				"dt": doctype,
+				"fieldname": ("like", "exim\\_%"),
+				"name": ("not in", [f"{doctype}-{name}" for name in current]),
+			},
+			pluck="name",
+		)
+		for name in stale:
+			frappe.delete_doc("Custom Field", name, ignore_permissions=True)
+		if stale:
+			frappe.clear_cache(doctype=doctype)
 
 
 def delete_custom_fields():
