@@ -366,16 +366,16 @@ CUSTOM_FIELDS["Supplier"] = [
 )
 
 CUSTOM_FIELDS["Sales Order"] = [
-	flag("exim_is_export", "Is Export", "customer_name", fetch_from="customer.exim_is_export")
+	flag("exim_is_export", "Is Export", "is_subcontracted", fetch_from="customer.exim_is_export")
 ] + get_order_and_invoice_fields("proforma_html", include_summary=False)
 CUSTOM_FIELDS["Sales Invoice"] = (
 	CUSTOM_FIELDS["Sales Invoice"]
-	+ [flag("exim_is_export", "Is Export", "customer_name", fetch_from="customer.exim_is_export")]
+	+ [flag("exim_is_export", "Is Export", "is_export_with_gst", fetch_from="customer.exim_is_export")]
 	+ get_order_and_invoice_fields("is_discounted", include_summary=True)
 )
 
 CUSTOM_FIELDS["Purchase Invoice"] = [
-	flag("exim_is_import", "Is Import", "supplier_name", fetch_from="supplier.exim_is_import")
+	flag("exim_is_import", "Is Import", "is_reverse_charge", fetch_from="supplier.exim_is_import")
 ] + chain(
 	[
 		{"fieldname": "exim_tab", "fieldtype": "Tab Break", "label": IMPORT_TAB, "depends_on": SHOW_IMPORT},
