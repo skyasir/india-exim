@@ -1,5 +1,3 @@
-<img src="assets/icon.svg" width="64" height="64" alt="">
-
 # India EXIM
 
 Export–import compliance for Indian businesses on ERPNext v16, built on top of
