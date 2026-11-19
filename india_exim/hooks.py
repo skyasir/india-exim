@@ -59,7 +59,13 @@ doc_events = {
 		"on_cancel": "india_exim.fema.payments.on_settlement_change",
 	},
 	"Payment Entry": SETTLEMENT_EVENTS,
-	"Journal Entry": SETTLEMENT_EVENTS,
+	"Journal Entry": {
+		**SETTLEMENT_EVENTS,
+		"on_cancel": [
+			"india_exim.fema.payments.on_settlement_change",
+			"india_exim.export_incentives.accounting.on_journal_entry_cancel",
+		],
+	},
 	"Bill of Entry": {
 		"on_submit": "india_exim.overrides.bill_of_entry.on_submit",
 		"before_cancel": "india_exim.overrides.bill_of_entry.before_cancel",

@@ -88,3 +88,20 @@ def cancel_accrual(shipping_bill) -> None:
 	if journal_entry.docstatus == 1:
 		journal_entry.flags.ignore_permissions = True
 		journal_entry.cancel()
+
+
+def on_journal_entry_cancel(doc, method=None):
+	"""Cancelling a receipt entry removes it from the claim it was recorded on."""
+	if doc.get("exim_reference_type") not in ("Export Incentive Claim", "GST Refund Claim"):
+		return
+	claim = frappe.get_doc(doc.exim_reference_type, doc.exim_reference_name)
+	remaining = [row for row in claim.receipts if row.journal_entry != doc.name]
+	if len(remaining) == len(claim.receipts):
+		return
+	claim.receipts = remaining
+	claim.flags.ignore_validate_update_after_submit = True
+	claim.flags.ignore_links = True
+	if claim.doctype == "Export Incentive Claim":
+		claim.set_totals()
+	claim.save(ignore_permissions=True)
+	claim.set_status(update=True)

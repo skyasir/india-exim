@@ -13,13 +13,10 @@ class DocumentRequirementTemplate(Document):
 		if self.is_statutory:
 			for field in CONDITION_FIELDS:
 				self.set(field, None)
-		if self.item_group and not frappe.db.get_value("Item Group", self.item_group, "parent_item_group"):
-			# the root group means "any item"; a default must not narrow the rule
-			self.item_group = None
 		if self.direction == "Export":
-			self.supplier = None
+			self.for_supplier = None
 		else:
-			self.customer = None
+			self.for_customer = None
 
 		seen = set()
 		for row in self.requirements:
@@ -29,8 +26,8 @@ class DocumentRequirementTemplate(Document):
 				)
 			seen.add(row.document_type)
 
-		if self.tariff_prefixes:
-			prefixes = [prefix.strip() for prefix in self.tariff_prefixes.split(",") if prefix.strip()]
+		if self.for_tariff_prefixes:
+			prefixes = [prefix.strip() for prefix in self.for_tariff_prefixes.split(",") if prefix.strip()]
 			if not all(prefix.isdigit() for prefix in prefixes):
 				frappe.throw(_("Tariff prefixes must be digits, e.g. 09, 1006, 52."))
-			self.tariff_prefixes = ", ".join(prefixes)
+			self.for_tariff_prefixes = ", ".join(prefixes)

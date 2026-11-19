@@ -11,15 +11,15 @@ from frappe.utils import add_days, cint, getdate
 
 DONE_STATUSES = ("Received", "Checked", "Sent", "Accepted", "Not Required")
 CONDITION_FIELDS = (
-	"country",
-	"country_group",
-	"tariff_prefixes",
-	"item_group",
-	"incoterm",
-	"payment_terms_type",
-	"mode_of_transport",
-	"customer",
-	"supplier",
+	"for_country",
+	"for_country_group",
+	"for_tariff_prefixes",
+	"for_item_group",
+	"for_incoterm",
+	"for_payment_terms_type",
+	"for_mode_of_transport",
+	"for_customer",
+	"for_supplier",
 )
 
 
@@ -91,20 +91,20 @@ def matches(template, context: ShipmentContext) -> bool:
 	if template.is_statutory:
 		return True
 	checks = {
-		"country": lambda value: value == context.country,
-		"country_group": lambda value: value in context.groups_of_country,
-		"tariff_prefixes": lambda value: any(
+		"for_country": lambda value: value == context.country,
+		"for_country_group": lambda value: value in context.groups_of_country,
+		"for_tariff_prefixes": lambda value: any(
 			tariff.startswith(prefix.strip())
 			for prefix in value.split(",")
 			if prefix.strip()
 			for tariff in context.tariffs
 		),
-		"item_group": lambda value: any(is_within_group(group, value) for group in context.item_groups),
-		"incoterm": lambda value: value == context.incoterm,
-		"payment_terms_type": lambda value: value == context.payment_terms_type,
-		"mode_of_transport": lambda value: value == context.mode_of_transport,
-		"customer": lambda value: value == context.customer,
-		"supplier": lambda value: value == context.supplier,
+		"for_item_group": lambda value: any(is_within_group(group, value) for group in context.item_groups),
+		"for_incoterm": lambda value: value == context.incoterm,
+		"for_payment_terms_type": lambda value: value == context.payment_terms_type,
+		"for_mode_of_transport": lambda value: value == context.mode_of_transport,
+		"for_customer": lambda value: value == context.customer,
+		"for_supplier": lambda value: value == context.supplier,
 	}
 	return all(checks[field](template.get(field)) for field in CONDITION_FIELDS if template.get(field))
 

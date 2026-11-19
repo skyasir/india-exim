@@ -63,9 +63,10 @@ class ShippingBill(Document):
 		}
 		for invoice in {row.sales_invoice for row in self.items if row.sales_invoice}:
 			current = frappe.db.get_value("Sales Invoice", invoice, list(values), as_dict=True)
-			if any(current.values()):
+			missing = {field: value for field, value in values.items() if not current.get(field)}
+			if not missing:
 				continue
-			frappe.db.set_value("Sales Invoice", invoice, values)
+			frappe.db.set_value("Sales Invoice", invoice, missing)
 			frappe.get_doc("Sales Invoice", invoice).add_comment(
 				"Info",
 				_("Shipping bill details set from {0} for GST returns.").format(
@@ -283,12 +284,17 @@ def make_shipping_bill(source_name: str) -> Document:
 			"shipping_bill_number": invoice.get("shipping_bill_number"),
 			"port_code": invoice.get("port_code"),
 			"incoterm": invoice.get("incoterm"),
+			"freight": invoice.get("exim_freight"),
+			"insurance": invoice.get("exim_insurance"),
 			"export_type": IGST_ROUTE
 			if invoice.get("is_export_with_gst")
 			else "Under LUT / Bond (without IGST)",
-			"destination_country": frappe.db.get_value("Address", invoice.customer_address, "country")
-			if invoice.customer_address
-			else None,
+			"destination_country": invoice.get("exim_destination_country")
+			or (
+				frappe.db.get_value("Address", invoice.customer_address, "country")
+				if invoice.customer_address
+				else None
+			),
 		}
 	)
 	for row in get_items_from_sales_invoices([invoice.name]):

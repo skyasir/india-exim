@@ -48,7 +48,7 @@ class TestDocumentChecklist(IntegrationTestCase):
 					"instructions": "Food only",
 				},
 			],
-			country="United States",
+			for_country="United States",
 		)
 		make_template(
 			"Test Buyer Rule",
@@ -65,13 +65,13 @@ class TestDocumentChecklist(IntegrationTestCase):
 					"due_offset_days": -5,
 				},
 			],
-			country="United States",
-			customer=FOREIGN_CUSTOMER,
+			for_country="United States",
+			for_customer=FOREIGN_CUSTOMER,
 		)
 		make_template(
 			"Test Saudi Only",
 			[{"document_type": "Product Conformity Certificate (SABER / SASO)", "mandatory": 1}],
-			country="Saudi Arabia",
+			for_country="Saudi Arabia",
 		)
 
 	def make_shipment(self, **values):
@@ -137,7 +137,19 @@ class TestDocumentChecklist(IntegrationTestCase):
 			"Test Statutory With Country",
 			[{"document_type": "Shipping Bill", "mandatory": 1}],
 			is_statutory=1,
-			country="Saudi Arabia",
+			for_country="Saudi Arabia",
 		)
-		self.assertIsNone(template.country)
+		self.assertIsNone(template.for_country)
+		frappe.delete_doc("Document Requirement Template", template.name)
+
+	def test_new_rule_is_not_narrowed_by_global_defaults(self):
+		"""System defaults such as country = India must not leak into rule conditions."""
+		frappe.db.set_default("country", "India")
+		template = make_template(
+			"Test Group Only",
+			[{"document_type": "Shipping Bill", "mandatory": 1}],
+			for_country_group="GCC",
+		)
+		self.assertIsNone(template.for_country)
+		self.assertIsNone(template.for_item_group)
 		frappe.delete_doc("Document Requirement Template", template.name)

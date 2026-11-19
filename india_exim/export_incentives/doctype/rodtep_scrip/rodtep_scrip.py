@@ -16,6 +16,12 @@ class RoDTEPScrip(Document):
 			frappe.throw(_("Create RoDTEP scrips from a sanctioned RoDTEP Export Incentive Claim."))
 		if flt(self.face_value) <= 0:
 			frappe.throw(_("Face value must be greater than zero."))
+		duplicate = frappe.db.get_value(
+			"RoDTEP Scrip",
+			{"scrip_number": self.scrip_number, "docstatus": ("<", 2), "name": ("!=", self.name)},
+		)
+		if duplicate:
+			frappe.throw(_("e-Scrip {0} is already recorded in {1}.").format(self.scrip_number, duplicate))
 		if not self.valid_upto:
 			months = frappe.db.get_single_value("India EXIM Settings", "scrip_validity_months") or 12
 			self.valid_upto = add_months(self.scrip_date, months)
@@ -52,11 +58,11 @@ class RoDTEPScrip(Document):
 			"Payment Ledger Entry",
 			"Export Incentive Claim",
 		)
+		remove_claim_receipt(self)  # first, so the claim no longer links the entry being cancelled
 		if self.journal_entry:
 			journal_entry = frappe.get_doc("Journal Entry", self.journal_entry)
 			journal_entry.flags.ignore_permissions = True
 			journal_entry.cancel()
-		remove_claim_receipt(self)
 		self.set_status(update=True)
 
 	def set_balance(self):

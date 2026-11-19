@@ -179,3 +179,33 @@ class TestExportIncentives(IntegrationTestCase):
 		record_refund_receipt(claim.name, today(), 9000, bank_account())
 		claim.reload()
 		self.assertEqual(claim.status, "Received")
+
+	@change_settings("India EXIM Settings", {"incentive_accrual_point": "On LEO"})
+	def test_cancelling_receipt_entry_reopens_claim(self):
+		shipping_bill = self.make_leo_shipping_bill()
+		claim = self.make_claim("Duty Drawback", [shipping_bill])
+		journal_entry = record_receipt(claim.name, today(), claim.total_sanctioned, bank_account())
+		frappe.get_doc("Journal Entry", journal_entry).cancel()
+		claim.reload()
+		self.assertEqual(claim.status, "Sanctioned")
+		self.assertEqual(claim.outstanding_amount, claim.total_sanctioned)
+		claim.cancel()
+
+	@change_settings("India EXIM Settings", {"incentive_accrual_point": "On LEO"})
+	def test_unused_scrip_can_be_cancelled(self):
+		shipping_bill = self.make_leo_shipping_bill()
+		claim = self.make_claim("RoDTEP", [shipping_bill])
+		scrip = frappe.get_doc(
+			"RoDTEP Scrip", create_rodtep_scrip(claim.name, frappe.generate_hash(length=8), today(), 800)
+		)
+		scrip.cancel()
+		claim.reload()
+		self.assertEqual(claim.status, "Sanctioned")
+		self.assertEqual(frappe.db.get_value("Journal Entry", scrip.journal_entry, "docstatus"), 2)
+
+		# the same e-scrip number can be recorded again after a cancellation, but not twice while active
+		again = create_rodtep_scrip(claim.name, scrip.scrip_number, today(), 800)
+		self.assertNotEqual(again, scrip.name)
+		self.assertRaises(
+			frappe.ValidationError, create_rodtep_scrip, claim.name, scrip.scrip_number, today(), 1
+		)

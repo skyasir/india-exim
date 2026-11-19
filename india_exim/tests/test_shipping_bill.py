@@ -137,3 +137,17 @@ class TestShippingBill(IntegrationTestCase):
 			}
 		).insert()
 		self.assertEqual(item.exim_customs_tariff_item, "52083190")
+
+	def test_freight_and_insurance_come_from_invoice_exim_tab(self):
+		invoice = make_export_invoice(
+			qty=10, rate=100, incoterm="CIF", exim_freight=50, exim_insurance=10, port_code="INNSA1"
+		)
+		shipping_bill = self.make_shipping_bill(invoice).insert()
+		self.assertEqual(shipping_bill.freight, 50)
+		self.assertEqual(shipping_bill.insurance, 10)
+		self.assertEqual(shipping_bill.total_fob_value, 940)
+		shipping_bill.submit()
+		self.assertEqual(
+			frappe.db.get_value("Sales Invoice", invoice.name, "shipping_bill_number"),
+			shipping_bill.shipping_bill_number,
+		)

@@ -2,7 +2,7 @@
  "actions": [],
  "allow_rename": 0,
  "autoname": "field:template_name",
- "creation": "2026-11-19 13:00:00.000000",
+ "creation": "2026-11-19 19:00:00.000000",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
@@ -14,16 +14,16 @@
   "is_statutory",
   "verify_note",
   "match_section",
-  "country",
-  "country_group",
-  "tariff_prefixes",
-  "item_group",
+  "for_country",
+  "for_country_group",
+  "for_tariff_prefixes",
+  "for_item_group",
   "column_break_match",
-  "incoterm",
-  "payment_terms_type",
-  "mode_of_transport",
-  "customer",
-  "supplier",
+  "for_incoterm",
+  "for_payment_terms_type",
+  "for_mode_of_transport",
+  "for_customer",
+  "for_supplier",
   "requirements_section",
   "requirements"
  ],
@@ -76,7 +76,7 @@
   },
   {
    "depends_on": "eval:!doc.is_statutory",
-   "fieldname": "country",
+   "fieldname": "for_country",
    "fieldtype": "Link",
    "in_list_view": 1,
    "in_standard_filter": 1,
@@ -85,7 +85,7 @@
   },
   {
    "depends_on": "eval:!doc.is_statutory",
-   "fieldname": "country_group",
+   "fieldname": "for_country_group",
    "fieldtype": "Link",
    "in_list_view": 1,
    "in_standard_filter": 1,
@@ -95,13 +95,13 @@
   {
    "depends_on": "eval:!doc.is_statutory",
    "description": "Comma-separated ITC-HS prefixes, e.g. 09, 1006, 52",
-   "fieldname": "tariff_prefixes",
+   "fieldname": "for_tariff_prefixes",
    "fieldtype": "Data",
    "label": "Tariff Chapters / Prefixes"
   },
   {
    "depends_on": "eval:!doc.is_statutory",
-   "fieldname": "item_group",
+   "fieldname": "for_item_group",
    "fieldtype": "Link",
    "label": "Item Group",
    "options": "Item Group"
@@ -112,35 +112,35 @@
   },
   {
    "depends_on": "eval:!doc.is_statutory",
-   "fieldname": "incoterm",
+   "fieldname": "for_incoterm",
    "fieldtype": "Link",
    "label": "Incoterm",
    "options": "Incoterm"
   },
   {
    "depends_on": "eval:!doc.is_statutory",
-   "fieldname": "payment_terms_type",
+   "fieldname": "for_payment_terms_type",
    "fieldtype": "Select",
    "label": "Payment Terms",
    "options": "\nAdvance\nLetter of Credit\nDocuments against Payment (DP)\nDocuments against Acceptance (DA)\nOpen Account"
   },
   {
    "depends_on": "eval:!doc.is_statutory",
-   "fieldname": "mode_of_transport",
+   "fieldname": "for_mode_of_transport",
    "fieldtype": "Select",
    "label": "Mode",
    "options": "\nSea FCL\nSea LCL\nAir\nCourier\nRoad\nRail"
   },
   {
    "depends_on": "eval:!doc.is_statutory && doc.direction=='Export'",
-   "fieldname": "customer",
+   "fieldname": "for_customer",
    "fieldtype": "Link",
    "label": "Customer",
    "options": "Customer"
   },
   {
    "depends_on": "eval:!doc.is_statutory && doc.direction=='Import'",
-   "fieldname": "supplier",
+   "fieldname": "for_supplier",
    "fieldtype": "Link",
    "label": "Supplier",
    "options": "Supplier"
@@ -159,7 +159,7 @@
   }
  ],
  "links": [],
- "modified": "2026-11-19 13:00:00.000000",
+ "modified": "2026-11-19 19:00:00.000000",
  "modified_by": "Administrator",
  "module": "Trade Documents",
  "name": "Document Requirement Template",
@@ -200,7 +200,7 @@
    "share": 1
   }
  ],
- "search_fields": "direction,country,country_group",
+ "search_fields": "direction,for_country,for_country_group",
  "sort_field": "creation",
  "sort_order": "DESC",
  "states": [],
