@@ -27,7 +27,11 @@ before_tests = "india_exim.tests.before_tests"
 
 doctype_js = {
 	"Company": "public/js/company.js",
-	"Sales Invoice": "public/js/sales_invoice.js",
+	"Customer": "public/js/exim_flags.js",
+	"Supplier": "public/js/exim_flags.js",
+	"Sales Order": "public/js/exim_flags.js",
+	"Sales Invoice": ["public/js/exim_flags.js", "public/js/sales_invoice.js"],
+	"Purchase Invoice": "public/js/exim_flags.js",
 }
 
 extend_doctype_class = {

@@ -106,6 +106,8 @@ def setup_exim_company(company: str = COMPANY) -> None:
 	setup_exim_accounts(company)
 	frappe.db.set_value("Company", company, "exim_iec", "AAQCA8719H")
 	frappe.db.set_single_value("GST Settings", "enable_overseas_transactions", 1)
+	frappe.db.set_value("Customer", FOREIGN_CUSTOMER, "exim_is_export", 1)
+	frappe.db.set_value("Supplier", "_Test Foreign Supplier", "exim_is_import", 1)
 	frappe.clear_document_cache("Company", company)
 
 

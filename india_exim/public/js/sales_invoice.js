@@ -1,7 +1,6 @@
 frappe.ui.form.on("Sales Invoice", {
 	refresh(frm) {
-		const is_export = ["Overseas", "SEZ"].includes(frm.doc.gst_category);
-		if (!is_export) return;
+		if (!frm.doc.exim_is_export) return;
 		render_export_status(frm);
 		if (frm.doc.docstatus !== 1 || frm.doc.is_return) return;
 

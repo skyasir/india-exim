@@ -151,3 +151,12 @@ class TestShippingBill(IntegrationTestCase):
 			frappe.db.get_value("Sales Invoice", invoice.name, "shipping_bill_number"),
 			shipping_bill.shipping_bill_number,
 		)
+
+	def test_export_flag_comes_from_customer_and_gates_export_documents(self):
+		from india_exim.exports.doctype.shipping_bill.shipping_bill import make_shipping_bill
+
+		invoice = make_export_invoice()
+		self.assertEqual(invoice.exim_is_export, 1)
+
+		frappe.db.set_value("Sales Invoice", invoice.name, "exim_is_export", 0)
+		self.assertRaisesRegex(frappe.ValidationError, "Is Export", make_shipping_bill, invoice.name)

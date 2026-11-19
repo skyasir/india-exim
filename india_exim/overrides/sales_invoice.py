@@ -46,6 +46,7 @@ def set_letter_of_undertaking(doc):
 def make_export_shipment(source_name: str):
 	invoice = frappe.get_doc("Sales Invoice", source_name)
 	invoice.check_permission("read")
+	ensure_export_invoice(invoice)
 	shipment = frappe.new_doc("Export Shipment")
 	shipment.update(
 		{
@@ -105,3 +106,13 @@ def get_export_status(sales_invoice: str) -> dict:
 
 def get_parents(child_doctype: str, fieldname: str, value: str) -> list[str]:
 	return list(set(frappe.get_all(child_doctype, filters={fieldname: value}, pluck="parent"))) or [""]
+
+
+def ensure_export_invoice(invoice) -> None:
+	if not invoice.get("exim_is_export"):
+		frappe.throw(
+			_("Tick <b>Is Export</b> on Sales Invoice {0} to create export documents from it.").format(
+				invoice.name
+			),
+			title=_("Not an Export Invoice"),
+		)

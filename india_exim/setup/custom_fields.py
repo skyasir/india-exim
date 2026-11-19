@@ -10,7 +10,7 @@ def get_company_fields():
 		{
 			"fieldname": "exim_tab",
 			"fieldtype": "Tab Break",
-			"label": "EXIM",
+			"label": "Export & Import",
 			"insert_after": "default_scrap_warehouse",
 		},
 		{
@@ -183,8 +183,29 @@ CUSTOM_FIELDS = {
 }
 
 
-EXPORT_PARTY = "eval:['Overseas', 'SEZ'].includes(doc.gst_category)"
-IMPORT_PARTY = "eval:doc.gst_category == 'Overseas'"
+SHOW_EXPORT = "exim_is_export"
+SHOW_IMPORT = "exim_is_import"
+EXPORT_TAB = "Export Details"
+IMPORT_TAB = "Import Details"
+
+
+def flag(
+	fieldname: str, label: str, insert_after: str, fetch_from: str | None = None, description: str = ""
+) -> dict:
+	"""The tick that shows the Export / Import Details tab. Kept outside the tab so it is always visible."""
+	field = {
+		"fieldname": fieldname,
+		"fieldtype": "Check",
+		"label": label,
+		"insert_after": insert_after,
+		"in_standard_filter": 1,
+		"description": description,
+	}
+	if fetch_from:
+		field.update({"fetch_from": fetch_from, "fetch_if_empty": 1})
+	return field
+
+
 PAYMENT_TERMS = "\nAdvance\nLetter of Credit\nDocuments against Payment (DP)\nDocuments against Acceptance (DA)\nOpen Account"
 MODES = "\nSea FCL\nSea LCL\nAir\nCourier\nRoad\nRail"
 
@@ -201,7 +222,7 @@ def chain(fields: list[dict], first_insert_after: str) -> list[dict]:
 def get_order_and_invoice_fields(insert_after: str, include_summary: bool) -> list[dict]:
 	"""Same fieldnames on Sales Order and Sales Invoice so ERPNext's mapper copies them."""
 	fields = [
-		{"fieldname": "exim_tab", "fieldtype": "Tab Break", "label": "EXIM", "depends_on": EXPORT_PARTY},
+		{"fieldname": "exim_tab", "fieldtype": "Tab Break", "label": EXPORT_TAB, "depends_on": SHOW_EXPORT},
 	]
 	if include_summary:
 		fields += [
@@ -267,9 +288,16 @@ def get_order_and_invoice_fields(insert_after: str, include_summary: bool) -> li
 	return chain(fields, insert_after)
 
 
-CUSTOM_FIELDS["Customer"] = chain(
+CUSTOM_FIELDS["Customer"] = [
+	flag(
+		"exim_is_export",
+		"Export Customer",
+		"customer_type",
+		description="Overseas buyer. Shows the Export Details tab and is copied to orders and invoices.",
+	)
+] + chain(
 	[
-		{"fieldname": "exim_tab", "fieldtype": "Tab Break", "label": "EXIM", "depends_on": EXPORT_PARTY},
+		{"fieldname": "exim_tab", "fieldtype": "Tab Break", "label": EXPORT_TAB, "depends_on": SHOW_EXPORT},
 		{
 			"fieldname": "exim_documents_section",
 			"fieldtype": "Section Break",
@@ -300,9 +328,16 @@ CUSTOM_FIELDS["Customer"] = chain(
 	"supplier_numbers",
 )
 
-CUSTOM_FIELDS["Supplier"] = chain(
+CUSTOM_FIELDS["Supplier"] = [
+	flag(
+		"exim_is_import",
+		"Import Supplier",
+		"supplier_type",
+		description="Overseas supplier. Shows the Import Details tab and is copied to purchase invoices.",
+	)
+] + chain(
 	[
-		{"fieldname": "exim_tab", "fieldtype": "Tab Break", "label": "EXIM", "depends_on": IMPORT_PARTY},
+		{"fieldname": "exim_tab", "fieldtype": "Tab Break", "label": IMPORT_TAB, "depends_on": SHOW_IMPORT},
 		{
 			"fieldname": "exim_origin_section",
 			"fieldtype": "Section Break",
@@ -330,14 +365,20 @@ CUSTOM_FIELDS["Supplier"] = chain(
 	"customer_numbers",
 )
 
-CUSTOM_FIELDS["Sales Order"] = get_order_and_invoice_fields("proforma_html", include_summary=False)
-CUSTOM_FIELDS["Sales Invoice"] = CUSTOM_FIELDS["Sales Invoice"] + get_order_and_invoice_fields(
-	"is_discounted", include_summary=True
+CUSTOM_FIELDS["Sales Order"] = [
+	flag("exim_is_export", "Is Export", "customer_name", fetch_from="customer.exim_is_export")
+] + get_order_and_invoice_fields("proforma_html", include_summary=False)
+CUSTOM_FIELDS["Sales Invoice"] = (
+	CUSTOM_FIELDS["Sales Invoice"]
+	+ [flag("exim_is_export", "Is Export", "customer_name", fetch_from="customer.exim_is_export")]
+	+ get_order_and_invoice_fields("is_discounted", include_summary=True)
 )
 
-CUSTOM_FIELDS["Purchase Invoice"] = chain(
+CUSTOM_FIELDS["Purchase Invoice"] = [
+	flag("exim_is_import", "Is Import", "supplier_name", fetch_from="supplier.exim_is_import")
+] + chain(
 	[
-		{"fieldname": "exim_tab", "fieldtype": "Tab Break", "label": "EXIM", "depends_on": IMPORT_PARTY},
+		{"fieldname": "exim_tab", "fieldtype": "Tab Break", "label": IMPORT_TAB, "depends_on": SHOW_IMPORT},
 		{"fieldname": "exim_origin_section", "fieldtype": "Section Break", "label": "Origin"},
 		{
 			"fieldname": "exim_origin_country",

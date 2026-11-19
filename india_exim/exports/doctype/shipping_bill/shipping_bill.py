@@ -10,6 +10,7 @@ from india_compliance.gst_india.constants import PORT_CODES
 from india_exim.exim_setup.doctype.ad_code_registration.ad_code_registration import get_ad_code
 from india_exim.export_incentives.accounting import cancel_accrual, make_incentive_accrual
 from india_exim.fema.payments import update_shipping_bill_realisation
+from india_exim.overrides.sales_invoice import ensure_export_invoice
 from india_exim.utils.rates import get_customs_exchange_rate, get_incentive_rate
 
 FOB_TYPE_INCOTERMS = ("EXW", "FCA", "FAS", "FOB")
@@ -274,6 +275,7 @@ def make_shipping_bill(source_name: str) -> Document:
 	"""New Shipping Bill from one Sales Invoice."""
 	invoice = frappe.get_doc("Sales Invoice", source_name)
 	invoice.check_permission("read")
+	ensure_export_invoice(invoice)
 	shipping_bill = frappe.new_doc("Shipping Bill")
 	shipping_bill.update(
 		{
