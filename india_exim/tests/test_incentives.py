@@ -1,0 +1,201 @@
+import frappe
+from frappe.tests import IntegrationTestCase, change_settings
+from frappe.utils import today
+
+from india_exim.export_incentives.doctype.export_incentive_claim.export_incentive_claim import (
+	create_rodtep_scrip,
+	get_unclaimed_shipping_bills,
+	record_receipt,
+)
+from india_exim.export_incentives.doctype.rodtep_scrip.rodtep_scrip import utilise_scrip
+from india_exim.tests.fixtures import (
+	COMPANY,
+	make_exchange_rate,
+	make_export_invoice,
+	make_incentive_rate,
+	make_lut,
+	make_tariff_item,
+	setup_exim_company,
+)
+
+
+def get_balance(account: str, voucher_no: str | None = None) -> float:
+	filters = {"account": account, "is_cancelled": 0}
+	if voucher_no:
+		filters["voucher_no"] = voucher_no
+	rows = frappe.get_all("GL Entry", filters=filters, fields=["debit", "credit"])
+	return sum(row.debit - row.credit for row in rows)
+
+
+def bank_account() -> str:
+	abbr = frappe.get_cached_value("Company", COMPANY, "abbr")
+	name = f"EXIM Test Bank - {abbr}"
+	if not frappe.db.exists("Account", name):
+		parent = frappe.db.get_value(
+			"Account", {"company": COMPANY, "is_group": 1, "account_type": "Bank"}
+		) or frappe.db.get_value(
+			"Account", {"company": COMPANY, "is_group": 1, "account_name": "Current Assets"}
+		)
+		frappe.get_doc(
+			{
+				"doctype": "Account",
+				"account_name": "EXIM Test Bank",
+				"company": COMPANY,
+				"parent_account": parent,
+				"account_type": "Bank",
+			}
+		).insert(ignore_permissions=True)
+	return name
+
+
+class TestExportIncentives(IntegrationTestCase):
+	@classmethod
+	def setUpClass(cls):
+		super().setUpClass()
+		setup_exim_company()
+		make_tariff_item()
+		make_exchange_rate("USD", export_rate=80, import_rate=82)
+		make_lut()
+		make_incentive_rate("RoDTEP", 1)  # 1% of 80,000 = 800 per bill
+		make_incentive_rate("Duty Drawback", 2)  # 2% of 80,000 = 1,600 per bill
+		cls.company = frappe.get_doc("Company", COMPANY)
+
+	def make_leo_shipping_bill(self):
+		from india_exim.exports.doctype.shipping_bill.shipping_bill import make_shipping_bill
+
+		invoice = make_export_invoice(qty=10, rate=100)
+		shipping_bill = make_shipping_bill(invoice.name)
+		shipping_bill.update(
+			{
+				"shipping_bill_number": frappe.generate_hash(length=7).upper(),
+				"shipping_bill_date": today(),
+				"port_code": "INNSA1",
+			}
+		)
+		shipping_bill.insert()
+		shipping_bill.submit()
+		shipping_bill.leo_date = today()
+		shipping_bill.save()
+		return shipping_bill
+
+	def make_claim(self, scheme, shipping_bills, sanctioned=None):
+		claim = frappe.get_doc(
+			{
+				"doctype": "Export Incentive Claim",
+				"company": COMPANY,
+				"scheme": scheme,
+				"scroll_number": frappe.generate_hash(length=6),
+				"scroll_date": today(),
+				"items": [{"shipping_bill": sb.name} for sb in shipping_bills],
+			}
+		).insert()
+		if sanctioned is not None:
+			claim.items[0].sanctioned_amount = sanctioned
+			claim.save()
+		claim.submit()
+		return claim
+
+	@change_settings("India EXIM Settings", {"incentive_accrual_point": "On LEO"})
+	def test_drawback_short_sanction_reverses_difference_and_receipt_clears_receivable(self):
+		shipping_bill = self.make_leo_shipping_bill()
+		self.assertEqual(shipping_bill.total_drawback, 1600)
+
+		claim = self.make_claim("Duty Drawback", [shipping_bill], sanctioned=1500)
+		self.assertEqual(claim.difference_amount, 100)
+		self.assertTrue(claim.sanction_journal_entry)
+		receivable = self.company.exim_drawback_receivable_account
+		self.assertEqual(get_balance(receivable, claim.sanction_journal_entry), -100)
+
+		record_receipt(claim.name, today(), 1500, bank_account())
+		claim.reload()
+		self.assertEqual(claim.status, "Received")
+		self.assertEqual(claim.outstanding_amount, 0)
+		self.assertEqual(
+			get_balance(receivable, shipping_bill.accrual_journal_entry)
+			+ get_balance(receivable, claim.sanction_journal_entry)
+			+ get_balance(receivable, claim.receipts[0].journal_entry),
+			0,
+		)
+
+	@change_settings("India EXIM Settings", {"incentive_accrual_point": "On LEO"})
+	def test_shipping_bill_cannot_be_claimed_twice(self):
+		shipping_bill = self.make_leo_shipping_bill()
+		self.make_claim("RoDTEP", [shipping_bill])
+		self.assertNotIn(
+			shipping_bill.name,
+			[row["shipping_bill"] for row in get_unclaimed_shipping_bills(COMPANY, "RoDTEP")],
+		)
+		self.assertRaises(frappe.ValidationError, self.make_claim, "RoDTEP", [shipping_bill])
+
+	@change_settings("India EXIM Settings", {"incentive_accrual_point": "On LEO"})
+	def test_rodtep_scrip_used_for_duty_and_sold_at_discount(self):
+		shipping_bill = self.make_leo_shipping_bill()
+		claim = self.make_claim("RoDTEP", [shipping_bill])
+		self.assertFalse(claim.sanction_journal_entry)  # sanctioned = accrued, nothing to adjust
+
+		scrip_name = create_rodtep_scrip(claim.name, frappe.generate_hash(length=8), today(), 800)
+		scrip = frappe.get_doc("RoDTEP Scrip", scrip_name)
+		claim.reload()
+		self.assertEqual(claim.status, "Received")
+		self.assertEqual(get_balance(self.company.exim_rodtep_scrip_account, scrip.journal_entry), 800)
+
+		self.assertRaises(
+			frappe.ValidationError,
+			utilise_scrip,
+			scrip.name,
+			"Sale",
+			today(),
+			900,
+			sale_value=850,
+			bank_account=bank_account(),
+		)
+
+		journal_entry = utilise_scrip(
+			scrip.name, "Sale", today(), 300, sale_value=291, bank_account=bank_account()
+		)
+		scrip.reload()
+		self.assertEqual(scrip.balance_amount, 500)
+		self.assertEqual(scrip.status, "Partly Used")
+		self.assertEqual(get_balance(self.company.exim_scrip_sale_loss_account, journal_entry), 9)
+
+	@change_settings("India EXIM Settings", {"incentive_accrual_point": "On Scroll"})
+	def test_on_scroll_books_full_sanction_as_income(self):
+		shipping_bill = self.make_leo_shipping_bill()
+		self.assertFalse(shipping_bill.accrual_journal_entry)
+		claim = self.make_claim("Duty Drawback", [shipping_bill])
+		self.assertEqual(
+			get_balance(self.company.exim_drawback_income_account, claim.sanction_journal_entry), -1600
+		)
+
+	def test_gst_refund_claim_lifecycle(self):
+		from india_exim.export_incentives.doctype.gst_refund_claim.gst_refund_claim import (
+			record_refund_receipt,
+		)
+
+		claim = frappe.get_doc(
+			{
+				"doctype": "GST Refund Claim",
+				"company": COMPANY,
+				"refund_type": "IGST Paid on Exports",
+				"from_date": today(),
+				"to_date": today(),
+				"arn": "AA240000000001X",
+				"claimed_amount": 10000,
+			}
+		).insert()
+		self.assertEqual(claim.credit_account, self.company.exim_igst_refund_receivable_account)
+		claim.submit()
+		self.assertEqual(claim.status, "Filed")
+
+		claim.sanctioned_amount = 9000
+		claim.sanction_date = today()
+		claim.save()
+		self.assertEqual(claim.rejected_amount, 1000)
+		self.assertEqual(claim.status, "Sanctioned")
+
+		self.assertRaises(
+			frappe.ValidationError, record_refund_receipt, claim.name, today(), 9500, bank_account()
+		)
+		record_refund_receipt(claim.name, today(), 9000, bank_account())
+		claim.reload()
+		self.assertEqual(claim.status, "Received")

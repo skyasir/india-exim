@@ -15,6 +15,8 @@ class CustomsTariffItem(Document):
 			frappe.throw(_("Tariff Code must be an 8-digit ITC-HS code."))
 
 		self.chapter = self.tariff_code[:2]
+		if not self.gst_hsn_code and frappe.db.exists("GST HSN Code", self.tariff_code):
+			self.gst_hsn_code = self.tariff_code
 		for row in self.rates:
 			validate_period(row.effective_from, row.effective_to, _("Row {0}").format(row.idx))
 		validate_no_overlap(

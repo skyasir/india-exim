@@ -36,6 +36,7 @@ class ShippingBill(Document):
 
 	def on_submit(self):
 		self.set_status(update=True)
+		self.update_sales_invoice_export_details()
 		self.accrue_incentives_if_due()
 
 	def before_update_after_submit(self):
@@ -49,6 +50,25 @@ class ShippingBill(Document):
 		self.ignore_linked_doctypes = ("Journal Entry", "GL Entry", "Payment Ledger Entry")
 		cancel_accrual(self)
 		self.db_set("status", "Cancelled")
+
+	def update_sales_invoice_export_details(self):
+		"""Fill India Compliance's shipping bill fields (used in GSTR-1 Table 6A) when they are empty."""
+		values = {
+			"shipping_bill_number": self.shipping_bill_number,
+			"shipping_bill_date": self.shipping_bill_date,
+			"port_code": self.port_code,
+		}
+		for invoice in {row.sales_invoice for row in self.items if row.sales_invoice}:
+			current = frappe.db.get_value("Sales Invoice", invoice, list(values), as_dict=True)
+			if any(current.values()):
+				continue
+			frappe.db.set_value("Sales Invoice", invoice, values)
+			frappe.get_doc("Sales Invoice", invoice).add_comment(
+				"Info",
+				_("Shipping bill details set from {0} for GST returns.").format(
+					frappe.utils.get_link_to_form("Shipping Bill", self.name)
+				),
+			)
 
 	def validate_port(self):
 		self.port_code = (self.port_code or "").strip().upper()

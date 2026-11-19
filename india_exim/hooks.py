@@ -34,9 +34,18 @@ doc_events = {
 	"Company": {
 		"after_insert": "india_exim.overrides.company.after_insert",
 	},
+	"Item": {
+		"validate": "india_exim.overrides.item.validate",
+	},
 	"Sales Invoice": {
 		"validate": "india_exim.overrides.sales_invoice.validate",
 	},
 }
 
 export_python_type_annotations = True
+
+scheduler_events = {
+	"daily": [
+		"india_exim.export_incentives.doctype.rodtep_scrip.rodtep_scrip.mark_expired_scrips",
+	],
+}

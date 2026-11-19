@@ -115,3 +115,25 @@ class TestShippingBill(IntegrationTestCase):
 		invoice = make_export_invoice()
 		shipping_bill = self.make_shipping_bill(invoice, leo_date="2000-01-01")
 		self.assertRaises(frappe.ValidationError, shipping_bill.insert)
+
+	def test_submit_fills_empty_invoice_shipping_bill_fields(self):
+		invoice = make_export_invoice()
+		shipping_bill = self.make_shipping_bill(invoice).insert()
+		shipping_bill.submit()
+		details = frappe.db.get_value(
+			"Sales Invoice", invoice.name, ["shipping_bill_number", "port_code"], as_dict=True
+		)
+		self.assertEqual(details.shipping_bill_number, shipping_bill.shipping_bill_number)
+		self.assertEqual(details.port_code, "INNSA1")
+
+	def test_item_defaults_tariff_from_eight_digit_hsn(self):
+		item = frappe.get_doc(
+			{
+				"doctype": "Item",
+				"item_code": "_Test EXIM HSN Default",
+				"item_group": "All Item Groups",
+				"stock_uom": "Nos",
+				"gst_hsn_code": "52083190",
+			}
+		).insert()
+		self.assertEqual(item.exim_customs_tariff_item, "52083190")

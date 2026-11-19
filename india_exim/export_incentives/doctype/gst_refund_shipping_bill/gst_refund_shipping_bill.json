@@ -1,0 +1,32 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "creation": "2026-11-19 13:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "shipping_bill"
+ ],
+ "fields": [
+  {
+   "fieldname": "shipping_bill",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Shipping Bill",
+   "options": "Shipping Bill",
+   "reqd": 1
+  }
+ ],
+ "istable": 1,
+ "links": [],
+ "modified": "2026-11-19 13:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Export Incentives",
+ "name": "GST Refund Shipping Bill",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}
