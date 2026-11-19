@@ -209,3 +209,26 @@ class TestExportIncentives(IntegrationTestCase):
 		self.assertRaises(
 			frappe.ValidationError, create_rodtep_scrip, claim.name, scrip.scrip_number, today(), 1
 		)
+
+	@change_settings("India EXIM Settings", {"incentive_accrual_point": "On LEO"})
+	def test_dashboard_cards(self):
+		from india_exim.utils.dashboard import (
+			get_days_to_lut_expiry,
+			get_incentives_receivable,
+			get_unclaimed_shipping_bills,
+		)
+
+		frappe.defaults.set_user_default("Company", COMPANY)
+		before = get_unclaimed_shipping_bills()
+		receivable_before = get_incentives_receivable()["value"]
+		shipping_bill = self.make_leo_shipping_bill()
+		self.assertEqual(get_unclaimed_shipping_bills(), before + 1)
+		self.assertEqual(
+			get_incentives_receivable()["value"], receivable_before + 2400
+		)  # 1,600 DBK + 800 RoDTEP
+
+		self.make_claim("Duty Drawback", [shipping_bill])
+		self.assertEqual(get_unclaimed_shipping_bills(), before + 1)  # RoDTEP still unclaimed
+		self.make_claim("RoDTEP", [shipping_bill])
+		self.assertEqual(get_unclaimed_shipping_bills(), before)
+		self.assertGreater(get_days_to_lut_expiry(), 0)

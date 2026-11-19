@@ -1,0 +1,23 @@
+{
+ "color": "#ECAD4B",
+ "creation": "2026-11-19 21:00:00.000000",
+ "docstatus": 0,
+ "doctype": "Number Card",
+ "document_type": "Shipping Bill",
+ "dynamic_filters_json": "[[\"Shipping Bill\", \"company\", \"=\", \"frappe.defaults.get_user_default(\\\"Company\\\")\"]]",
+ "filters_json": "[[\"Shipping Bill\", \"docstatus\", \"=\", 1], [\"Shipping Bill\", \"realisation_status\", \"in\", [\"Pending\", \"Partly Realised\"]]]",
+ "function": "Count",
+ "idx": 0,
+ "is_public": 1,
+ "is_standard": 1,
+ "label": "Awaiting Realisation",
+ "modified": "2026-11-19 21:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Exports",
+ "name": "Awaiting Realisation",
+ "owner": "Administrator",
+ "show_full_number": 1,
+ "show_percentage_stats": 0,
+ "stats_time_interval": "Monthly",
+ "type": "Document Type"
+}

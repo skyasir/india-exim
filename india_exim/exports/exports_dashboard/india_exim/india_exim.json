@@ -1,0 +1,82 @@
+{
+ "cards": [
+  {
+   "card": "Exports This Year (FOB)"
+  },
+  {
+   "card": "Awaiting LEO"
+  },
+  {
+   "card": "Awaiting Realisation"
+  },
+  {
+   "card": "Realisation Overdue"
+  },
+  {
+   "card": "Shipments in Progress"
+  },
+  {
+   "card": "Shipments with Pending Documents"
+  },
+  {
+   "card": "Incentives Receivable"
+  },
+  {
+   "card": "Shipping Bills Not Yet Claimed"
+  },
+  {
+   "card": "RoDTEP Scrip Balance"
+  },
+  {
+   "card": "Days to LUT Expiry"
+  },
+  {
+   "card": "Customs Duty This Year"
+  },
+  {
+   "card": "Import Payments Pending"
+  }
+ ],
+ "charts": [
+  {
+   "chart": "Exports by Month (FOB INR)",
+   "width": "Full"
+  },
+  {
+   "chart": "Exports by Destination",
+   "width": "Half"
+  },
+  {
+   "chart": "Export Realisation Status",
+   "width": "Half"
+  },
+  {
+   "chart": "Top Export Customers",
+   "width": "Full"
+  },
+  {
+   "chart": "Incentives Sanctioned by Month",
+   "width": "Half"
+  },
+  {
+   "chart": "Customs Duty by Month",
+   "width": "Half"
+  },
+  {
+   "chart": "Export Shipments by Status",
+   "width": "Full"
+  }
+ ],
+ "creation": "2026-11-19 21:00:00.000000",
+ "dashboard_name": "India EXIM",
+ "docstatus": 0,
+ "doctype": "Dashboard",
+ "idx": 0,
+ "is_default": 0,
+ "is_standard": 1,
+ "modified": "2026-11-19 21:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Exports",
+ "name": "India EXIM",
+ "owner": "Administrator"
+}

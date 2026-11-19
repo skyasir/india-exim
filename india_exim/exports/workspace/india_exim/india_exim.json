@@ -1,8 +1,25 @@
 {
  "app": "india_exim",
- "charts": [],
- "content": "[{\"id\": \"quick_head\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Quick Access</b></span>\", \"col\": 12}}, {\"id\": \"customs_ta\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Customs Tariff Item\", \"col\": 3}}, {\"id\": \"letter_of_\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Letter of Undertaking\", \"col\": 3}}, {\"id\": \"trade_docu\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Trade Document Type\", \"col\": 3}}, {\"id\": \"bill_of_en\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Bill of Entry\", \"col\": 3}}]",
- "creation": "2026-11-19 18:00:00.000000",
+ "charts": [
+  {
+   "chart_name": "Exports by Month (FOB INR)",
+   "label": "Exports by Month (FOB INR)"
+  },
+  {
+   "chart_name": "Exports by Destination",
+   "label": "Exports by Destination"
+  },
+  {
+   "chart_name": "Export Realisation Status",
+   "label": "Export Realisation Status"
+  },
+  {
+   "chart_name": "Customs Duty by Month",
+   "label": "Customs Duty by Month"
+  }
+ ],
+ "content": "[{\"id\": \"h_exports\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Exports</b></span>\", \"col\": 12}}, {\"id\": \"exports_this\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Exports This Year (FOB)\", \"col\": 4}}, {\"id\": \"awaiting_leo\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Awaiting LEO\", \"col\": 4}}, {\"id\": \"awaiting_rea\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Awaiting Realisation\", \"col\": 4}}, {\"id\": \"realisation_\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Realisation Overdue\", \"col\": 4}}, {\"id\": \"shipments_in\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Shipments in Progress\", \"col\": 4}}, {\"id\": \"shipments_wi\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Shipments with Pending Documents\", \"col\": 4}}, {\"id\": \"c_month\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Exports by Month (FOB INR)\", \"col\": 12}}, {\"id\": \"c_dest\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Exports by Destination\", \"col\": 6}}, {\"id\": \"c_real\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Export Realisation Status\", \"col\": 6}}, {\"id\": \"h_incent\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Incentives and GST Refunds</b></span>\", \"col\": 12}}, {\"id\": \"incentives_r\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Incentives Receivable\", \"col\": 3}}, {\"id\": \"shipping_bil\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Shipping Bills Not Yet Claimed\", \"col\": 3}}, {\"id\": \"rodtep_scrip\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"RoDTEP Scrip Balance\", \"col\": 3}}, {\"id\": \"days_to_lut_\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Days to LUT Expiry\", \"col\": 3}}, {\"id\": \"h_imports\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Imports</b></span>\", \"col\": 12}}, {\"id\": \"customs_duty\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Customs Duty This Year\", \"col\": 6}}, {\"id\": \"import_payme\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Import Payments Pending\", \"col\": 6}}, {\"id\": \"c_duty\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Customs Duty by Month\", \"col\": 12}}, {\"id\": \"h_quick\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Quick Access</b></span>\", \"col\": 12}}, {\"id\": \"s_export_shi\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Export Shipment\", \"col\": 4}}, {\"id\": \"s_shipping_b\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Shipping Bill\", \"col\": 4}}, {\"id\": \"s_export_inc\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Export Incentive Claim\", \"col\": 4}}, {\"id\": \"s_rodtep_scr\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"RoDTEP Scrip\", \"col\": 4}}, {\"id\": \"s_bill_of_en\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Bill of Entry\", \"col\": 4}}, {\"id\": \"s_sales_invo\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Sales Invoice\", \"col\": 4}}]",
+ "creation": "2026-11-19 21:00:00.000000",
  "custom_blocks": [],
  "docstatus": 0,
  "doctype": "Workspace",
@@ -13,11 +30,60 @@
  "is_hidden": 0,
  "label": "India EXIM",
  "links": [],
- "modified": "2026-11-19 18:00:00.000000",
+ "modified": "2026-11-19 21:00:00.000000",
  "modified_by": "Administrator",
  "module": "Exports",
  "name": "India EXIM",
- "number_cards": [],
+ "number_cards": [
+  {
+   "label": "Exports This Year (FOB)",
+   "number_card_name": "Exports This Year (FOB)"
+  },
+  {
+   "label": "Awaiting LEO",
+   "number_card_name": "Awaiting LEO"
+  },
+  {
+   "label": "Awaiting Realisation",
+   "number_card_name": "Awaiting Realisation"
+  },
+  {
+   "label": "Realisation Overdue",
+   "number_card_name": "Realisation Overdue"
+  },
+  {
+   "label": "Shipments in Progress",
+   "number_card_name": "Shipments in Progress"
+  },
+  {
+   "label": "Shipments with Pending Documents",
+   "number_card_name": "Shipments with Pending Documents"
+  },
+  {
+   "label": "Incentives Receivable",
+   "number_card_name": "Incentives Receivable"
+  },
+  {
+   "label": "Shipping Bills Not Yet Claimed",
+   "number_card_name": "Shipping Bills Not Yet Claimed"
+  },
+  {
+   "label": "RoDTEP Scrip Balance",
+   "number_card_name": "RoDTEP Scrip Balance"
+  },
+  {
+   "label": "Days to LUT Expiry",
+   "number_card_name": "Days to LUT Expiry"
+  },
+  {
+   "label": "Customs Duty This Year",
+   "number_card_name": "Customs Duty This Year"
+  },
+  {
+   "label": "Import Payments Pending",
+   "number_card_name": "Import Payments Pending"
+  }
+ ],
  "owner": "Administrator",
  "parent_page": "",
  "public": 1,
@@ -32,36 +98,65 @@
   },
   {
    "role": "System Manager"
+  },
+  {
+   "role": "Accounts Manager"
   }
  ],
  "sequence_id": 30.0,
  "shortcuts": [
   {
-   "color": "Grey",
+   "color": "Orange",
    "doc_view": "List",
-   "label": "Customs Tariff Item",
-   "link_to": "Customs Tariff Item",
+   "format": "{} In Progress",
+   "label": "Export Shipment",
+   "link_to": "Export Shipment",
+   "stats_filter": "[[\"Export Shipment\", \"status\", \"not in\", [\"Delivered\", \"Closed\", \"Cancelled\"]]]",
    "type": "DocType"
   },
   {
-   "color": "Grey",
+   "color": "Yellow",
    "doc_view": "List",
-   "label": "Letter of Undertaking",
-   "link_to": "Letter of Undertaking",
+   "format": "{} Awaiting LEO",
+   "label": "Shipping Bill",
+   "link_to": "Shipping Bill",
+   "stats_filter": "[[\"Shipping Bill\", \"status\", \"=\", \"Filed\"]]",
    "type": "DocType"
   },
   {
-   "color": "Grey",
+   "color": "Blue",
    "doc_view": "List",
-   "label": "Trade Document Type",
-   "link_to": "Trade Document Type",
+   "format": "{} Awaiting Receipt",
+   "label": "Export Incentive Claim",
+   "link_to": "Export Incentive Claim",
+   "stats_filter": "[[\"Export Incentive Claim\", \"status\", \"in\", [\"Sanctioned\", \"Partly Received\"]]]",
    "type": "DocType"
   },
   {
-   "color": "Grey",
+   "color": "Green",
    "doc_view": "List",
+   "format": "{} Active",
+   "label": "RoDTEP Scrip",
+   "link_to": "RoDTEP Scrip",
+   "stats_filter": "[[\"RoDTEP Scrip\", \"status\", \"in\", [\"Active\", \"Partly Used\"]]]",
+   "type": "DocType"
+  },
+  {
+   "color": "Purple",
+   "doc_view": "List",
+   "format": "{} Unpaid",
    "label": "Bill of Entry",
    "link_to": "Bill of Entry",
+   "stats_filter": "[[\"Bill of Entry\", \"exim_payment_status\", \"!=\", \"Paid\"], [\"Bill of Entry\", \"docstatus\", \"=\", 1]]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "format": "{} Export Invoices",
+   "label": "Sales Invoice",
+   "link_to": "Sales Invoice",
+   "stats_filter": "[[\"Sales Invoice\", \"exim_is_export\", \"=\", 1], [\"Sales Invoice\", \"docstatus\", \"=\", 1]]",
    "type": "DocType"
   }
  ],
