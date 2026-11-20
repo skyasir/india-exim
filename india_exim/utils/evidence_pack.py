@@ -15,6 +15,8 @@ import frappe
 from frappe import _
 from frappe.utils import cstr, get_datetime
 
+from india_exim.utils import render_print_format
+
 SUPPORTED = ("Shipping Bill", "Bill of Entry")
 PRINT_FORMATS = {
 	"Sales Invoice": ["Export Commercial Invoice", "Export Packing List"],
@@ -140,8 +142,8 @@ def add_prints(pack: zipfile.ZipFile, folder: str, doctype: str, name: str) -> l
 			content = frappe.get_print(doctype, name, print_format, as_pdf=True)
 			filename = f"{label}.pdf"
 		except Exception:
-			# no PDF engine available: keep the HTML so the pack is still complete
-			content = frappe.get_print(doctype, name, print_format)
+			# no PDF engine or no built print assets: keep the HTML so the pack is still complete
+			content = render_print_format(frappe.get_doc(doctype, name), print_format)
 			filename = f"{label}.html"
 		pack.writestr(f"{folder}/{filename}", content)
 		added.append(filename)

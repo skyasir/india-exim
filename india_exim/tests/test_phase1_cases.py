@@ -26,6 +26,7 @@ from india_exim.tests.fixtures import (
 	make_tariff_item,
 	setup_exim_company,
 )
+from india_exim.utils import render_print_format
 
 PRINT_FORMATS = {
 	"Sales Invoice": [
@@ -347,13 +348,16 @@ class TestPhaseOneCases(IntegrationTestCase):
 		}
 		for doctype, formats in PRINT_FORMATS.items():
 			for print_format in formats:
-				html = frappe.get_print(doctype, names[doctype], print_format, no_letterhead=1)
+				html = render_print_format(frappe.get_doc(doctype, names[doctype]), print_format)
 				self.assertIn(COMPANY, html, print_format)
 		self.assertIn(
 			"LETTER OF UNDERTAKING",
-			frappe.get_print("Sales Invoice", invoice.name, "Export Commercial Invoice"),
+			render_print_format(invoice, "Export Commercial Invoice"),
 		)
-		self.assertIn("TEST1234567", frappe.get_print("Export Shipment", shipment.name, "VGM Declaration"))
+		self.assertIn(
+			"TEST1234567",
+			render_print_format(frappe.get_doc("Export Shipment", shipment.name), "VGM Declaration"),
+		)
 
 		pack = zipfile.ZipFile(io.BytesIO(build_evidence_pack("Shipping Bill", shipping_bill.name)))
 		index = pack.read("index.csv").decode()
