@@ -53,6 +53,18 @@ Recorded on a demo site with made-up data.
 **Bill of Entry:** customs duty from the tariff at the CBIC rate, feeding India Compliance's IGST, landed cost and import payment status
 ![Bill of Entry duty calculation](docs/screenshots/bill-of-entry-duty.png)
 
+**Shipment Control Tower:** open shipments by stage, with the next cut-off, document readiness and shipping bill status
+![Shipment Control Tower](docs/screenshots/control-tower.png)
+
+**Document Board:** every shipment's checklist documents by status; drag a card or attach the file in place
+![Document Board](docs/screenshots/document-board.png)
+
+**Export Costing Sheet:** EXW to CFR / CIF price build-up with incentives, bank charges, ECGC and margin
+![Export Costing Sheet](docs/screenshots/export-costing-sheet.png)
+
+**Export Invoice:** LUT declaration, consignee, route, FOB and freight split, container and seal numbers
+![Export Invoice print](docs/screenshots/export-invoice.png)
+
 **Company, Export & Import tab:** IEC, RCMC and default export / import accounts
 ![Company Export & Import tab](docs/screenshots/company-export-import.png)
 

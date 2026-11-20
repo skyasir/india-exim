@@ -35,9 +35,9 @@
 		</td></tr>
 		<tr>
 			<td style="width: 55%">
-				<span class="label">{{ _("To (Drawee)") }}</span>
+				<span class="exim-label">{{ _("To (Drawee)") }}</span>
 				<b>{{ doc.customer_name }}</b><br>
-				<span class="pre">{{ doc.get("address_display") or "" }}</span>
+				<span>{{ doc.get("address_display") or "" }}</span>
 			</td>
 			<td style="text-align: right">{{ exim.signature(doc.company, _("Drawer — Authorised Signatory")) }}</td>
 		</tr>

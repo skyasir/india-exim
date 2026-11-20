@@ -7,7 +7,7 @@
 		<tr><td colspan="4" class="title">{{ _("CLEARING INSTRUCTIONS") }}</td></tr>
 		<tr>
 			<td colspan="2" style="width: 50%">
-				<span class="label">{{ _("To (Customs Broker / CHA)") }}</span>
+				<span class="exim-label">{{ _("To (Customs Broker / CHA)") }}</span>
 				<b>{{ frappe.db.get_value("Supplier", doc.exim_cha, "supplier_name") if doc.get("exim_cha") else "__________________" }}</b>
 			</td>
 			{{ exim.cell(_("Our Ref."), doc.name) }}
@@ -15,14 +15,14 @@
 		</tr>
 		<tr>
 			<td colspan="2">
-				<span class="label">{{ _("Importer") }}</span><b>{{ doc.company }}</b><br>
-				<span class="pre">{{ doc.get("billing_address_display") or doc.get("shipping_address_display") or "" }}</span>
+				<span class="exim-label">{{ _("Importer") }}</span><b>{{ doc.company }}</b><br>
+				<span>{{ doc.get("billing_address_display") or doc.get("shipping_address_display") or "" }}</span>
 				{%- if doc.get("company_gstin") %}<br>{{ _("GSTIN") }}: {{ doc.company_gstin }}{% endif %}
 				{%- set iec = exim.company_iec(doc.company) %}{% if iec %}<br>{{ _("IEC") }}: {{ iec }}{% endif %}
 			</td>
 			<td colspan="2">
-				<span class="label">{{ _("Supplier (Overseas)") }}</span><b>{{ doc.supplier_name }}</b><br>
-				<span class="pre">{{ doc.get("address_display") or "" }}</span>
+				<span class="exim-label">{{ _("Supplier (Overseas)") }}</span><b>{{ doc.supplier_name }}</b><br>
+				<span>{{ doc.get("address_display") or "" }}</span>
 			</td>
 		</tr>
 		<tr>
@@ -56,10 +56,10 @@
 
 	<table class="gap">
 		<tr><td>
-			<span class="label">{{ _("Documents Enclosed") }}</span>
+			<span class="exim-label">{{ _("Documents Enclosed") }}</span>
 			1. {{ _("Commercial invoice") }} &nbsp; 2. {{ _("Packing list") }} &nbsp; 3. {{ _("Bill of lading / air waybill") }} &nbsp; 4. {{ _("Insurance certificate or policy") }}
 			{%- if doc.get("exim_fta_claimed") %} &nbsp; 5. {{ _("Certificate of origin and CAROTAR origin information") }}{% endif %}
-			<br><br><span class="label">{{ _("Instructions") }}</span>
+			<br><br><span class="exim-label">{{ _("Instructions") }}</span>
 			{{ _("Please file the Bill of Entry, share the checklist for our approval before submission, and send the duty challan and the assessed Bill of Entry. Clear the goods before the free time ends to avoid detention and demurrage.") }}
 		</td></tr>
 	</table>
