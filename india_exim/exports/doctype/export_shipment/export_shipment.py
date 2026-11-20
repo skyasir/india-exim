@@ -11,6 +11,7 @@ from india_exim.trade_documents.checklist import (
 	enforce_gate,
 	get_readiness,
 	refresh_due_dates,
+	sync_system_documents,
 )
 
 GATED_STATUSES = ("Documents Sent", "Delivered", "Closed")
@@ -23,6 +24,7 @@ class ExportShipment(Document):
 		if self.is_new() and not self.documents:
 			apply_checklist(self)
 		refresh_due_dates(self)
+		sync_system_documents(self)
 		self.readiness_percent = get_readiness(self)
 		if self.status in GATED_STATUSES and self.has_value_changed("status"):
 			enforce_gate(self, _("Shipment moved to {0}").format(_(self.status)))
@@ -82,6 +84,12 @@ def make_shipping_bill(source_name: str) -> Document:
 		frappe.throw(_("Add at least one submitted Sales Invoice to the shipment first."))
 
 	first_invoice = frappe.get_doc("Sales Invoice", invoices[0])
+	# freight and insurance in the invoice value (CIF, CFR...) are deducted to reach FOB
+	charges = frappe.get_all(
+		"Sales Invoice",
+		filters={"name": ("in", invoices)},
+		fields=[{"SUM": "exim_freight", "as": "freight"}, {"SUM": "exim_insurance", "as": "insurance"}],
+	)[0]
 	shipping_bill = frappe.new_doc("Shipping Bill")
 	shipping_bill.update(
 		{
@@ -92,6 +100,8 @@ def make_shipping_bill(source_name: str) -> Document:
 			"incoterm": shipment.incoterm,
 			"destination_country": shipment.destination_country,
 			"port_code": shipment.port_of_loading,
+			"freight": charges.freight,
+			"insurance": charges.insurance,
 			"shipping_bill_date": frappe.utils.today(),
 			"export_type": "With Payment of IGST"
 			if first_invoice.get("is_export_with_gst")

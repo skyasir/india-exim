@@ -77,9 +77,10 @@
 			<td><span class="label">{{ _("Final Destination") }}</span>{{ doc.get("exim_final_destination") or "" }}</td>
 		</tr>
 		<tr>
+			<td><span class="label">{{ _("Port of Loading") }}</span>{{ doc.get("exim_port_of_loading") or "" }}</td>
 			<td><span class="label">{{ _("Mode of Transport") }}</span>{{ doc.get("exim_mode_of_transport") or "" }}</td>
 			<td><span class="label">{{ _("Latest Shipment Date") }}</span>{{ frappe.format(doc.exim_latest_shipment_date, {"fieldtype": "Date"}) if doc.get("exim_latest_shipment_date") else (frappe.format(doc.delivery_date, {"fieldtype": "Date"}) if doc.delivery_date else "") }}</td>
-			<td colspan="2"><span class="label">{{ _("Marks and Numbers") }}</span><span class="pre">{{ doc.get("exim_marks_and_numbers") or "" }}</span></td>
+			<td><span class="label">{{ _("Marks and Numbers") }}</span><span class="pre">{{ doc.get("exim_marks_and_numbers") or "" }}</span></td>
 		</tr>
 	</table>
 

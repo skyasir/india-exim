@@ -275,8 +275,13 @@ def get_party_fields() -> list[dict]:
 	return fields
 
 
-def get_order_and_invoice_fields(insert_after: str, include_summary: bool) -> list[dict]:
-	"""Same fieldnames on Sales Order and Sales Invoice so ERPNext's mapper copies them."""
+def get_order_and_invoice_fields(
+	insert_after: str, include_summary: bool, include_port_of_loading: bool = False
+) -> list[dict]:
+	"""Same fieldnames on Sales Order and Sales Invoice so ERPNext's mapper copies them.
+
+	Delivery Note and Sales Invoice already have India Compliance's Port Code, so the port of
+	loading is only added to Quotation and Sales Order and is copied into Port Code from there."""
 	fields = [
 		{"fieldname": "exim_tab", "fieldtype": "Tab Break", "label": EXPORT_TAB, "depends_on": SHOW_EXPORT},
 	]
@@ -288,6 +293,19 @@ def get_order_and_invoice_fields(insert_after: str, include_summary: bool) -> li
 	fields += get_party_fields()
 	fields += [
 		{"fieldname": "exim_route_section", "fieldtype": "Section Break", "label": "Route"},
+		*(
+			[
+				{
+					"fieldname": "exim_port_of_loading",
+					"fieldtype": "Data",
+					"label": "Port of Loading (Port Code)",
+					"length": 6,
+					"description": "Indian customs port code, e.g. INNSA1. Becomes the Port Code on the delivery note and invoice.",
+				}
+			]
+			if include_port_of_loading
+			else []
+		),
 		{
 			"fieldname": "exim_destination_country",
 			"fieldtype": "Link",
@@ -381,8 +399,56 @@ CUSTOM_FIELDS["Customer"] = [
 			"fieldtype": "Text Editor",
 			"label": "Other Document Instructions",
 		},
+		{
+			"fieldname": "exim_screening_section",
+			"fieldtype": "Section Break",
+			"label": "Screening and Credit Cover",
+			"description": "Record each check of this buyer against denied-party and sanctions lists. Export orders warn or stop when it is missing, old or a match (India EXIM Settings > Pre-shipment Controls).",
+		},
+		{"fieldname": "exim_screened_on", "fieldtype": "Date", "label": "Denied-party Screening Done On"},
+		{
+			"fieldname": "exim_screening_result",
+			"fieldtype": "Select",
+			"label": "Screening Result",
+			"options": "\nClear\nPossible Match - Cleared on Review\nMatch - Do Not Trade",
+		},
+		{"fieldname": "exim_screening_reference", "fieldtype": "Data", "label": "Lists Checked / Reference"},
+		{"fieldname": "exim_screening_column", "fieldtype": "Column Break"},
+		{
+			"fieldname": "exim_ecgc_buyer_limit",
+			"fieldtype": "Currency",
+			"label": "ECGC Buyer Limit (INR)",
+			"description": "Credit limit approved by ECGC for this buyer. Export orders warn when the amount owed would exceed it.",
+		},
+		{"fieldname": "exim_ecgc_limit_valid_upto", "fieldtype": "Date", "label": "ECGC Limit Valid Upto"},
 	],
 	"supplier_numbers",
+)
+
+CUSTOM_FIELDS["Country"] = chain(
+	[
+		{
+			"fieldname": "exim_section",
+			"fieldtype": "Section Break",
+			"label": "Export Controls",
+			"description": "Used by India EXIM's pre-shipment checks on export quotations, orders and invoices.",
+		},
+		{
+			"fieldname": "exim_trade_risk",
+			"fieldtype": "Select",
+			"label": "Trade Risk",
+			"options": "\nSanctioned\nRestricted\nPayment Risk",
+			"description": "Sanctioned: exports are stopped (or warned, per settings). Restricted and Payment Risk: a warning.",
+		},
+		{
+			"fieldname": "exim_requires_legalisation",
+			"fieldtype": "Check",
+			"label": "Documents Need Legalisation",
+		},
+		{"fieldname": "exim_column", "fieldtype": "Column Break"},
+		{"fieldname": "exim_trade_risk_note", "fieldtype": "Small Text", "label": "Notes"},
+	],
+	"time_zones",
 )
 
 CUSTOM_FIELDS["Supplier"] = [
@@ -422,23 +488,62 @@ CUSTOM_FIELDS["Supplier"] = [
 	"customer_numbers",
 )
 
-# Quotation -> Sales Order -> Sales Invoice: the same fieldnames on all three, so ERPNext's
+# Quotation -> Sales Order -> Delivery Note -> Sales Invoice: the same fieldnames on all of them, so ERPNext's
 # mappers carry the export details forward. A quotation's party can be a Lead, so the tick is
 # fetched from the customer in india_exim.overrides.quotation rather than by fetch_from.
 CUSTOM_FIELDS["Quotation"] = [
 	flag("exim_is_export", "Is Export", "order_type")
-] + get_order_and_invoice_fields("supplier_quotation", include_summary=False)
+] + get_order_and_invoice_fields("supplier_quotation", include_summary=False, include_port_of_loading=True)
 CUSTOM_FIELDS["Sales Order"] = [
 	flag("exim_is_export", "Is Export", "is_subcontracted", fetch_from="customer.exim_is_export")
-] + get_order_and_invoice_fields("proforma_html", include_summary=False)
+] + get_order_and_invoice_fields("proforma_html", include_summary=False, include_port_of_loading=True)
+CUSTOM_FIELDS["Delivery Note"] = [
+	flag("exim_is_export", "Is Export", "is_export_with_gst", fetch_from="customer.exim_is_export")
+] + get_order_and_invoice_fields("instructions", include_summary=False)
 CUSTOM_FIELDS["Sales Invoice"] = (
 	CUSTOM_FIELDS["Sales Invoice"]
 	+ [flag("exim_is_export", "Is Export", "is_export_with_gst", fetch_from="customer.exim_is_export")]
 	+ get_order_and_invoice_fields("is_discounted", include_summary=True)
 )
 
+MERCHANT_EXPORT = "exim_merchant_export"
 CUSTOM_FIELDS["Purchase Invoice"] = [
-	flag("exim_is_import", "Is Import", "is_reverse_charge", fetch_from="supplier.exim_is_import")
+	flag("exim_is_import", "Is Import", "is_reverse_charge", fetch_from="supplier.exim_is_import"),
+	*chain(
+		[
+			{
+				"fieldname": MERCHANT_EXPORT,
+				"fieldtype": "Check",
+				"label": "Bought for Merchant Export (0.1% GST)",
+				"depends_on": "eval:!doc.exim_is_import",
+				"description": "Goods bought from an Indian supplier at the concessional 0.1% GST for export by us as a merchant exporter.",
+			},
+			{
+				"fieldname": "exim_merchant_export_due",
+				"fieldtype": "Date",
+				"label": "Export By",
+				"read_only": 1,
+				"depends_on": MERCHANT_EXPORT,
+				"description": "The goods must be exported within 90 days of the supplier's invoice (set in India EXIM Settings).",
+			},
+			{
+				"fieldname": "exim_merchant_shipping_bill",
+				"fieldtype": "Link",
+				"label": "Exported Under Shipping Bill",
+				"options": "Shipping Bill",
+				"allow_on_submit": 1,
+				"depends_on": MERCHANT_EXPORT,
+			},
+			{
+				"fieldname": "exim_merchant_proof_sent_on",
+				"fieldtype": "Date",
+				"label": "Shipping Bill and EGM Copy Sent to Supplier On",
+				"allow_on_submit": 1,
+				"depends_on": MERCHANT_EXPORT,
+			},
+		],
+		"exim_is_import",
+	),
 ] + chain(
 	[
 		{"fieldname": "exim_tab", "fieldtype": "Tab Break", "label": IMPORT_TAB, "depends_on": SHOW_IMPORT},

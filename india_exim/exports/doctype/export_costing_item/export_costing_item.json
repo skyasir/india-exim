@@ -1,0 +1,188 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "creation": "2026-11-19 20:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "item_code",
+  "item_name",
+  "customs_tariff_item",
+  "qty",
+  "uom",
+  "ex_works_cost",
+  "column_break_rates",
+  "drawback_rate",
+  "rodtep_rate",
+  "costs_section",
+  "exw_amount",
+  "fob_amount",
+  "column_break_build",
+  "cost_at_basis",
+  "incentive_amount",
+  "price_section",
+  "price_inr",
+  "column_break_price",
+  "rate_fc",
+  "amount_fc",
+  "currency"
+ ],
+ "fields": [
+  {
+   "columns": 2,
+   "fieldname": "item_code",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Item",
+   "options": "Item",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "item_code.item_name",
+   "fieldname": "item_name",
+   "fieldtype": "Data",
+   "label": "Item Name",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "item_code.exim_customs_tariff_item",
+   "fieldname": "customs_tariff_item",
+   "fieldtype": "Link",
+   "label": "ITC-HS",
+   "options": "Customs Tariff Item",
+   "read_only": 1
+  },
+  {
+   "columns": 1,
+   "default": "1",
+   "fieldname": "qty",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Qty",
+   "reqd": 1
+  },
+  {
+   "columns": 1,
+   "fetch_from": "item_code.stock_uom",
+   "fieldname": "uom",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "UOM",
+   "options": "UOM"
+  },
+  {
+   "columns": 2,
+   "description": "Cost of goods at the factory gate, including your overheads.",
+   "fieldname": "ex_works_cost",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Ex-works Cost / Unit (INR)",
+   "options": "Company:company:default_currency",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_rates",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "Fetched from Export Incentive Rate for the ITC-HS code; per-unit caps are not applied here.",
+   "fieldname": "drawback_rate",
+   "fieldtype": "Percent",
+   "label": "Drawback %"
+  },
+  {
+   "fieldname": "rodtep_rate",
+   "fieldtype": "Percent",
+   "label": "RoDTEP %"
+  },
+  {
+   "fieldname": "costs_section",
+   "fieldtype": "Section Break",
+   "label": "Build-up (INR)"
+  },
+  {
+   "fieldname": "exw_amount",
+   "fieldtype": "Currency",
+   "label": "EXW",
+   "options": "Company:company:default_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "fob_amount",
+   "fieldtype": "Currency",
+   "label": "FOB",
+   "options": "Company:company:default_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_build",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "cost_at_basis",
+   "fieldtype": "Currency",
+   "label": "Cost at Incoterm",
+   "options": "Company:company:default_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "incentive_amount",
+   "fieldtype": "Currency",
+   "label": "Incentives",
+   "options": "Company:company:default_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "price_section",
+   "fieldtype": "Section Break",
+   "label": "Price"
+  },
+  {
+   "fieldname": "price_inr",
+   "fieldtype": "Currency",
+   "label": "Price (INR)",
+   "options": "Company:company:default_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_price",
+   "fieldtype": "Column Break"
+  },
+  {
+   "columns": 2,
+   "fieldname": "rate_fc",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Rate / Unit",
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "amount_fc",
+   "fieldtype": "Currency",
+   "label": "Amount",
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "currency",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Currency",
+   "options": "Currency",
+   "read_only": 1
+  }
+ ],
+ "istable": 1,
+ "links": [],
+ "modified": "2026-11-19 20:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Exports",
+ "name": "Export Costing Item",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

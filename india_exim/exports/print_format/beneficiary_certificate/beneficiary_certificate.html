@@ -1,0 +1,28 @@
+{#- Beneficiary Certificate (Sales Invoice). The usual LC requirement: the beneficiary certifies
+    that non-negotiable documents went to the applicant. Edit the wording to the LC's clause 46A. -#}
+{%- import "india_exim/templates/print_formats/exim_macros.html" as exim -%}
+{%- set shipment_name = frappe.db.get_value("Export Shipment Invoice", {"sales_invoice": doc.name, "parenttype": "Export Shipment"}, "parent") -%}
+{%- set shipment = frappe.get_doc("Export Shipment", shipment_name) if shipment_name else None -%}
+{{ exim.style() }}
+<div class="exim">
+	<table>
+		<tr><td colspan="2" class="title">{{ _("BENEFICIARY CERTIFICATE") }}</td></tr>
+		<tr>
+			<td style="width: 50%">{{ exim.exporter(doc, _("Beneficiary")) }}</td>
+			<td>{{ exim.party(doc, "buyer", _("Applicant")) }}</td>
+		</tr>
+		<tr>
+			{{ exim.cell(_("Letter of Credit No. & Date"), (doc.get("exim_lc_number") or "") ~ ((" / " ~ exim.date(doc.exim_lc_date)) if doc.get("exim_lc_date") else "")) }}
+			{{ exim.cell(_("Invoice No. & Date"), doc.name ~ " / " ~ exim.date(doc.posting_date)) }}
+		</tr>
+		<tr><td colspan="2" class="letter" style="padding: 10px">
+			<p>{{ _("We hereby certify that:") }}</p>
+			<p>1. {{ _("One full set of non-negotiable shipping documents, including copies of the commercial invoice, packing list and transport document{0}, has been sent to the applicant by courier{1}.").format(
+				(" " ~ _("No.") ~ " " ~ shipment.bl_number) if shipment and shipment.bl_number else "",
+				(" " ~ _("on or before {0}").format(exim.date(frappe.utils.add_days(shipment.bl_date, 5)))) if shipment and shipment.bl_date else "") }}</p>
+			<p>2. {{ _("The goods shipped are of {0} origin and conform to the description, quantity and quality stated in the letter of credit and the buyer's order{1}.").format(_("Indian"), (" " ~ doc.po_no) if doc.po_no else "") }}</p>
+			<p>3. {{ _("The marks and numbers on the packages are as stated in the invoice: {0}").format(doc.get("exim_marks_and_numbers") or "-") }}</p>
+		</td></tr>
+		<tr><td colspan="2" style="text-align: right">{{ exim.signature(doc.company) }}</td></tr>
+	</table>
+</div>

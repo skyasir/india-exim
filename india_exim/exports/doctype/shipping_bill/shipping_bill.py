@@ -11,6 +11,7 @@ from india_exim.exim_setup.doctype.ad_code_registration.ad_code_registration imp
 from india_exim.export_incentives.accounting import cancel_accrual, make_incentive_accrual
 from india_exim.fema.payments import update_shipping_bill_realisation
 from india_exim.overrides.sales_invoice import ensure_export_invoice
+from india_exim.trade_documents.checklist import update_shipment_from_shipping_bill
 from india_exim.utils.rates import get_customs_exchange_rate, get_incentive_rate
 
 FOB_TYPE_INCOTERMS = ("EXW", "FCA", "FAS", "FOB")
@@ -41,6 +42,7 @@ class ShippingBill(Document):
 		self.update_sales_invoice_export_details()
 		self.accrue_incentives_if_due()
 		update_shipping_bill_realisation(self.name)
+		update_shipment_from_shipping_bill(self)
 
 	def before_update_after_submit(self):
 		self.validate_dates()
@@ -49,11 +51,13 @@ class ShippingBill(Document):
 	def on_update_after_submit(self):
 		self.accrue_incentives_if_due()
 		update_shipping_bill_realisation(self.name)
+		update_shipment_from_shipping_bill(self)
 
 	def on_cancel(self):
 		self.ignore_linked_doctypes = ("Journal Entry", "GL Entry", "Payment Ledger Entry")
 		cancel_accrual(self)
 		self.db_set("status", "Cancelled")
+		update_shipment_from_shipping_bill(self)
 
 	def update_sales_invoice_export_details(self):
 		"""Fill India Compliance's shipping bill fields (used in GSTR-1 Table 6A) when they are empty."""
@@ -200,7 +204,13 @@ class ShippingBill(Document):
 
 		months = frappe.db.get_single_value("India EXIM Settings", "export_realisation_months") or 9
 		self.realisation_due_date = add_months(self.shipping_bill_date, months)
-		self.outstanding_value = flt(self.total_invoice_value) - flt(self.realised_value)
+		self.outstanding_value = (
+			flt(self.total_invoice_value) - flt(self.realised_value) - flt(self.agency_commission)
+		)
+		if flt(self.agency_commission) and not 0 < flt(self.agency_commission) < flt(
+			self.total_invoice_value
+		):
+			frappe.throw(_("Agency commission must be positive and less than the invoice value."))
 
 	def set_status(self, update=False):
 		if self.docstatus == 2:
@@ -220,7 +230,7 @@ class ShippingBill(Document):
 			self.status = status
 
 	def accrue_incentives_if_due(self):
-		if self.accrual_journal_entry or not self.leo_date:
+		if self.accrual_journal_entry or not self.leo_date or self.is_opening:
 			return
 		if frappe.db.get_single_value("India EXIM Settings", "incentive_accrual_point") != "On LEO":
 			return
@@ -265,6 +275,10 @@ def get_items_from_sales_invoices(sales_invoices: list[str] | str) -> list[dict]
 					"uom": item.stock_uom or item.uom,
 					"invoice_value": item.amount,
 					"igst_amount": item.get("igst_amount") or 0,
+					# the doctype defaults are not applied to rows opened in the browser as a new
+					# document, so state them here
+					"claim_drawback": 1,
+					"claim_rodtep": 1,
 				}
 			)
 	return rows

@@ -1,0 +1,63 @@
+{#- Shared pieces of the India EXIM print formats. Import with
+    {% import "india_exim/templates/print_formats/exim_macros.html" as exim %} -#}
+
+{%- macro style() -%}
+<style>
+	.exim { font-size: 10.5px; color: #111; line-height: 1.35; }
+	.exim table { width: 100%; border-collapse: collapse; }
+	.exim td, .exim th { border: 1px solid #555; padding: 4px 6px; vertical-align: top; }
+	.exim th { background: #f2f2f2; text-align: left; font-weight: 600; }
+	.exim .title { text-align: center; font-size: 16px; font-weight: 700; letter-spacing: 1px; padding: 6px; }
+	.exim .subtitle { text-align: center; font-size: 10px; padding: 2px 6px 6px; }
+	.exim .label { color: #555; font-size: 8.5px; text-transform: uppercase; display: block; }
+	.exim .num { text-align: right; white-space: nowrap; }
+	.exim .center { text-align: center; }
+	.exim .pre { white-space: pre-line; }
+	.exim .gap { margin-top: 6px; }
+	.exim .plain td { border: none; padding: 2px 0; }
+	.exim .letter p { margin: 0 0 8px; }
+	.exim .sign { margin-top: 40px; }
+</style>
+{%- endmacro -%}
+
+{%- macro company_iec(company) -%}{{ frappe.db.get_value("Company", company, "exim_iec") or "" }}{%- endmacro -%}
+
+{%- macro exporter(doc, label=_("Exporter")) -%}
+<span class="label">{{ label }}</span>
+<b>{{ doc.company }}</b><br>
+<span class="pre">{{ doc.get("company_address_display") or "" }}</span>
+{%- if doc.get("company_gstin") %}<br>{{ _("GSTIN") }}: {{ doc.company_gstin }}{% endif %}
+{%- set iec = company_iec(doc.company) %}{% if iec %}<br>{{ _("IEC") }}: {{ iec }}{% endif %}
+{%- endmacro -%}
+
+{%- macro customer_name(name) -%}{{ frappe.db.get_value("Customer", name, "customer_name") if name else "" }}{%- endmacro -%}
+
+{#- Consignee, buyer or notify party: the Export Details pick, else the document's own customer. -#}
+{%- macro party(doc, party, label, fallback=True) -%}
+<span class="label">{{ label }}</span>
+{%- if doc.get("exim_" ~ party) %}
+<b>{{ customer_name(doc.get("exim_" ~ party)) }}</b><br>
+<span class="pre">{{ doc.get("exim_" ~ party ~ "_address_display") or "" }}</span>
+{%- if doc.get("exim_" ~ party ~ "_contact_display") %}<br><span class="pre">{{ doc.get("exim_" ~ party ~ "_contact_display") }}</span>{% endif %}
+{%- elif fallback %}
+<b>{{ doc.customer_name }}</b><br>
+<span class="pre">{{ (doc.get("shipping_address") if party == "consignee" else None) or doc.get("address_display") or "" }}</span>
+{%- else %}{{ _("Same as consignee") }}{% endif %}
+{%- endmacro -%}
+
+{%- macro cell(label, value, colspan=1) -%}
+<td{% if colspan > 1 %} colspan="{{ colspan }}"{% endif %}><span class="label">{{ label }}</span>{{ value if value not in (None, "") else "" }}</td>
+{%- endmacro -%}
+
+{%- macro date(value) -%}{{ frappe.format(value, {"fieldtype": "Date"}) if value else "" }}{%- endmacro -%}
+
+{%- macro money(value, currency) -%}{{ frappe.utils.fmt_money(value or 0, currency=currency) }}{%- endmacro -%}
+
+{%- macro hs_code(item) -%}
+{{- (frappe.db.get_value("Item", item.item_code, "exim_customs_tariff_item") if item.get("item_code") else None) or item.get("gst_hsn_code") or "" -}}
+{%- endmacro -%}
+
+{%- macro signature(company, label=_("Authorised Signatory")) -%}
+<div class="sign">{{ _("For") }} <b>{{ company }}</b></div>
+<div style="margin-top: 30px">{{ label }}</div>
+{%- endmacro -%}

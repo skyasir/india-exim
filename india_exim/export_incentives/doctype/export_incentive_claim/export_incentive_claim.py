@@ -60,7 +60,8 @@ class ExportIncentiveClaim(Document):
 			details = frappe.db.get_value(
 				"Shipping Bill",
 				row.shipping_bill,
-				["docstatus", "company", "leo_date", "accrual_journal_entry", total_field or "name"],
+				["docstatus", "company", "leo_date", "accrual_journal_entry", total_field or "name"]
+				+ ([REVERSED_FIELDS[self.scheme]] if self.scheme in REVERSED_FIELDS else []),
 				as_dict=True,
 			)
 			if details.docstatus != 1 or details.company != self.company:
@@ -82,7 +83,9 @@ class ExportIncentiveClaim(Document):
 					)
 				)
 
-			row.expected_amount = flt(details.get(total_field)) if total_field else flt(row.expected_amount)
+			row.expected_amount = (
+				net_incentive(details, self.scheme) if total_field else flt(row.expected_amount)
+			)
 			if self.is_new() and not flt(row.sanctioned_amount):
 				row.sanctioned_amount = row.expected_amount
 			if flt(row.sanctioned_amount) < 0:
@@ -122,8 +125,12 @@ class ExportIncentiveClaim(Document):
 		income = get_exim_account(self.company, self.heads[2])
 		adjustment = 0.0
 		for row in self.items:
-			accrued = frappe.db.get_value("Shipping Bill", row.shipping_bill, "accrual_journal_entry")
-			already_booked = flt(row.expected_amount) if accrual_point == "On LEO" and accrued else 0
+			accrued, is_opening = frappe.db.get_value(
+				"Shipping Bill", row.shipping_bill, ["accrual_journal_entry", "is_opening"]
+			)
+			# opening shipping bills: the receivable came in with the opening balances
+			booked = is_opening or (accrual_point == "On LEO" and accrued)
+			already_booked = flt(row.expected_amount) if booked else 0
 			adjustment += flt(row.sanctioned_amount) - already_booked
 
 		adjustment = flt(adjustment, 2)
@@ -193,8 +200,22 @@ def get_existing_claim(shipping_bill: str, scheme: str, exclude: str | None = No
 	return result[0][0] if result else None
 
 
+# incentive taken back for credit notes / write-offs (india_exim.export_incentives.accounting)
+REVERSED_FIELDS = {"Duty Drawback": "drawback_reversed", "RoDTEP": "rodtep_reversed"}
+
+
+def net_incentive(shipping_bill: dict, scheme: str) -> float:
+	"""Accrued incentive on a shipping bill less what was reversed after shipment."""
+	total_field = SCHEME_HEADS[scheme][0]
+	return flt(
+		flt(shipping_bill.get(total_field)) - flt(shipping_bill.get(REVERSED_FIELDS.get(scheme, ""))), 2
+	)
+
+
 @frappe.whitelist()
-def get_unclaimed_shipping_bills(company: str, scheme: str, from_date=None, to_date=None) -> list[dict]:
+def get_unclaimed_shipping_bills(
+	company: str, scheme: str, from_date: str | None = None, to_date: str | None = None
+) -> list[dict]:
 	frappe.has_permission("Shipping Bill", "read", throw=True)
 	total_field = SCHEME_HEADS[scheme][0]
 	filters = {"company": company, "docstatus": 1, "leo_date": ("is", "set")}
@@ -212,6 +233,7 @@ def get_unclaimed_shipping_bills(company: str, scheme: str, from_date=None, to_d
 			"shipping_bill_date",
 			"leo_date",
 			total_field or "name as dummy",
+			*([REVERSED_FIELDS[scheme]] if scheme in REVERSED_FIELDS else []),
 		],
 		order_by="leo_date",
 	)
@@ -221,7 +243,7 @@ def get_unclaimed_shipping_bills(company: str, scheme: str, from_date=None, to_d
 			"shipping_bill_number": row.shipping_bill_number,
 			"shipping_bill_date": row.shipping_bill_date,
 			"leo_date": row.leo_date,
-			"expected_amount": flt(row.get(total_field)) if total_field else 0,
+			"expected_amount": net_incentive(row, scheme) if total_field else 0,
 		}
 		for row in shipping_bills
 		if not get_existing_claim(row.name, scheme)

@@ -8,9 +8,33 @@ import frappe
 DATA_DIR = Path(__file__).parent / "data"
 
 
+# Trade Document Type -> the India EXIM print format that produces it
+DOCUMENT_PRINT_FORMATS = {
+	"Proforma Invoice": "Export Proforma Invoice",
+	"Commercial Invoice": "Export Commercial Invoice",
+	"Packing List": "Export Packing List",
+	"Shipping Instructions": "Shipping Instructions",
+	"VGM Declaration (SOLAS)": "VGM Declaration",
+	"Bill of Exchange": "Bill of Exchange",
+	"Bank Covering Letter / Export Bill Lodgement": "Bank Covering Letter",
+	"Beneficiary Certificate": "Beneficiary Certificate",
+}
+
+
 def seed_master_data():
 	seed_trade_document_types()
 	seed_country_groups()
+	link_print_formats()
+
+
+def link_print_formats():
+	"""Point the standard document types at their print formats, unless a user chose another."""
+	for document_type, print_format in DOCUMENT_PRINT_FORMATS.items():
+		if not frappe.db.exists("Print Format", print_format):
+			continue
+		current = frappe.db.get_value("Trade Document Type", document_type, "print_format")
+		if frappe.db.exists("Trade Document Type", document_type) and not current:
+			frappe.db.set_value("Trade Document Type", document_type, "print_format", print_format)
 
 
 def load(filename: str) -> list[dict]:

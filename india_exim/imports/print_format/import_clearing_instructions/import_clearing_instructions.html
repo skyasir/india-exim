@@ -1,0 +1,67 @@
+{#- Clearing instructions to the customs broker (Purchase Invoice of an import): consignment,
+    transport, origin and FTA claim, and the documents handed over for the Bill of Entry. -#}
+{%- import "india_exim/templates/print_formats/exim_macros.html" as exim -%}
+{{ exim.style() }}
+<div class="exim">
+	<table>
+		<tr><td colspan="4" class="title">{{ _("CLEARING INSTRUCTIONS") }}</td></tr>
+		<tr>
+			<td colspan="2" style="width: 50%">
+				<span class="label">{{ _("To (Customs Broker / CHA)") }}</span>
+				<b>{{ frappe.db.get_value("Supplier", doc.exim_cha, "supplier_name") if doc.get("exim_cha") else "__________________" }}</b>
+			</td>
+			{{ exim.cell(_("Our Ref."), doc.name) }}
+			{{ exim.cell(_("Date"), exim.date(frappe.utils.today())) }}
+		</tr>
+		<tr>
+			<td colspan="2">
+				<span class="label">{{ _("Importer") }}</span><b>{{ doc.company }}</b><br>
+				<span class="pre">{{ doc.get("billing_address_display") or doc.get("shipping_address_display") or "" }}</span>
+				{%- if doc.get("company_gstin") %}<br>{{ _("GSTIN") }}: {{ doc.company_gstin }}{% endif %}
+				{%- set iec = exim.company_iec(doc.company) %}{% if iec %}<br>{{ _("IEC") }}: {{ iec }}{% endif %}
+			</td>
+			<td colspan="2">
+				<span class="label">{{ _("Supplier (Overseas)") }}</span><b>{{ doc.supplier_name }}</b><br>
+				<span class="pre">{{ doc.get("address_display") or "" }}</span>
+			</td>
+		</tr>
+		<tr>
+			{{ exim.cell(_("Supplier Invoice No. & Date"), (doc.bill_no or "") ~ ((" / " ~ exim.date(doc.bill_date)) if doc.bill_date else "")) }}
+			{{ exim.cell(_("Invoice Value"), exim.money(doc.grand_total, doc.currency)) }}
+			{{ exim.cell(_("Incoterm"), (doc.incoterm or "") ~ (" " ~ doc.named_place if doc.get("named_place") else "")) }}
+			{{ exim.cell(_("Country of Origin"), doc.get("exim_origin_country")) }}
+		</tr>
+		<tr>
+			{{ exim.cell(_("BL / AWB No. & Date"), (doc.get("exim_bl_number") or "") ~ ((" / " ~ exim.date(doc.exim_bl_date)) if doc.get("exim_bl_date") else "")) }}
+			{{ exim.cell(_("IGM No. & Date"), (doc.get("exim_igm_number") or "") ~ ((" / " ~ exim.date(doc.exim_igm_date)) if doc.get("exim_igm_date") else "")) }}
+			{{ exim.cell(_("Port of Loading"), doc.get("exim_port_of_loading")) }}
+			{{ exim.cell(_("Port of Discharge"), doc.get("exim_port_of_discharge")) }}
+		</tr>
+		<tr>
+			{{ exim.cell(_("ETA"), exim.date(doc.get("exim_eta"))) }}
+			{{ exim.cell(_("Free Time Ends"), exim.date(doc.get("exim_free_time_ends"))) }}
+			{{ exim.cell(_("FTA Concession"), (_("Claim under CoO No. {0}").format(doc.exim_certificate_of_origin or "-")) if doc.get("exim_fta_claimed") else _("Not claimed")) }}
+			{{ exim.cell(_("Bill of Entry Type"), _("Home Consumption")) }}
+		</tr>
+	</table>
+
+	<table class="gap">
+		<thead><tr><th style="width: 5%">{{ _("Sr.") }}</th><th>{{ _("Description") }}</th><th style="width: 11%">{{ _("HS Code") }}</th><th class="num" style="width: 13%">{{ _("Quantity") }}</th><th class="num" style="width: 14%">{{ _("Value") }} ({{ doc.currency }})</th></tr></thead>
+		<tbody>
+		{%- for item in doc.items %}
+			<tr><td>{{ loop.index }}</td><td>{{ item.item_name }}</td><td>{{ exim.hs_code(item) }}</td><td class="num">{{ frappe.format(item.qty, {"fieldtype": "Float"}) }} {{ item.uom }}</td><td class="num">{{ frappe.format(item.amount, {"fieldtype": "Currency", "options": "currency"}, doc) }}</td></tr>
+		{%- endfor %}
+		</tbody>
+	</table>
+
+	<table class="gap">
+		<tr><td>
+			<span class="label">{{ _("Documents Enclosed") }}</span>
+			1. {{ _("Commercial invoice") }} &nbsp; 2. {{ _("Packing list") }} &nbsp; 3. {{ _("Bill of lading / air waybill") }} &nbsp; 4. {{ _("Insurance certificate or policy") }}
+			{%- if doc.get("exim_fta_claimed") %} &nbsp; 5. {{ _("Certificate of origin and CAROTAR origin information") }}{% endif %}
+			<br><br><span class="label">{{ _("Instructions") }}</span>
+			{{ _("Please file the Bill of Entry, share the checklist for our approval before submission, and send the duty challan and the assessed Bill of Entry. Clear the goods before the free time ends to avoid detention and demurrage.") }}
+		</td></tr>
+	</table>
+	<table class="gap plain"><tr><td style="text-align: right">{{ exim.signature(doc.company) }}</td></tr></table>
+</div>

@@ -237,3 +237,66 @@ def enforce_gate(shipment, action_label: str) -> None:
 	if mode == "Block":
 		frappe.throw(message, title=_("Documents Pending"))
 	frappe.msgprint(message, title=_("Documents Pending"), indicator="orange")
+
+
+# Documents the app itself produces or records. Their checklist rows are ticked when the source
+# record exists, so nobody types the same number twice.
+OPEN_STATUSES = ("Pending", "Applied")
+TRANSPORT_DOCUMENTS = ("Bill of Lading", "Sea Waybill / Telex Release", "Air Waybill", "Courier Waybill")
+
+
+def mark_received(shipment, document_types, number=None, date=None) -> None:
+	"""Tick open rows of these document types on a shipment document held in memory."""
+	if isinstance(document_types, str):
+		document_types = (document_types,)
+	for row in shipment.documents:
+		if row.document_type in document_types and row.status in OPEN_STATUSES:
+			row.status = "Received"
+			row.document_number = row.document_number or number
+			row.document_date = row.document_date or date
+
+
+def mark_reopened(shipment, document_types, number) -> None:
+	"""Undo mark_received for rows that carry this number (the source was cancelled)."""
+	if isinstance(document_types, str):
+		document_types = (document_types,)
+	for row in shipment.documents:
+		if row.document_type in document_types and row.document_number == number:
+			row.status = "Pending"
+			row.document_number = None
+			row.document_date = None
+
+
+def sync_system_documents(shipment) -> None:
+	"""Called from Export Shipment.validate: invoice and transport document rows."""
+	for row in shipment.invoices:
+		invoice = frappe.db.get_value(
+			"Sales Invoice", row.sales_invoice, ["docstatus", "posting_date"], as_dict=True
+		)
+		if invoice and invoice.docstatus == 1:
+			mark_received(shipment, "Commercial Invoice", row.sales_invoice, invoice.posting_date)
+	if shipment.bl_number:
+		mark_received(shipment, TRANSPORT_DOCUMENTS, shipment.bl_number, shipment.bl_date)
+
+
+def update_shipment_from_shipping_bill(shipping_bill) -> None:
+	"""Shipping Bill submitted, LEO recorded or cancelled: keep the shipment's checklist in step."""
+	if not shipping_bill.export_shipment:
+		return
+	shipment = frappe.get_doc("Export Shipment", shipping_bill.export_shipment)
+	before = [(row.status, row.document_number) for row in shipment.documents]
+	if shipping_bill.docstatus == 2:
+		mark_reopened(shipment, "Shipping Bill", shipping_bill.shipping_bill_number)
+		mark_reopened(shipment, "Let Export Order (LEO)", shipping_bill.shipping_bill_number)
+	else:
+		mark_received(
+			shipment, "Shipping Bill", shipping_bill.shipping_bill_number, shipping_bill.shipping_bill_date
+		)
+		if shipping_bill.leo_date:
+			mark_received(
+				shipment, "Let Export Order (LEO)", shipping_bill.shipping_bill_number, shipping_bill.leo_date
+			)
+	if before == [(row.status, row.document_number) for row in shipment.documents]:
+		return
+	shipment.flags.ignore_permissions = True
+	shipment.save()

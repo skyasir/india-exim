@@ -10,4 +10,4 @@ class IndiaEXIMSettings(Document):
 	def validate(self):
 		for fieldname in ("export_realisation_months", "import_payment_months"):
 			if (self.get(fieldname) or 0) <= 0:
-				frappe.throw(_("{0} must be greater than zero.").format(self.meta.get_label(fieldname)))
+				frappe.throw(_("{0} must be greater than zero.").format(_(self.meta.get_label(fieldname))))

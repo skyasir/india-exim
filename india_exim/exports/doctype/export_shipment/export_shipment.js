@@ -4,7 +4,12 @@
 frappe.ui.form.on("Export Shipment", {
 	setup(frm) {
 		frm.set_query("sales_invoice", "invoices", () => ({
-			filters: { company: frm.doc.company, customer: frm.doc.customer, docstatus: 1, is_return: 0 },
+			filters: {
+				company: frm.doc.company,
+				customer: frm.doc.customer,
+				docstatus: 1,
+				is_return: 0,
+			},
 		}));
 		for (const field of ["freight_forwarder", "cha"]) {
 			frm.set_query(field, () => ({ filters: { disabled: 0 } }));
@@ -15,7 +20,11 @@ frappe.ui.form.on("Export Shipment", {
 		if (frm.is_new()) return;
 		frm.dashboard.add_indicator(
 			__("Documents Ready: {0}%", [frm.doc.readiness_percent || 0]),
-			frm.doc.readiness_percent >= 100 ? "green" : frm.doc.readiness_percent >= 50 ? "orange" : "red"
+			frm.doc.readiness_percent >= 100
+				? "green"
+				: frm.doc.readiness_percent >= 50
+				? "orange"
+				: "red"
 		);
 		frm.add_custom_button(__("Refresh Document Checklist"), () =>
 			frappe
@@ -26,7 +35,10 @@ frappe.ui.form.on("Export Shipment", {
 				})
 				.then(({ message }) => {
 					frappe.show_alert({
-						message: __("{0} document(s) added, {1} in total", [message.added, message.total]),
+						message: __("{0} document(s) added, {1} in total", [
+							message.added,
+							message.total,
+						]),
 						indicator: "green",
 					});
 					frm.reload_doc();

@@ -3,15 +3,33 @@
 Export–import compliance for Indian businesses on ERPNext v16, built on top of
 [India Compliance](https://github.com/resilient-tech/india-compliance) (which keeps owning GST).
 
-**Phase 1 (in progress)**
+## What it does (Phase 1: exports and imports of goods)
 
-- Foreign-trade masters: ITC-HS tariff with dated duty rates, RoDTEP / Drawback rates with per-unit caps,
-  CBIC customs exchange rates, Letter of Undertaking, AD code registrations, default EXIM accounts on Company.
-- Exports: Export Shipment (route, cut-offs, containers, charges), Shipping Bill (FOB from Incoterm, customs
-  exchange rate, incentives at LEO-date rates, accrual on LEO, realisation due date).
-- Trade documents: country / country-group / product / Incoterm / payment-term / buyer rules merged into a
-  per-shipment checklist, with due dates, readiness % and an optional block before documents go out.
-- LUT check on zero-rated export invoices.
+- **Sales flow:** Quotation → Export Costing Sheet → Sales Order → Proforma Invoice → Delivery Note → Sales
+  Invoice, with the export details (consignee, buyer, notify party, route, payment and LC terms, marks)
+  carried through every step.
+- **Foreign-trade masters:** ITC-HS tariff with dated duty rates and export policy, RoDTEP / Drawback rates
+  with per-unit caps, CBIC customs exchange rates, Letter of Undertaking, AD codes, EXIM accounts on Company.
+- **Shipments and documents:** Export Shipment (booking, cut-offs, containers, charges) with a document
+  checklist built from country, product, Incoterm, payment-term and buyer rules. Shipment Control Tower and
+  Document Board screens.
+- **Shipping Bill:** FOB from the Incoterm, customs exchange rate, Drawback and RoDTEP accrued on LEO,
+  proportionate reversal for credit notes and write-offs, agency commission, opening entries for go-live.
+- **FEMA:** realisation from ordinary payments and credit notes, ageing, extensions and write-offs, export
+  advances, import payment status per Bill of Entry.
+- **Imports:** duty breakup on India Compliance's Bill of Entry, landed cost, RoDTEP scrip used against duty.
+- **Incentives and refunds:** Export Incentive Claim, RoDTEP Scrip ledger, GST Refund Claim, merchant export at
+  0.1% GST.
+- **Controls:** LUT check on zero-rated invoices, destination and buyer screening, export policy and SCOMET
+  checks on export orders.
+- **Print formats:** Proforma Invoice, Export Invoice, Packing List, Bill of Exchange, Beneficiary
+  Certificate, Bank Covering Letter, Shipping Instructions, VGM Declaration, Import Clearing Instructions.
+- **Reports and alerts:** 12 reports, standard notifications and daily alerts for realisation, incentives,
+  documents, LUT, scrips, advances and merchant exports. An evidence pack (one ZIP per Shipping Bill or Bill
+  of Entry) for audits and enquiries.
+
+See [docs/compliance-matrix.md](docs/compliance-matrix.md) for each legal requirement and where it is handled,
+and [india_exim/setup/import_templates](india_exim/setup/import_templates) for go-live templates.
 
 Law is stored as dated data (rate tables with effective dates and notification numbers), never hard-coded.
 Rates shipped in tests are illustrative only — always load the notified schedules for real use.

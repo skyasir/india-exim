@@ -18,8 +18,8 @@
    "label": "Top Export Customers"
   }
  ],
- "content": "[{\"id\": \"n_exports_th\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Exports This Year (FOB)\", \"col\": 4}}, {\"id\": \"n_awaiting_l\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Awaiting LEO\", \"col\": 4}}, {\"id\": \"n_awaiting_r\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Awaiting Realisation\", \"col\": 4}}, {\"id\": \"n_realisatio\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Realisation Overdue\", \"col\": 4}}, {\"id\": \"n_shipments_\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Shipments in Progress\", \"col\": 4}}, {\"id\": \"n_shipments_\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Shipments with Pending Documents\", \"col\": 4}}, {\"id\": \"c_exports_by\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Exports by Month (FOB INR)\", \"col\": 12}}, {\"id\": \"c_exports_by\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Exports by Destination\", \"col\": 6}}, {\"id\": \"c_export_rea\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Export Realisation Status\", \"col\": 6}}, {\"id\": \"c_top_export\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Top Export Customers\", \"col\": 12}}, {\"id\": \"h_quick\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Quick Access</b></span>\", \"col\": 12}}, {\"id\": \"s_quotation\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Quotation\", \"col\": 4}}, {\"id\": \"s_sales_orde\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Sales Order\", \"col\": 4}}, {\"id\": \"s_proforma_i\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Proforma Invoice\", \"col\": 4}}, {\"id\": \"s_delivery_n\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Delivery Note\", \"col\": 4}}, {\"id\": \"s_sales_invo\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Sales Invoice\", \"col\": 4}}, {\"id\": \"s_export_shi\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Export Shipment\", \"col\": 4}}, {\"id\": \"s_shipping_b\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Shipping Bill\", \"col\": 4}}, {\"id\": \"s_payment_en\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Payment Entry\", \"col\": 4}}, {\"id\": \"rs_export_rea\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Export Realisation Ageing\", \"col\": 4}}, {\"id\": \"rs_shipping_b\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Shipping Bill Register\", \"col\": 4}}, {\"id\": \"h_reports\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Reports</b></span>\", \"col\": 12}}, {\"id\": \"r_export_rep\", \"type\": \"card\", \"data\": {\"card_name\": \"Export Reports\", \"col\": 4}}]",
- "creation": "2026-11-20 18:00:00.000000",
+ "content": "[{\"id\": \"n_exports_th\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Exports This Year (FOB)\", \"col\": 4}}, {\"id\": \"n_awaiting_l\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Awaiting LEO\", \"col\": 4}}, {\"id\": \"n_awaiting_r\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Awaiting Realisation\", \"col\": 4}}, {\"id\": \"n_realisatio\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Realisation Overdue\", \"col\": 4}}, {\"id\": \"n_shipments_\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Shipments in Progress\", \"col\": 4}}, {\"id\": \"n_shipments_\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Shipments with Pending Documents\", \"col\": 4}}, {\"id\": \"c_exports_by\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Exports by Month (FOB INR)\", \"col\": 12}}, {\"id\": \"c_exports_by\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Exports by Destination\", \"col\": 6}}, {\"id\": \"c_export_rea\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Export Realisation Status\", \"col\": 6}}, {\"id\": \"c_top_export\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Top Export Customers\", \"col\": 12}}, {\"id\": \"h_quick\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Quick Access</b></span>\", \"col\": 12}}, {\"id\": \"s_quotation\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Quotation\", \"col\": 4}}, {\"id\": \"s_export_cos\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Export Costing Sheet\", \"col\": 4}}, {\"id\": \"s_sales_orde\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Sales Order\", \"col\": 4}}, {\"id\": \"s_proforma_i\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Proforma Invoice\", \"col\": 4}}, {\"id\": \"s_delivery_n\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Delivery Note\", \"col\": 4}}, {\"id\": \"s_sales_invo\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Sales Invoice\", \"col\": 4}}, {\"id\": \"s_export_shi\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Export Shipment\", \"col\": 4}}, {\"id\": \"s_shipping_b\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Shipping Bill\", \"col\": 4}}, {\"id\": \"s_payment_en\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Payment Entry\", \"col\": 4}}, {\"id\": \"rs_export_rea\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Export Realisation Ageing\", \"col\": 4}}, {\"id\": \"rs_shipping_b\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Shipping Bill Register\", \"col\": 4}}, {\"id\": \"h_reports\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Reports</b></span>\", \"col\": 12}}, {\"id\": \"r_export_rep\", \"type\": \"card\", \"data\": {\"card_name\": \"Export Reports\", \"col\": 4}}]",
+ "creation": "2026-11-20 21:00:00.000000",
  "custom_blocks": [],
  "docstatus": 0,
  "doctype": "Workspace",
@@ -34,7 +34,7 @@
    "hidden": 0,
    "is_query_report": 0,
    "label": "Export Reports",
-   "link_count": 3,
+   "link_count": 6,
    "link_type": "DocType",
    "onboard": 0,
    "type": "Card Break"
@@ -62,15 +62,45 @@
   {
    "hidden": 0,
    "is_query_report": 1,
-   "label": "Pending Trade Documents",
+   "label": "Export Summary",
    "link_count": 0,
-   "link_to": "Pending Trade Documents",
+   "link_to": "Export Summary",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Export Advance Register",
+   "link_count": 0,
+   "link_to": "Export Advance Register",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Merchant Export Register",
+   "link_count": 0,
+   "link_to": "Merchant Export Register",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Costing vs Actual",
+   "link_count": 0,
+   "link_to": "Costing vs Actual",
    "link_type": "Report",
    "onboard": 0,
    "type": "Link"
   }
  ],
- "modified": "2026-11-20 18:00:00.000000",
+ "modified": "2026-11-20 21:00:00.000000",
  "modified_by": "Administrator",
  "module": "Exports",
  "name": "Exports",
@@ -128,6 +158,15 @@
    "label": "Quotation",
    "link_to": "Quotation",
    "stats_filter": "[[\"Quotation\", \"exim_is_export\", \"=\", 1], [\"Quotation\", \"status\", \"=\", \"Open\"]]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "format": "",
+   "label": "Export Costing Sheet",
+   "link_to": "Export Costing Sheet",
+   "stats_filter": "[]",
    "type": "DocType"
   },
   {
