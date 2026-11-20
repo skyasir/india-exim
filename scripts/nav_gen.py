@@ -9,44 +9,55 @@ from pathlib import Path
 APP = Path(__file__).resolve().parents[1] / "india_exim"
 # apps folder of a bench with frappe, erpnext and india_compliance, to check that linked doctypes and reports exist
 UPSTREAM = Path(os.environ.get("BENCH_APPS", "~/frappe-bench/apps")).expanduser()
-TS = "2026-11-20 21:00:00.000000"
+TS = "2026-11-21 12:00:00.000000"
 HOME = "India EXIM"
 
 # module -> (dock icon, [items]); item = (label, link_type, link_to, icon) or ("section", label, icon)
+# One sidebar per module, laid out like ERPNext's own: Home (the module's page) and Dashboard,
+# the module's main documents with icons, then collapsed Reports and Setup sections.
+# Each item lives in one module; the India EXIM home page is the Home item of the dock.
+# item = (label, link_type, link_to, icon) or ("section", label, icon); items after a section
+# are its children.
+TOP = [("Dashboard", "Dashboard", "India EXIM", "chart-column")]
+
+
+def home(module):
+	return ("Home", "Workspace", module, "house")
+
+
 SIDEBARS = {
 	"Exports": (
 		"ship",
 		[
-			("Overview", "Workspace", "Exports", "layout-dashboard"),
-			("Home", "Workspace", HOME, "house"),
-			("Dashboard", "Dashboard", "India EXIM", "chart-column"),
-			# in the order an export moves: quote, order, proforma, dispatch, invoice, ship, get paid
+			home("Exports"),
+			*TOP,
+			# in the order an export moves: quote, cost, order, proforma, dispatch, invoice, ship, paid
 			("Quotation", "DocType", "Quotation", "scroll-text"),
 			("Export Costing Sheet", "DocType", "Export Costing Sheet", "calculator"),
 			("Sales Order", "DocType", "Sales Order", "file-pen"),
 			("Proforma Invoice", "DocType", "Proforma Invoice", "file-badge"),
 			("Delivery Note", "DocType", "Delivery Note", "truck"),
 			("Sales Invoice", "DocType", "Sales Invoice", "receipt"),
-			("Export Shipment", "DocType", "Export Shipment", "container"),
-			("Control Tower", "Page", "shipment-control-tower", "radar"),
 			("Shipping Bill", "DocType", "Shipping Bill", "file-output"),
 			("Payment Entry", "DocType", "Payment Entry", "landmark"),
 			("section", "Reports", "notepad-text"),
 			("Shipping Bill Register", "Report", "Shipping Bill Register", None),
 			("Export Realisation Ageing", "Report", "Export Realisation Ageing", None),
-			("Export Summary", "Report", "Export Summary", None),
 			("Export Advance Register", "Report", "Export Advance Register", None),
-			("Merchant Export Register", "Report", "Merchant Export Register", None),
+			("Export Summary", "Report", "Export Summary", None),
 			("Costing vs Actual", "Report", "Costing vs Actual", None),
-			("Shipment Tracker", "Report", "Shipment Tracker", None),
+			("Merchant Export Register", "Report", "Merchant Export Register", None),
+			("section", "Setup", "database"),
+			("Customer", "DocType", "Customer", None),
+			("Item", "DocType", "Item", None),
+			("Letter of Undertaking", "DocType", "Letter of Undertaking", None),
 		],
 	),
 	"Imports": (
 		"package-open",
 		[
-			("Overview", "Workspace", "Imports", "layout-dashboard"),
-			("Home", "Workspace", HOME, "house"),
-			("Dashboard", "Dashboard", "India EXIM", "chart-column"),
+			home("Imports"),
+			*TOP,
 			("Purchase Invoice", "DocType", "Purchase Invoice", "receipt"),
 			("Bill of Entry", "DocType", "Bill of Entry", "file-input"),
 			("Landed Cost Voucher", "DocType", "Landed Cost Voucher", "package-plus"),
@@ -55,54 +66,70 @@ SIDEBARS = {
 			("Customs Duty Register", "Report", "Customs Duty Register", None),
 			("Import Payment Ageing", "Report", "Import Payment Ageing", None),
 			("Bill of Entry Summary", "Report", "Bill of Entry Summary", None),
+			("section", "Setup", "database"),
+			("Supplier", "DocType", "Supplier", None),
+			("Item", "DocType", "Item", None),
+			("Customs Tariff Item", "DocType", "Customs Tariff Item", None),
+		],
+	),
+	"Trade Documents": (
+		"files",
+		[
+			home("Trade Documents"),
+			*TOP,
+			("Control Tower", "Page", "shipment-control-tower", "radar"),
+			("Document Board", "Page", "document-board", "kanban"),
+			("Export Shipment", "DocType", "Export Shipment", "container"),
+			("section", "Reports", "notepad-text"),
+			("Shipment Tracker", "Report", "Shipment Tracker", None),
+			("Pending Trade Documents", "Report", "Pending Trade Documents", None),
+			("section", "Setup", "database"),
+			("Document Requirement Template", "DocType", "Document Requirement Template", None),
+			("Trade Document Type", "DocType", "Trade Document Type", None),
+			("Country Group", "DocType", "Country Group", None),
 		],
 	),
 	"Export Incentives": (
 		"badge-indian-rupee",
 		[
-			("Overview", "Workspace", "Export Incentives", "layout-dashboard"),
-			("Home", "Workspace", HOME, "house"),
-			("Dashboard", "Dashboard", "India EXIM", "chart-column"),
+			home("Export Incentives"),
+			*TOP,
 			("Export Incentive Claim", "DocType", "Export Incentive Claim", "hand-coins"),
 			("RoDTEP Scrip", "DocType", "RoDTEP Scrip", "ticket"),
 			("GST Refund Claim", "DocType", "GST Refund Claim", "receipt-indian-rupee"),
 			("section", "Reports", "notepad-text"),
 			("Export Incentive Register", "Report", "Export Incentive Register", None),
 			("RoDTEP Scrip Ledger", "Report", "RoDTEP Scrip Ledger", None),
-			("section", "Rates", "percent"),
+			("section", "Setup", "database"),
 			("Export Incentive Rate", "DocType", "Export Incentive Rate", None),
 		],
 	),
-	"Trade Documents": (
-		"files",
+	"DGFT Licences": (
+		"stamp",
 		[
-			("Overview", "Workspace", "Trade Documents", "layout-dashboard"),
-			("Home", "Workspace", HOME, "house"),
-			("Dashboard", "Dashboard", "India EXIM", "chart-column"),
-			("Control Tower", "Page", "shipment-control-tower", "radar"),
-			("Document Board", "Page", "document-board", "kanban"),
-			("Export Shipment", "DocType", "Export Shipment", "container"),
-			("Document Requirement Template", "DocType", "Document Requirement Template", "list-checks"),
-			("Trade Document Type", "DocType", "Trade Document Type", "file-text"),
-			("Country Group", "DocType", "Country Group", "globe"),
+			home("DGFT Licences"),
+			*TOP,
+			("Export Authorisation", "DocType", "Export Authorisation", "stamp"),
 			("section", "Reports", "notepad-text"),
-			("Shipment Tracker", "Report", "Shipment Tracker", None),
-			("Pending Trade Documents", "Report", "Pending Trade Documents", None),
+			("Authorisation Register", "Report", "Authorisation Register", None),
 		],
 	),
 	"EXIM Setup": (
 		"settings",
 		[
-			("Overview", "Workspace", "EXIM Setup", "layout-dashboard"),
-			("Home", "Workspace", HOME, "house"),
-			("Dashboard", "Dashboard", "India EXIM", "chart-column"),
+			home("EXIM Setup"),
+			*TOP,
 			("India EXIM Settings", "DocType", "India EXIM Settings", "sliders-horizontal"),
-			("Customs Tariff Item", "DocType", "Customs Tariff Item", "barcode"),
-			("Customs Exchange Rate", "DocType", "Customs Exchange Rate", "arrow-left-right"),
+			("Company", "DocType", "Company", "building"),
 			("Letter of Undertaking", "DocType", "Letter of Undertaking", "file-signature"),
 			("AD Code Registration", "DocType", "AD Code Registration", "building-2"),
-			("Company", "DocType", "Company", "building"),
-			("Country", "DocType", "Country", "flag"),
+			("section", "Tariff and Rates", "percent"),
+			("Customs Tariff Item", "DocType", "Customs Tariff Item", None),
+			("Customs Exchange Rate", "DocType", "Customs Exchange Rate", None),
+			("Export Incentive Rate", "DocType", "Export Incentive Rate", None),
+			("section", "Countries", "globe"),
+			("Country", "DocType", "Country", None),
+			("Country Group", "DocType", "Country Group", None),
 			("section", "Reports", "notepad-text"),
 			("LUT Register", "Report", "LUT Register", None),
 		],

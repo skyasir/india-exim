@@ -1,6 +1,6 @@
 {
  "app": "india_exim",
- "creation": "2026-11-20 21:00:00.000000",
+ "creation": "2026-11-21 12:00:00.000000",
  "docstatus": 0,
  "doctype": "Dock",
  "idx": 0,
@@ -32,6 +32,14 @@
   {
    "added": 0,
    "hidden": 0,
+   "icon": "files",
+   "link_to": "Trade Documents",
+   "link_type": "Sidebar",
+   "title": "Trade Documents"
+  },
+  {
+   "added": 0,
+   "hidden": 0,
    "icon": "badge-indian-rupee",
    "link_to": "Export Incentives",
    "link_type": "Sidebar",
@@ -40,10 +48,10 @@
   {
    "added": 0,
    "hidden": 0,
-   "icon": "files",
-   "link_to": "Trade Documents",
+   "icon": "stamp",
+   "link_to": "DGFT Licences",
    "link_type": "Sidebar",
-   "title": "Trade Documents"
+   "title": "DGFT Licences"
   },
   {
    "added": 0,
@@ -54,7 +62,7 @@
    "title": "EXIM Setup"
   }
  ],
- "modified": "2026-11-20 21:00:00.000000",
+ "modified": "2026-11-21 12:00:00.000000",
  "modified_by": "Administrator",
  "name": "india_exim",
  "owner": "Administrator",
