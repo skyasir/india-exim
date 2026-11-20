@@ -13,7 +13,12 @@ frappe.query_reports["Pending Trade Documents"] = {
 		},
 		{ fieldname: "responsible", label: __("Responsible"), fieldtype: "Link", options: "User" },
 		{ fieldname: "customer", label: __("Customer"), fieldtype: "Link", options: "Customer" },
-		{ fieldname: "mandatory_only", label: __("Mandatory Only"), fieldtype: "Check", default: 1 },
+		{
+			fieldname: "mandatory_only",
+			label: __("Mandatory Only"),
+			fieldtype: "Check",
+			default: 1,
+		},
 		{ fieldname: "overdue_only", label: __("Overdue Only"), fieldtype: "Check" },
 	],
 	formatter(value, row, column, data, default_formatter) {

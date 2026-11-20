@@ -14,7 +14,8 @@ frappe.query_reports["LUT Register"] = {
 	formatter(value, row, column, data, default_formatter) {
 		value = default_formatter(value, row, column, data);
 		if (column.fieldname === "status" && data) {
-			const color = { Active: "green", Expired: "red", Upcoming: "blue" }[data.status] || "gray";
+			const color =
+				{ Active: "green", Expired: "red", Upcoming: "blue" }[data.status] || "gray";
 			value = `<span class="indicator-pill ${color}">${value}</span>`;
 		}
 		return value;

@@ -4,7 +4,11 @@
 frappe.ui.form.on("Shipping Bill", {
 	setup(frm) {
 		frm.set_query("export_shipment", () => ({
-			filters: { company: frm.doc.company, customer: frm.doc.customer, status: ["!=", "Cancelled"] },
+			filters: {
+				company: frm.doc.company,
+				customer: frm.doc.customer,
+				status: ["!=", "Cancelled"],
+			},
 		}));
 		frm.set_query("sales_invoice", "items", () => ({
 			filters: { company: frm.doc.company, customer: frm.doc.customer, docstatus: 1 },
@@ -14,12 +18,18 @@ frappe.ui.form.on("Shipping Bill", {
 	refresh(frm) {
 		set_status_indicator(frm);
 		if (frm.doc.docstatus === 1) {
-			frm.add_custom_button(__("Evidence Pack"), () => download_evidence_pack(frm), __("View"));
+			frm.add_custom_button(
+				__("Evidence Pack"),
+				() => download_evidence_pack(frm),
+				__("View")
+			);
 		}
 		if (frm.doc.docstatus === 1 && frm.doc.accrual_journal_entry) {
-			frm.add_custom_button(__("Incentive Accrual"), () =>
-				frappe.set_route("Form", "Journal Entry", frm.doc.accrual_journal_entry)
-			, __("View"));
+			frm.add_custom_button(
+				__("Incentive Accrual"),
+				() => frappe.set_route("Form", "Journal Entry", frm.doc.accrual_journal_entry),
+				__("View")
+			);
 		}
 	},
 
@@ -34,7 +44,12 @@ frappe.ui.form.on("Shipping Bill", {
 			setters: { posting_date: null },
 			add_filters_group: 1,
 			get_query: () => ({
-				filters: { company: frm.doc.company, customer: frm.doc.customer, docstatus: 1, is_return: 0 },
+				filters: {
+					company: frm.doc.company,
+					customer: frm.doc.customer,
+					docstatus: 1,
+					is_return: 0,
+				},
 			}),
 			action(selections) {
 				if (!selections.length) return;
@@ -44,7 +59,9 @@ frappe.ui.form.on("Shipping Bill", {
 						args: { sales_invoices: selections },
 					})
 					.then(({ message }) => {
-						const existing = new Set((frm.doc.items || []).map((row) => row.sales_invoice_item));
+						const existing = new Set(
+							(frm.doc.items || []).map((row) => row.sales_invoice_item)
+						);
 						(message || [])
 							.filter((row) => !existing.has(row.sales_invoice_item))
 							.forEach((row) => frm.add_child("items", row));
@@ -64,7 +81,8 @@ function set_status_indicator(frm) {
 		"EGM Filed": "green",
 		Cancelled: "red",
 	};
-	if (frm.doc.status) frm.page.set_indicator(__(frm.doc.status), colours[frm.doc.status] || "gray");
+	if (frm.doc.status)
+		frm.page.set_indicator(__(frm.doc.status), colours[frm.doc.status] || "gray");
 }
 
 // One ZIP with every document, attachment, payment and change for an audit or enquiry.

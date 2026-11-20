@@ -14,11 +14,15 @@
 			const values = {};
 			if ("address" in details) values[`exim_${party}_address`] = details.address;
 			if ("contact" in details) values[`exim_${party}_contact`] = details.contact;
-			if ("address_display" in details) values[`exim_${party}_address_display`] = details.address_display;
-			if ("contact_display" in details) values[`exim_${party}_contact_display`] = details.contact_display;
+			if ("address_display" in details)
+				values[`exim_${party}_address_display`] = details.address_display;
+			if ("contact_display" in details)
+				values[`exim_${party}_contact_display`] = details.contact_display;
 			// the links set here must not fetch again through their own handlers
 			frm.__exim_filling = true;
-			return Promise.resolve(frm.set_value(values)).finally(() => (frm.__exim_filling = false));
+			return Promise.resolve(frm.set_value(values)).finally(
+				() => (frm.__exim_filling = false)
+			);
 		});
 
 	const handlers = {

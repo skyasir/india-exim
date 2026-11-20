@@ -6,7 +6,11 @@ const EXIM_ROOT_TYPES = {
 		"exim_rodtep_scrip_account",
 		"exim_igst_refund_receivable_account",
 	],
-	Income: ["exim_drawback_income_account", "exim_rodtep_income_account", "exim_rosctl_income_account"],
+	Income: [
+		"exim_drawback_income_account",
+		"exim_rodtep_income_account",
+		"exim_rosctl_income_account",
+	],
 	Expense: [
 		"exim_scrip_sale_loss_account",
 		"exim_incentive_recovery_account",

@@ -3,7 +3,9 @@
 
 frappe.ui.form.on("Export Costing Sheet", {
 	setup(frm) {
-		frm.set_query("quotation", () => ({ filters: { company: frm.doc.company, docstatus: 0 } }));
+		frm.set_query("quotation", () => ({
+			filters: { company: frm.doc.company, docstatus: 0 },
+		}));
 	},
 
 	refresh(frm) {
@@ -26,11 +28,16 @@ frappe.ui.form.on("Export Costing Sheet", {
 
 	currency(frm) {
 		if (!frm.doc.currency || !frm.doc.company) return;
-		const company_currency = frappe.get_doc(":Company", frm.doc.company)?.default_currency || "INR";
+		const company_currency =
+			frappe.get_doc(":Company", frm.doc.company)?.default_currency || "INR";
 		frappe
 			.call({
 				method: "erpnext.setup.utils.get_exchange_rate",
-				args: { from_currency: frm.doc.currency, to_currency: company_currency, transaction_date: frm.doc.posting_date },
+				args: {
+					from_currency: frm.doc.currency,
+					to_currency: company_currency,
+					transaction_date: frm.doc.posting_date,
+				},
 			})
 			.then(({ message }) => message && frm.set_value("exchange_rate", message));
 	},

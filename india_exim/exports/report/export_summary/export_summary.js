@@ -18,7 +18,13 @@ frappe.query_reports["Export Summary"] = {
 			default: erpnext.utils.get_fiscal_year(frappe.datetime.get_today(), true)[1],
 			reqd: 1,
 		},
-		{ fieldname: "to_date", label: __("To Date"), fieldtype: "Date", default: frappe.datetime.get_today(), reqd: 1 },
+		{
+			fieldname: "to_date",
+			label: __("To Date"),
+			fieldtype: "Date",
+			default: frappe.datetime.get_today(),
+			reqd: 1,
+		},
 		{
 			fieldname: "group_by",
 			label: __("Group By"),
@@ -28,6 +34,11 @@ frappe.query_reports["Export Summary"] = {
 			reqd: 1,
 		},
 		{ fieldname: "customer", label: __("Customer"), fieldtype: "Link", options: "Customer" },
-		{ fieldname: "destination_country", label: __("Destination"), fieldtype: "Link", options: "Country" },
+		{
+			fieldname: "destination_country",
+			label: __("Destination"),
+			fieldtype: "Link",
+			options: "Country",
+		},
 	],
 };

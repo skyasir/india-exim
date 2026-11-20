@@ -17,13 +17,20 @@ frappe.query_reports["Costing vs Actual"] = {
 			fieldtype: "Date",
 			default: erpnext.utils.get_fiscal_year(frappe.datetime.get_today(), true)[1],
 		},
-		{ fieldname: "to_date", label: __("To Date"), fieldtype: "Date", default: frappe.datetime.get_today() },
+		{
+			fieldname: "to_date",
+			label: __("To Date"),
+			fieldtype: "Date",
+			default: frappe.datetime.get_today(),
+		},
 		{ fieldname: "customer", label: __("Customer"), fieldtype: "Link", options: "Customer" },
 	],
 	formatter(value, row, column, data, default_formatter) {
 		value = default_formatter(value, row, column, data);
 		if (column.fieldname === "variance" && data && data.variance) {
-			value = `<span style="color: var(--${data.variance < 0 ? "red" : "green"}-600)">${value}</span>`;
+			value = `<span style="color: var(--${
+				data.variance < 0 ? "red" : "green"
+			}-600)">${value}</span>`;
 		}
 		return value;
 	},

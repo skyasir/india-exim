@@ -11,7 +11,12 @@ frappe.query_reports["Export Advance Register"] = {
 			default: frappe.defaults.get_user_default("Company"),
 			reqd: 1,
 		},
-		{ fieldname: "as_on_date", label: __("As On"), fieldtype: "Date", default: frappe.datetime.get_today() },
+		{
+			fieldname: "as_on_date",
+			label: __("As On"),
+			fieldtype: "Date",
+			default: frappe.datetime.get_today(),
+		},
 		{ fieldname: "customer", label: __("Customer"), fieldtype: "Link", options: "Customer" },
 		{ fieldname: "overdue_only", label: __("Overdue Only"), fieldtype: "Check" },
 	],
