@@ -16,6 +16,7 @@ from india_exim.tests.fixtures import (
 	make_party_account,
 	setup_exim_company,
 )
+from india_exim.utils import render_print_format
 
 EXPORT_DETAILS = {
 	"exim_destination_country": "United States",
@@ -79,13 +80,7 @@ class TestSalesFlow(IntegrationTestCase):
 			}
 		).insert(ignore_permissions=True)
 
-		html = frappe.get_print(
-			"Sales Order",
-			order.name,
-			"Export Proforma Invoice",
-			doc=proforma.get_sales_order_copy(),
-			no_letterhead=1,
-		)
+		html = render_print_format(proforma.get_sales_order_copy(), "Export Proforma Invoice")
 		for text in (
 			"PROFORMA INVOICE",
 			proforma.name,
