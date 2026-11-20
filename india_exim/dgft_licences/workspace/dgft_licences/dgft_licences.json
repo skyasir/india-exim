@@ -1,0 +1,105 @@
+{
+ "app": "india_exim",
+ "charts": [],
+ "content": "[{\"id\": \"n_active_aut\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Active Authorisations\", \"col\": 4}}, {\"id\": \"n_eo_due_in_\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"EO Due in 90 Days\", \"col\": 4}}, {\"id\": \"n_duty_saved\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Duty Saved under Authorisations\", \"col\": 4}}, {\"id\": \"h_quick\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Quick Access</b></span>\", \"col\": 12}}, {\"id\": \"s_export_aut\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Export Authorisation\", \"col\": 4}}, {\"id\": \"s_bill_of_en\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Bill of Entry\", \"col\": 4}}, {\"id\": \"s_shipping_b\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Shipping Bill\", \"col\": 4}}, {\"id\": \"h_reports\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Reports</b></span>\", \"col\": 12}}, {\"id\": \"r_licence_re\", \"type\": \"card\", \"data\": {\"card_name\": \"Licence Reports\", \"col\": 4}}]",
+ "creation": "2026-11-21 10:00:00.000000",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "stamp",
+ "idx": 0,
+ "is_hidden": 0,
+ "label": "DGFT Licences",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Licence Reports",
+   "link_count": 1,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Authorisation Register",
+   "link_count": 0,
+   "link_to": "Authorisation Register",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2026-11-21 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "DGFT Licences",
+ "name": "DGFT Licences",
+ "number_cards": [
+  {
+   "label": "Active Authorisations",
+   "number_card_name": "Active Authorisations"
+  },
+  {
+   "label": "EO Due in 90 Days",
+   "number_card_name": "EO Due in 90 Days"
+  },
+  {
+   "label": "Duty Saved under Authorisations",
+   "number_card_name": "Duty Saved under Authorisations"
+  }
+ ],
+ "owner": "Administrator",
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [],
+ "restrict_to_domain": "",
+ "roles": [
+  {
+   "role": "EXIM Manager"
+  },
+  {
+   "role": "EXIM User"
+  },
+  {
+   "role": "System Manager"
+  },
+  {
+   "role": "Accounts Manager"
+  }
+ ],
+ "sequence_id": 35.0,
+ "shortcuts": [
+  {
+   "color": "Blue",
+   "doc_view": "List",
+   "format": "{} Active",
+   "label": "Export Authorisation",
+   "link_to": "Export Authorisation",
+   "stats_filter": "[[\"Export Authorisation\", \"status\", \"=\", \"Active\"]]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "format": "",
+   "label": "Bill of Entry",
+   "link_to": "Bill of Entry",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "format": "",
+   "label": "Shipping Bill",
+   "link_to": "Shipping Bill",
+   "stats_filter": "[]",
+   "type": "DocType"
+  }
+ ],
+ "title": "DGFT Licences",
+ "type": "Workspace"
+}

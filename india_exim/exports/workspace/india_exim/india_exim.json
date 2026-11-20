@@ -19,7 +19,7 @@
   }
  ],
  "content": "[{\"id\": \"onboarding\", \"type\": \"onboarding\", \"data\": {\"onboarding_name\": \"India EXIM Onboarding\", \"col\": 12}}, {\"id\": \"h_exports\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Exports</b></span>\", \"col\": 12}}, {\"id\": \"exports_this\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Exports This Year (FOB)\", \"col\": 4}}, {\"id\": \"awaiting_leo\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Awaiting LEO\", \"col\": 4}}, {\"id\": \"awaiting_rea\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Awaiting Realisation\", \"col\": 4}}, {\"id\": \"realisation_\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Realisation Overdue\", \"col\": 4}}, {\"id\": \"shipments_in\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Shipments in Progress\", \"col\": 4}}, {\"id\": \"shipments_wi\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Shipments with Pending Documents\", \"col\": 4}}, {\"id\": \"c_month\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Exports by Month (FOB INR)\", \"col\": 12}}, {\"id\": \"c_dest\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Exports by Destination\", \"col\": 6}}, {\"id\": \"c_real\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Export Realisation Status\", \"col\": 6}}, {\"id\": \"h_incent\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Incentives and GST Refunds</b></span>\", \"col\": 12}}, {\"id\": \"incentives_r\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Incentives Receivable\", \"col\": 3}}, {\"id\": \"shipping_bil\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Shipping Bills Not Yet Claimed\", \"col\": 3}}, {\"id\": \"rodtep_scrip\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"RoDTEP Scrip Balance\", \"col\": 3}}, {\"id\": \"days_to_lut_\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Days to LUT Expiry\", \"col\": 3}}, {\"id\": \"h_imports\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Imports</b></span>\", \"col\": 12}}, {\"id\": \"customs_duty\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Customs Duty This Year\", \"col\": 6}}, {\"id\": \"import_payme\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Import Payments Pending\", \"col\": 6}}, {\"id\": \"c_duty\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Customs Duty by Month\", \"col\": 12}}, {\"id\": \"h_reports\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Reports</b></span>\", \"col\": 12}}, {\"id\": \"r_export_rep\", \"type\": \"card\", \"data\": {\"card_name\": \"Export Reports\", \"col\": 3}}, {\"id\": \"r_incentive_\", \"type\": \"card\", \"data\": {\"card_name\": \"Incentive Reports\", \"col\": 3}}, {\"id\": \"r_import_rep\", \"type\": \"card\", \"data\": {\"card_name\": \"Import Reports\", \"col\": 3}}, {\"id\": \"r_shipment_r\", \"type\": \"card\", \"data\": {\"card_name\": \"Shipment Reports\", \"col\": 3}}, {\"id\": \"h_quick\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Quick Access</b></span>\", \"col\": 12}}, {\"id\": \"s_export_shi\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Export Shipment\", \"col\": 4}}, {\"id\": \"s_shipping_b\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Shipping Bill\", \"col\": 4}}, {\"id\": \"s_export_inc\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Export Incentive Claim\", \"col\": 4}}, {\"id\": \"s_rodtep_scr\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"RoDTEP Scrip\", \"col\": 4}}, {\"id\": \"s_bill_of_en\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Bill of Entry\", \"col\": 4}}, {\"id\": \"s_sales_invo\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Sales Invoice\", \"col\": 4}}, {\"id\": \"rs_export_rea\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Export Realisation Ageing\", \"col\": 4}}, {\"id\": \"rs_export_inc\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Export Incentive Register\", \"col\": 4}}, {\"id\": \"rs_pending_tr\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Pending Trade Documents\", \"col\": 4}}, {\"id\": \"rs_shipping_b\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Shipping Bill Register\", \"col\": 4}}, {\"id\": \"rs_shipment_t\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Shipment Tracker\", \"col\": 4}}, {\"id\": \"rs_customs_du\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Customs Duty Register\", \"col\": 4}}, {\"id\": \"rs_import_pay\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Import Payment Ageing\", \"col\": 4}}]",
- "creation": "2026-11-20 21:00:00.000000",
+ "creation": "2026-11-21 10:00:00.000000",
  "custom_blocks": [],
  "docstatus": 0,
  "doctype": "Workspace",
@@ -103,7 +103,7 @@
    "hidden": 0,
    "is_query_report": 0,
    "label": "Incentive Reports",
-   "link_count": 2,
+   "link_count": 3,
    "link_type": "DocType",
    "onboard": 0,
    "type": "Card Break"
@@ -124,6 +124,16 @@
    "label": "LUT Register",
    "link_count": 0,
    "link_to": "LUT Register",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Authorisation Register",
+   "link_count": 0,
+   "link_to": "Authorisation Register",
    "link_type": "Report",
    "onboard": 0,
    "type": "Link"
@@ -197,7 +207,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-11-20 21:00:00.000000",
+ "modified": "2026-11-21 10:00:00.000000",
  "modified_by": "Administrator",
  "module": "Exports",
  "name": "India EXIM",

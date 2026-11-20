@@ -7,6 +7,7 @@ from frappe.model.document import Document
 from frappe.utils import add_months, flt, getdate
 from india_compliance.gst_india.constants import PORT_CODES
 
+from india_exim.dgft_licences.authorisation import apply_to_shipping_bill, on_customs_document_change
 from india_exim.exim_setup.doctype.ad_code_registration.ad_code_registration import get_ad_code
 from india_exim.export_incentives.accounting import cancel_accrual, make_incentive_accrual
 from india_exim.fema.payments import update_shipping_bill_realisation
@@ -30,6 +31,7 @@ class ShippingBill(Document):
 			self.currency, self.shipping_bill_date, "Export"
 		)
 		self.calculate_fob()
+		apply_to_shipping_bill(self)
 		if not self.accrual_journal_entry:
 			self.calculate_incentives(self.leo_date or self.shipping_bill_date)
 		self.calculate_igst()
@@ -43,6 +45,7 @@ class ShippingBill(Document):
 		self.accrue_incentives_if_due()
 		update_shipping_bill_realisation(self.name)
 		update_shipment_from_shipping_bill(self)
+		on_customs_document_change(self)
 
 	def before_update_after_submit(self):
 		self.validate_dates()
@@ -58,6 +61,7 @@ class ShippingBill(Document):
 		cancel_accrual(self)
 		self.db_set("status", "Cancelled")
 		update_shipment_from_shipping_bill(self)
+		on_customs_document_change(self)
 
 	def update_sales_invoice_export_details(self):
 		"""Fill India Compliance's shipping bill fields (used in GSTR-1 Table 6A) when they are empty."""

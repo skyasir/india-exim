@@ -2,7 +2,7 @@
  "app": "india_exim",
  "charts": [],
  "content": "[{\"id\": \"onboarding\", \"type\": \"onboarding\", \"data\": {\"onboarding_name\": \"India EXIM Onboarding\", \"col\": 12}}, {\"id\": \"n_days_to_lu\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Days to LUT Expiry\", \"col\": 12}}, {\"id\": \"h_quick\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Quick Access</b></span>\", \"col\": 12}}, {\"id\": \"s_india_exim\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"India EXIM Settings\", \"col\": 4}}, {\"id\": \"s_letter_of_\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Letter of Undertaking\", \"col\": 4}}, {\"id\": \"s_customs_ex\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Customs Exchange Rate\", \"col\": 4}}, {\"id\": \"s_customs_ta\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Customs Tariff Item\", \"col\": 4}}, {\"id\": \"s_ad_code_re\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"AD Code Registration\", \"col\": 4}}, {\"id\": \"s_company\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Company\", \"col\": 4}}, {\"id\": \"s_country\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Country\", \"col\": 4}}, {\"id\": \"h_reports\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Reports</b></span>\", \"col\": 12}}, {\"id\": \"r_setup_repo\", \"type\": \"card\", \"data\": {\"card_name\": \"Setup Reports\", \"col\": 4}}]",
- "creation": "2026-11-20 21:00:00.000000",
+ "creation": "2026-11-21 10:00:00.000000",
  "custom_blocks": [],
  "docstatus": 0,
  "doctype": "Workspace",
@@ -33,7 +33,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-11-20 21:00:00.000000",
+ "modified": "2026-11-21 10:00:00.000000",
  "modified_by": "Administrator",
  "module": "EXIM Setup",
  "name": "EXIM Setup",
@@ -62,7 +62,7 @@
    "role": "Accounts Manager"
   }
  ],
- "sequence_id": 35.0,
+ "sequence_id": 36.0,
  "shortcuts": [
   {
    "color": "Grey",

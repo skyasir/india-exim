@@ -1,6 +1,7 @@
 import frappe
 from frappe import _
 
+from india_exim.dgft_licences.authorisation import set_igst_foregone
 from india_exim.imports.customs_duty import set_customs_duties
 
 
@@ -10,6 +11,8 @@ class BillOfEntryEXIM:
 	def before_validate(self):
 		set_customs_duties(self)
 		super().before_validate()
+		# IGST is worked out by India Compliance above; what was not charged under a licence is saved
+		set_igst_foregone(self)
 
 
 def on_submit(doc, method=None):
