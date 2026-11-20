@@ -1,0 +1,43 @@
+{#- Verified Gross Mass declaration under SOLAS Chapter VI Regulation 2 (Export Shipment),
+    one line per container, signed by the shipper. -#}
+{%- import "india_exim/templates/print_formats/exim_macros.html" as exim -%}
+{{ exim.style() }}
+<div class="exim">
+	<table>
+		<tr><td colspan="4" class="title">{{ _("VERIFIED GROSS MASS (VGM) DECLARATION") }}</td></tr>
+		<tr><td colspan="4" class="subtitle">{{ _("As per SOLAS Chapter VI, Regulation 2, and the DG Shipping guidelines") }}</td></tr>
+		<tr>
+			<td colspan="2" style="width: 50%">
+				<span class="label">{{ _("Shipper") }}</span><b>{{ doc.company }}</b>
+				{%- set iec = exim.company_iec(doc.company) %}{% if iec %}<br>{{ _("IEC") }}: {{ iec }}{% endif %}
+			</td>
+			{{ exim.cell(_("Booking No."), doc.booking_number) }}
+			{{ exim.cell(_("Shipping Line"), doc.shipping_line) }}
+		</tr>
+		<tr>
+			{{ exim.cell(_("Vessel / Voyage"), doc.vessel_voyage) }}
+			{{ exim.cell(_("Port of Loading"), doc.port_of_loading) }}
+			{{ exim.cell(_("Port of Discharge"), doc.port_of_discharge) }}
+			{{ exim.cell(_("Method of Weighing"), _("Method 1 / Method 2 (strike out one)")) }}
+		</tr>
+	</table>
+	<table class="gap">
+		<thead><tr><th style="width: 6%">{{ _("Sr.") }}</th><th>{{ _("Container No.") }}</th><th>{{ _("Size / Type") }}</th><th class="num">{{ _("Cargo Gross Wt. (kg)") }}</th><th class="num">{{ _("Verified Gross Mass (kg)") }}</th><th>{{ _("Weighbridge / Slip No.") }}</th></tr></thead>
+		<tbody>
+		{%- for c in doc.containers %}
+			<tr><td>{{ loop.index }}</td><td>{{ c.container_number or "" }}</td><td>{{ c.size_type or "" }}</td><td class="num">{{ frappe.format(c.gross_weight, {"fieldtype": "Float"}) if c.gross_weight else "" }}</td><td class="num"><b>{{ frappe.format(c.vgm_weight, {"fieldtype": "Float"}) if c.vgm_weight else "" }}</b></td><td></td></tr>
+		{%- else %}
+			<tr><td colspan="6">{{ _("No containers recorded on this shipment.") }}</td></tr>
+		{%- endfor %}
+		</tbody>
+	</table>
+	<table class="gap">
+		<tr><td class="letter" style="padding: 10px">
+			<p>{{ _("We declare that the verified gross mass stated above has been obtained in accordance with SOLAS and is correct. The VGM includes the cargo, packing, dunnage and the container's tare weight.") }}</p>
+			<table class="plain">
+				<tr><td style="width: 50%">{{ _("Name of authorised person") }}: ____________________<br>{{ _("Designation") }}: ____________________<br>{{ _("Contact") }}: ____________________</td>
+				<td style="text-align: right">{{ exim.signature(doc.company) }}</td></tr>
+			</table>
+		</td></tr>
+	</table>
+</div>

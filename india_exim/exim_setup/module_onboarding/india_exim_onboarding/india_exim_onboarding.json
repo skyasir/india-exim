@@ -1,0 +1,63 @@
+{
+ "allow_roles": [
+  {
+   "role": "EXIM Manager"
+  },
+  {
+   "role": "System Manager"
+  }
+ ],
+ "creation": "2026-11-20 21:00:00.000000",
+ "docstatus": 0,
+ "doctype": "Module Onboarding",
+ "idx": 0,
+ "is_complete": 0,
+ "modified": "2026-11-20 21:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "EXIM Setup",
+ "name": "India EXIM Onboarding",
+ "owner": "Administrator",
+ "steps": [
+  {
+   "is_optional": 0,
+   "step": "EXIM Company Details"
+  },
+  {
+   "is_optional": 0,
+   "step": "EXIM AD Code"
+  },
+  {
+   "is_optional": 0,
+   "step": "EXIM Letter of Undertaking"
+  },
+  {
+   "is_optional": 0,
+   "step": "EXIM Customs Exchange Rate"
+  },
+  {
+   "is_optional": 0,
+   "step": "EXIM Tariff Item"
+  },
+  {
+   "is_optional": 1,
+   "step": "EXIM Incentive Rate"
+  },
+  {
+   "is_optional": 0,
+   "step": "EXIM Export Customer"
+  },
+  {
+   "is_optional": 1,
+   "step": "EXIM Settings"
+  },
+  {
+   "is_optional": 1,
+   "step": "EXIM First Quotation"
+  },
+  {
+   "is_optional": 1,
+   "step": "EXIM Opening Balances"
+  }
+ ],
+ "title": "Set up India EXIM"
+}

@@ -72,5 +72,6 @@
 
 	frappe.ui.form.on("Quotation", handlers);
 	frappe.ui.form.on("Sales Order", handlers);
+	frappe.ui.form.on("Delivery Note", handlers);
 	frappe.ui.form.on("Sales Invoice", handlers);
 })();

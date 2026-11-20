@@ -69,7 +69,8 @@ def update_shipping_bill_realisation(name: str) -> None:
 		credited += settlement.credited * share
 
 	written_off = sum(flt(row.write_off_value) for row in shipping_bill.realisation_actions)
-	outstanding = flt(shipping_bill.total_invoice_value) - credited - realised - written_off
+	commission = flt(shipping_bill.get("agency_commission"))
+	outstanding = flt(shipping_bill.total_invoice_value) - credited - realised - written_off - commission
 	extensions = [
 		getdate(row.extended_upto) for row in shipping_bill.realisation_actions if row.extended_upto
 	]
@@ -85,6 +86,9 @@ def update_shipping_bill_realisation(name: str) -> None:
 	else:
 		status = "Pending"
 
+	from india_exim.export_incentives.accounting import sync_incentive_reversal
+
+	sync_incentive_reversal(shipping_bill, credited + written_off)
 	shipping_bill.db_set(
 		{
 			"realised_value": flt(realised, 2),

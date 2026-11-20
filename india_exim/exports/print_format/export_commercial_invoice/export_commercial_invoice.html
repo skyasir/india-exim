@@ -1,0 +1,132 @@
+{#- Export Commercial Invoice (Sales Invoice). Layout follows the customary Indian export invoice:
+    exporter, consignee and buyer, pre-carriage and ports, terms, marks and goods, with the GST
+    declaration for exports under LUT or on payment of IGST. -#}
+{%- import "india_exim/templates/print_formats/exim_macros.html" as exim -%}
+{%- set shipment_name = frappe.db.get_value("Export Shipment Invoice", {"sales_invoice": doc.name, "parenttype": "Export Shipment"}, "parent") -%}
+{%- set shipment = frappe.get_doc("Export Shipment", shipment_name) if shipment_name else None -%}
+{%- set orders = [] -%}
+{%- for item in doc.items if item.sales_order and item.sales_order not in orders %}{% set _ = orders.append(item.sales_order) %}{% endfor -%}
+{%- set igst_route = doc.get("is_export_with_gst") -%}
+{%- set lut = frappe.db.get_value("Letter of Undertaking", doc.exim_lut, ["arn", "valid_from", "valid_upto"], as_dict=True) if doc.get("exim_lut") else None -%}
+{{ exim.style() }}
+<div class="exim">
+	<table>
+		<tr><td colspan="4" class="title">{{ _("EXPORT INVOICE") }}</td></tr>
+		<tr><td colspan="4" class="subtitle">
+			{%- if igst_route -%}
+			{{ _("SUPPLY MEANT FOR EXPORT ON PAYMENT OF INTEGRATED TAX") }}
+			{%- else -%}
+			{{ _("SUPPLY MEANT FOR EXPORT UNDER BOND OR LETTER OF UNDERTAKING WITHOUT PAYMENT OF INTEGRATED TAX") }}
+			{%- if lut %}<br>{{ _("LUT ARN") }}: {{ lut.arn }} ({{ exim.date(lut.valid_from) }} {{ _("to") }} {{ exim.date(lut.valid_upto) }}){% endif %}
+			{%- endif -%}
+		</td></tr>
+		<tr>
+			<td colspan="2" rowspan="3" style="width: 50%">{{ exim.exporter(doc) }}</td>
+			{{ exim.cell(_("Invoice No."), doc.name) }}
+			{{ exim.cell(_("Date"), exim.date(doc.posting_date)) }}
+		</tr>
+		<tr>
+			{{ exim.cell(_("Exporter's Ref. (Order)"), orders | join(", ")) }}
+			{{ exim.cell(_("Buyer's Order No. & Date"), (doc.po_no or "") ~ ((" / " ~ exim.date(doc.po_date)) if doc.po_date else "")) }}
+		</tr>
+		<tr>
+			{{ exim.cell(_("Currency"), doc.currency) }}
+			{{ exim.cell(_("e-Invoice IRN"), doc.get("irn") or "") }}
+		</tr>
+		<tr>
+			<td colspan="2">{{ exim.party(doc, "consignee", _("Consignee")) }}</td>
+			<td colspan="2">{{ exim.party(doc, "buyer", _("Buyer (if other than consignee)"), fallback=False) }}</td>
+		</tr>
+		{%- if doc.get("exim_notify") %}
+		<tr><td colspan="4">{{ exim.party(doc, "notify", _("Notify Party")) }}</td></tr>
+		{%- endif %}
+		<tr>
+			{{ exim.cell(_("Country of Origin of Goods"), _("India")) }}
+			{{ exim.cell(_("Country of Final Destination"), doc.get("exim_destination_country")) }}
+			{{ exim.cell(_("Terms of Delivery (Incoterms 2020)"), (doc.incoterm or "") ~ (" " ~ doc.named_place if doc.get("named_place") else "")) }}
+			{{ exim.cell(_("Terms of Payment"), doc.get("exim_payment_terms_type") or doc.payment_terms_template) }}
+		</tr>
+		<tr>
+			{{ exim.cell(_("Pre-carriage By"), doc.get("exim_pre_carriage_by")) }}
+			{{ exim.cell(_("Place of Receipt by Pre-carrier"), doc.get("exim_place_of_receipt")) }}
+			{{ exim.cell(_("Vessel / Flight No."), shipment.vessel_voyage if shipment else "") }}
+			{{ exim.cell(_("Port of Loading"), doc.get("port_code")) }}
+		</tr>
+		<tr>
+			{{ exim.cell(_("Port of Discharge"), doc.get("exim_port_of_discharge")) }}
+			{{ exim.cell(_("Final Destination"), doc.get("exim_final_destination")) }}
+			{{ exim.cell(_("Shipping Bill No. & Date"), (doc.get("shipping_bill_number") or "") ~ ((" / " ~ exim.date(doc.shipping_bill_date)) if doc.get("shipping_bill_date") else "")) }}
+			{{ exim.cell(_("LC No. & Date"), (doc.get("exim_lc_number") or "") ~ ((" / " ~ exim.date(doc.exim_lc_date)) if doc.get("exim_lc_date") else "")) }}
+		</tr>
+		<tr>
+			<td colspan="2"><span class="label">{{ _("Marks & Nos. / Container No.") }}</span>
+				<span class="pre">{{ doc.get("exim_marks_and_numbers") or "" }}</span>
+				{%- if shipment %}{% for c in shipment.containers %}<br>{{ c.container_number or "" }}{% if c.seal_number %} / {{ _("Seal") }} {{ c.seal_number }}{% endif %}{% if c.size_type %} ({{ c.size_type }}){% endif %}{% endfor %}{% endif %}
+			</td>
+			{{ exim.cell(_("No. & Kind of Packages"), (shipment.total_packages ~ " " ~ _("packages")) if shipment and shipment.total_packages else "") }}
+			{{ exim.cell(_("Gross Weight"), (frappe.format(shipment.total_gross_weight, {"fieldtype": "Float"}) ~ " kg") if shipment and shipment.total_gross_weight else "") }}
+		</tr>
+	</table>
+
+	<table class="gap">
+		<thead>
+			<tr>
+				<th style="width: 4%">{{ _("Sr.") }}</th>
+				<th>{{ _("Description of Goods") }}</th>
+				<th style="width: 10%">{{ _("HS Code") }}</th>
+				<th class="num" style="width: 12%">{{ _("Quantity") }}</th>
+				<th class="num" style="width: 11%">{{ _("Rate") }} ({{ doc.currency }})</th>
+				{%- if igst_route %}<th class="num" style="width: 11%">{{ _("IGST") }} (INR)</th>{% endif %}
+				<th class="num" style="width: 13%">{{ _("Amount") }} ({{ doc.currency }})</th>
+			</tr>
+		</thead>
+		<tbody>
+			{%- for item in doc.items %}
+			<tr>
+				<td>{{ loop.index }}</td>
+				<td><b>{{ item.item_name }}</b>{% if item.description and item.description != item.item_name %}<br>{{ item.description }}{% endif %}</td>
+				<td>{{ exim.hs_code(item) }}</td>
+				<td class="num">{{ frappe.format(item.qty, {"fieldtype": "Float"}) }} {{ item.uom }}</td>
+				<td class="num">{{ frappe.format(item.rate, {"fieldtype": "Currency", "options": "currency"}, doc) }}</td>
+				{%- if igst_route %}<td class="num">{{ frappe.utils.fmt_money(item.get("igst_amount") or 0, currency="INR") }}</td>{% endif %}
+				<td class="num">{{ frappe.format(item.amount, {"fieldtype": "Currency", "options": "currency"}, doc) }}</td>
+			</tr>
+			{%- endfor %}
+		</tbody>
+		<tfoot>
+			{%- set span = 6 if igst_route else 5 %}
+			{%- set freight = doc.get("exim_freight") or 0 %}
+			{%- set insurance = doc.get("exim_insurance") or 0 %}
+			{%- if freight or insurance %}
+			<tr><td colspan="{{ span }}" class="num">{{ _("FOB Value") }}</td><td class="num">{{ exim.money(doc.total - freight - insurance, doc.currency) }}</td></tr>
+			<tr><td colspan="{{ span }}" class="num">{{ _("Freight") }}</td><td class="num">{{ exim.money(freight, doc.currency) }}</td></tr>
+			<tr><td colspan="{{ span }}" class="num">{{ _("Insurance") }}</td><td class="num">{{ exim.money(insurance, doc.currency) }}</td></tr>
+			{%- endif %}
+			{%- for tax in doc.taxes if tax.tax_amount %}
+			<tr><td colspan="{{ span }}" class="num">{{ tax.description }}</td><td class="num">{{ tax.get_formatted("tax_amount") }}</td></tr>
+			{%- endfor %}
+			{%- if doc.discount_amount %}
+			<tr><td colspan="{{ span }}" class="num">{{ _("Discount") }}</td><td class="num">- {{ doc.get_formatted("discount_amount") }}</td></tr>
+			{%- endif %}
+			<tr>
+				<th colspan="{{ span }}" class="num">{{ _("Total") }} {{ doc.incoterm or "" }} ({{ doc.currency }})</th>
+				<th class="num">{{ doc.get_formatted("rounded_total") if doc.rounded_total else doc.get_formatted("grand_total") }}</th>
+			</tr>
+			<tr><td colspan="{{ span + 1 }}"><span class="label">{{ _("Amount in Words") }}</span>{{ frappe.utils.money_in_words(doc.rounded_total or doc.grand_total, doc.currency) }}</td></tr>
+			{%- if igst_route %}
+			<tr><td colspan="{{ span + 1 }}"><span class="label">{{ _("IGST Paid") }}</span>{{ frappe.utils.fmt_money(doc.base_total_taxes_and_charges, currency="INR") }}</td></tr>
+			{%- endif %}
+		</tfoot>
+	</table>
+
+	<table class="gap">
+		<tr>
+			<td style="width: 60%">
+				<span class="label">{{ _("Declaration") }}</span>
+				{{ _("We declare that this invoice shows the actual price of the goods described and that all particulars are true and correct.") }}
+				{%- if doc.terms %}<br><br><span class="label">{{ _("Terms") }}</span>{{ doc.terms }}{% endif %}
+			</td>
+			<td style="text-align: right">{{ exim.signature(doc.company) }}</td>
+		</tr>
+	</table>
+</div>

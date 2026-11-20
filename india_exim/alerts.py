@@ -19,6 +19,7 @@ CLOSED_SHIPMENT_STATUSES = ("Delivered", "Closed", "Cancelled")
 def send_daily_alerts() -> None:
 	notify_document_deadlines()
 	notify_missing_customs_exchange_rate()
+	notify_export_advances_due()
 
 
 def notify_document_deadlines() -> None:
@@ -104,3 +105,43 @@ def notify_missing_customs_exchange_rate() -> None:
 			),
 		},
 	)
+
+
+def notify_export_advances_due() -> None:
+	"""Advances from overseas buyers that must be shipped against within 30 days, or whose
+	shipment period ended yesterday (RBI rule, period set in India EXIM Settings). One alert per advance and milestone."""
+	from india_exim.exports.report.export_advance_register.export_advance_register import get_data
+
+	rows = [row for row in get_data(frappe._dict()) if row.days_left in (30, -1)]
+	if not rows:
+		return
+	users = sorted(set(get_users_with_role("EXIM Manager")) | set(get_users_with_role("Accounts Manager")))
+	if not users:
+		return
+	for row in rows:
+		amount = frappe.format_value(row.unadjusted, {"fieldtype": "Currency"}, currency=row.currency)
+		subject = (
+			_("Ship against advance {0} from {1} ({2}) by {3}").format(
+				row.payment_entry,
+				row.customer,
+				amount,
+				frappe.format_value(row.ship_by, {"fieldtype": "Date"}),
+			)
+			if row.days_left == 30
+			else _("Shipment period over for advance {0} from {1} ({2} unadjusted)").format(
+				row.payment_entry, row.customer, amount
+			)
+		)
+		enqueue_create_notification(
+			users,
+			{
+				"type": "Alert",
+				"document_type": "Payment Entry",
+				"document_name": row.payment_entry,
+				"subject": subject,
+				"email_content": _(
+					"Goods against an export advance must be shipped within the period in India EXIM"
+					" Settings, or the advance refunded with the AD bank's approval."
+				),
+			},
+		)

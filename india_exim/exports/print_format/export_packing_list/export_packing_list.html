@@ -1,0 +1,100 @@
+{#- Export Packing List (Sales Invoice). No prices. Weights per line come from the item's weight
+    per unit; packages, container and seal numbers come from the Export Shipment. -#}
+{%- import "india_exim/templates/print_formats/exim_macros.html" as exim -%}
+{%- set shipment_name = frappe.db.get_value("Export Shipment Invoice", {"sales_invoice": doc.name, "parenttype": "Export Shipment"}, "parent") -%}
+{%- set shipment = frappe.get_doc("Export Shipment", shipment_name) if shipment_name else None -%}
+{{ exim.style() }}
+<div class="exim">
+	<table>
+		<tr><td colspan="4" class="title">{{ _("PACKING LIST") }}</td></tr>
+		<tr>
+			<td colspan="2" rowspan="2" style="width: 50%">{{ exim.exporter(doc) }}</td>
+			{{ exim.cell(_("Invoice No."), doc.name) }}
+			{{ exim.cell(_("Date"), exim.date(doc.posting_date)) }}
+		</tr>
+		<tr>
+			{{ exim.cell(_("Buyer's Order No."), doc.po_no) }}
+			{{ exim.cell(_("Shipment"), shipment_name) }}
+		</tr>
+		<tr>
+			<td colspan="2">{{ exim.party(doc, "consignee", _("Consignee")) }}</td>
+			<td colspan="2">{{ exim.party(doc, "notify", _("Notify Party"), fallback=False) }}</td>
+		</tr>
+		<tr>
+			{{ exim.cell(_("Port of Loading"), doc.get("port_code")) }}
+			{{ exim.cell(_("Port of Discharge"), doc.get("exim_port_of_discharge")) }}
+			{{ exim.cell(_("Final Destination"), doc.get("exim_final_destination")) }}
+			{{ exim.cell(_("Vessel / Voyage"), shipment.vessel_voyage if shipment else "") }}
+		</tr>
+		<tr>
+			<td colspan="4"><span class="label">{{ _("Marks & Nos.") }}</span><span class="pre">{{ doc.get("exim_marks_and_numbers") or (shipment.marks_and_numbers if shipment else "") or "" }}</span></td>
+		</tr>
+	</table>
+
+	<table class="gap">
+		<thead>
+			<tr>
+				<th style="width: 4%">{{ _("Sr.") }}</th>
+				<th>{{ _("Description of Goods") }}</th>
+				<th style="width: 11%">{{ _("HS Code") }}</th>
+				<th class="num" style="width: 14%">{{ _("Quantity") }}</th>
+				<th class="num" style="width: 14%">{{ _("Net Weight") }}</th>
+			</tr>
+		</thead>
+		<tbody>
+			{%- set total_net = namespace(value=0) %}
+			{%- for item in doc.items %}
+			{%- set total_net.value = total_net.value + (item.total_weight or 0) %}
+			<tr>
+				<td>{{ loop.index }}</td>
+				<td><b>{{ item.item_name }}</b>{% if item.description and item.description != item.item_name %}<br>{{ item.description }}{% endif %}</td>
+				<td>{{ exim.hs_code(item) }}</td>
+				<td class="num">{{ frappe.format(item.qty, {"fieldtype": "Float"}) }} {{ item.uom }}</td>
+				<td class="num">{% if item.total_weight %}{{ frappe.format(item.total_weight, {"fieldtype": "Float"}) }} {{ item.weight_uom or "" }}{% endif %}</td>
+			</tr>
+			{%- endfor %}
+			{%- if total_net.value %}
+			<tr><th colspan="4" class="num">{{ _("Total Net Weight") }}</th><th class="num">{{ frappe.format(total_net.value, {"fieldtype": "Float"}) }}</th></tr>
+			{%- endif %}
+		</tbody>
+	</table>
+
+	{%- if shipment and shipment.containers %}
+	<table class="gap">
+		<thead>
+			<tr>
+				<th>{{ _("Container No.") }}</th>
+				<th>{{ _("Seal No.") }}</th>
+				<th>{{ _("Size / Type") }}</th>
+				<th class="num">{{ _("Packages") }}</th>
+				<th class="num">{{ _("Net Wt. (kg)") }}</th>
+				<th class="num">{{ _("Gross Wt. (kg)") }}</th>
+				<th class="num">{{ _("Volume (CBM)") }}</th>
+			</tr>
+		</thead>
+		<tbody>
+			{%- for c in shipment.containers %}
+			<tr>
+				<td>{{ c.container_number or "" }}</td>
+				<td>{{ c.seal_number or "" }}</td>
+				<td>{{ c.size_type or "" }}</td>
+				<td class="num">{{ c.packages or "" }}</td>
+				<td class="num">{{ frappe.format(c.net_weight, {"fieldtype": "Float"}) if c.net_weight else "" }}</td>
+				<td class="num">{{ frappe.format(c.gross_weight, {"fieldtype": "Float"}) if c.gross_weight else "" }}</td>
+				<td class="num">{{ frappe.format(c.volume_cbm, {"fieldtype": "Float"}) if c.volume_cbm else "" }}</td>
+			</tr>
+			{%- endfor %}
+			<tr>
+				<th colspan="3" class="num">{{ _("Total") }}</th>
+				<th class="num">{{ shipment.total_packages or "" }}</th>
+				<th class="num">{{ frappe.format(shipment.containers | sum(attribute="net_weight"), {"fieldtype": "Float"}) }}</th>
+				<th class="num">{{ frappe.format(shipment.total_gross_weight, {"fieldtype": "Float"}) }}</th>
+				{%- set volume = shipment.containers | sum(attribute="volume_cbm") %}
+				<th class="num">{{ frappe.format(volume, {"fieldtype": "Float"}) if volume else "" }}</th>
+			</tr>
+		</tbody>
+	</table>
+	{%- endif %}
+
+	<table class="gap plain"><tr><td style="text-align: right">{{ exim.signature(doc.company) }}</td></tr></table>
+</div>

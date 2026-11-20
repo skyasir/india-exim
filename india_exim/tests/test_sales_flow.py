@@ -2,6 +2,8 @@
 
 import frappe
 from erpnext.selling.doctype.quotation.quotation import make_sales_order
+from erpnext.selling.doctype.sales_order.sales_order import make_delivery_note
+from erpnext.stock.doctype.delivery_note.delivery_note import make_sales_invoice
 from frappe.tests import IntegrationTestCase
 from frappe.utils import add_days, getdate
 
@@ -10,6 +12,7 @@ from india_exim.tests.fixtures import (
 	FOREIGN_CUSTOMER,
 	TARIFF_CODE,
 	make_export_item,
+	make_lut,
 	make_party_account,
 	setup_exim_company,
 )
@@ -47,6 +50,7 @@ class TestSalesFlow(IntegrationTestCase):
 	def setUpClass(cls):
 		super().setUpClass()
 		setup_exim_company()
+		make_lut()
 		frappe.db.set_single_value("Selling Settings", "enable_proforma_invoice", 1)
 
 	def test_quotation_ticks_is_export_from_customer(self):
@@ -95,3 +99,47 @@ class TestSalesFlow(IntegrationTestCase):
 		# only the proformed quantity: 4 x 100
 		self.assertIn("400", html)
 		self.assertNotIn("1,000", html)
+
+	def test_export_details_flow_through_delivery_note_to_invoice(self):
+		quotation = make_export_quotation(**EXPORT_DETAILS)
+		quotation.submit()
+		order = make_sales_order(quotation.name)
+		order.delivery_date = add_days(getdate(), 30)
+		order.insert(ignore_permissions=True)
+		order.submit()
+
+		delivery = make_delivery_note(order.name)
+		delivery.insert(ignore_permissions=True)
+		self.assertEqual(delivery.exim_is_export, 1)
+		for fieldname, value in EXPORT_DETAILS.items():
+			self.assertEqual(delivery.get(fieldname), value, fieldname)
+
+		delivery.submit()
+
+		# a delivery note without the details (made before the tab existed) still passes them on
+		frappe.db.set_value("Delivery Note", delivery.name, dict.fromkeys(EXPORT_DETAILS))
+		invoice = make_sales_invoice(delivery.name)
+		invoice.debit_to = make_party_account("USD", "Receivable")
+		invoice.insert(ignore_permissions=True)
+		for fieldname, value in EXPORT_DETAILS.items():
+			self.assertEqual(invoice.get(fieldname), value, fieldname)
+
+	def test_shipping_bill_from_shipment_deducts_freight_and_claims_incentives(self):
+		from india_exim.exports.doctype.export_shipment.export_shipment import make_shipping_bill
+		from india_exim.overrides.sales_invoice import make_export_shipment
+		from india_exim.tests.fixtures import make_export_invoice
+
+		invoice = make_export_invoice(
+			qty=10, rate=100, incoterm="CIF", exim_freight=50, exim_insurance=10, do_not_submit=True
+		)
+		invoice.exim_is_export = 1
+		invoice.save()
+		invoice.submit()
+		shipment = make_export_shipment(invoice.name)
+		shipment.insert(ignore_permissions=True)
+
+		shipping_bill = make_shipping_bill(shipment.name)
+		self.assertEqual((shipping_bill.freight, shipping_bill.insurance), (50, 10))
+		# rows reach the browser as plain values, so the claim ticks must be set, not defaulted
+		row = shipping_bill.items[0].as_dict()
+		self.assertEqual((row.claim_drawback, row.claim_rodtep), (1, 1))

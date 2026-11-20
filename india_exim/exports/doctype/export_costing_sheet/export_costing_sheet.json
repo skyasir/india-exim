@@ -1,0 +1,375 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "naming_series:",
+ "creation": "2026-11-19 20:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "company",
+  "customer",
+  "quotation",
+  "column_break_head",
+  "posting_date",
+  "destination_country",
+  "incoterm",
+  "currency",
+  "exchange_rate",
+  "items_section",
+  "items",
+  "fob_costs_section",
+  "packing",
+  "inland_haulage",
+  "column_break_fob",
+  "port_charges",
+  "other_fob_costs",
+  "main_carriage_section",
+  "freight",
+  "column_break_carriage",
+  "insurance",
+  "percentages_section",
+  "bank_charges_percent",
+  "ecgc_premium_percent",
+  "column_break_pct",
+  "margin_percent",
+  "include_incentives",
+  "results_section",
+  "total_exw",
+  "total_fob_cost",
+  "total_cost_at_basis",
+  "total_incentives",
+  "column_break_results",
+  "total_price_inr",
+  "total_price_fc",
+  "margin_amount",
+  "remarks"
+ ],
+ "fields": [
+  {
+   "default": "ECS-.YYYY.-.#####",
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "ECS-.YYYY.-.#####",
+   "print_hide": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "reqd": 1
+  },
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Customer",
+   "options": "Customer"
+  },
+  {
+   "description": "Rates can be copied into this quotation while it is a draft.",
+   "fieldname": "quotation",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Quotation",
+   "options": "Quotation"
+  },
+  {
+   "fieldname": "column_break_head",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Today",
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "label": "Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "destination_country",
+   "fieldtype": "Link",
+   "label": "Destination Country",
+   "options": "Country"
+  },
+  {
+   "default": "FOB",
+   "fieldname": "incoterm",
+   "fieldtype": "Link",
+   "label": "Incoterm (Price Basis)",
+   "options": "Incoterm",
+   "reqd": 1
+  },
+  {
+   "fieldname": "currency",
+   "fieldtype": "Link",
+   "label": "Quote Currency",
+   "options": "Currency",
+   "reqd": 1
+  },
+  {
+   "description": "Use a forward rate if one is booked.",
+   "fieldname": "exchange_rate",
+   "fieldtype": "Float",
+   "label": "Exchange Rate (INR per unit)",
+   "precision": "4",
+   "reqd": 1
+  },
+  {
+   "fieldname": "items_section",
+   "fieldtype": "Section Break",
+   "label": "Goods"
+  },
+  {
+   "fieldname": "items",
+   "fieldtype": "Table",
+   "label": "Items",
+   "options": "Export Costing Item",
+   "reqd": 1
+  },
+  {
+   "fieldname": "fob_costs_section",
+   "fieldtype": "Section Break",
+   "label": "Costs up to FOB (INR, for the whole shipment)"
+  },
+  {
+   "fieldname": "packing",
+   "fieldtype": "Currency",
+   "label": "Export Packing",
+   "options": "Company:company:default_currency"
+  },
+  {
+   "fieldname": "inland_haulage",
+   "fieldtype": "Currency",
+   "label": "Inland Haulage to Port",
+   "options": "Company:company:default_currency"
+  },
+  {
+   "fieldname": "column_break_fob",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "port_charges",
+   "fieldtype": "Currency",
+   "label": "CHA, THC and Port Charges",
+   "options": "Company:company:default_currency"
+  },
+  {
+   "fieldname": "other_fob_costs",
+   "fieldtype": "Currency",
+   "label": "Other Costs (inspection, certificates)",
+   "options": "Company:company:default_currency"
+  },
+  {
+   "fieldname": "main_carriage_section",
+   "fieldtype": "Section Break",
+   "label": "Main Carriage (INR)"
+  },
+  {
+   "description": "Counted in the price for CFR, CPT, CIF, CIP and D-terms.",
+   "fieldname": "freight",
+   "fieldtype": "Currency",
+   "label": "Ocean / Air Freight",
+   "options": "Company:company:default_currency"
+  },
+  {
+   "fieldname": "column_break_carriage",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "Counted in the price for CIF, CIP and D-terms.",
+   "fieldname": "insurance",
+   "fieldtype": "Currency",
+   "label": "Marine Insurance",
+   "options": "Company:company:default_currency"
+  },
+  {
+   "fieldname": "percentages_section",
+   "fieldtype": "Section Break",
+   "label": "Charges on the Price and Margin"
+  },
+  {
+   "default": "0.25",
+   "fieldname": "bank_charges_percent",
+   "fieldtype": "Percent",
+   "label": "Bank Charges %"
+  },
+  {
+   "fieldname": "ecgc_premium_percent",
+   "fieldtype": "Percent",
+   "label": "ECGC Premium %"
+  },
+  {
+   "fieldname": "column_break_pct",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "10",
+   "fieldname": "margin_percent",
+   "fieldtype": "Percent",
+   "label": "Target Margin %",
+   "reqd": 1
+  },
+  {
+   "default": "1",
+   "description": "Lower the price by the Drawback and RoDTEP expected on the FOB value.",
+   "fieldname": "include_incentives",
+   "fieldtype": "Check",
+   "label": "Pass Incentives to the Buyer"
+  },
+  {
+   "fieldname": "results_section",
+   "fieldtype": "Section Break",
+   "label": "Result"
+  },
+  {
+   "fieldname": "total_exw",
+   "fieldtype": "Currency",
+   "label": "EXW Total",
+   "options": "Company:company:default_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_fob_cost",
+   "fieldtype": "Currency",
+   "label": "FOB Cost",
+   "options": "Company:company:default_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_cost_at_basis",
+   "fieldtype": "Currency",
+   "label": "Cost at Incoterm",
+   "options": "Company:company:default_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_incentives",
+   "fieldtype": "Currency",
+   "label": "Incentives Expected",
+   "options": "Company:company:default_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_results",
+   "fieldtype": "Column Break"
+  },
+  {
+   "bold": 1,
+   "fieldname": "total_price_inr",
+   "fieldtype": "Currency",
+   "label": "Price (INR)",
+   "options": "Company:company:default_currency",
+   "read_only": 1
+  },
+  {
+   "bold": 1,
+   "fieldname": "total_price_fc",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Price",
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "margin_amount",
+   "fieldtype": "Currency",
+   "label": "Margin (INR)",
+   "options": "Company:company:default_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "remarks",
+   "fieldtype": "Small Text",
+   "label": "Remarks"
+  }
+ ],
+ "links": [],
+ "modified": "2026-11-19 20:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Exports",
+ "name": "Export Costing Sheet",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "EXIM Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "EXIM User",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales User",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts User",
+   "share": 1
+  }
+ ],
+ "search_fields": "customer,quotation",
+ "show_title_field_in_link": 1,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "customer",
+ "track_changes": 1
+}

@@ -1,0 +1,28 @@
+{
+ "content": null,
+ "creation": "2026-11-20 21:00:00.000000",
+ "docstatus": 0,
+ "doctype": "Page",
+ "idx": 0,
+ "modified": "2026-11-20 21:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Trade Documents",
+ "name": "shipment-control-tower",
+ "owner": "Administrator",
+ "page_name": "shipment-control-tower",
+ "roles": [
+  {
+   "role": "EXIM Manager"
+  },
+  {
+   "role": "EXIM User"
+  },
+  {
+   "role": "System Manager"
+  }
+ ],
+ "script": null,
+ "standard": "Yes",
+ "style": null,
+ "title": "Shipment Control Tower"
+}

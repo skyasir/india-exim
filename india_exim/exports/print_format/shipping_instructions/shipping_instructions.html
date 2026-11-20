@@ -1,0 +1,92 @@
+{#- Shipping Instructions to the freight forwarder / CHA (Export Shipment): what goes on the
+    transport document and how the cargo is to be shipped. Parties come from the first invoice. -#}
+{%- import "india_exim/templates/print_formats/exim_macros.html" as exim -%}
+{%- set invoices = [] -%}
+{%- for row in doc.invoices %}{% set _ = invoices.append(frappe.get_doc("Sales Invoice", row.sales_invoice)) %}{% endfor -%}
+{%- set first = invoices[0] if invoices else None -%}
+{%- set prepaid = doc.incoterm in ("CFR", "CIF", "CPT", "CIP", "DAP", "DPU", "DDP") -%}
+{%- set forwarder = doc.freight_forwarder or doc.cha -%}
+{{ exim.style() }}
+<div class="exim">
+	<table>
+		<tr><td colspan="4" class="title">{{ _("SHIPPING INSTRUCTIONS") }}</td></tr>
+		<tr>
+			<td colspan="2" style="width: 50%">
+				<span class="label">{{ _("To (Forwarder / CHA)") }}</span>
+				<b>{{ frappe.db.get_value("Supplier", forwarder, "supplier_name") if forwarder else "__________________" }}</b>
+				{%- if doc.cha and doc.freight_forwarder %}<br>{{ _("CHA") }}: {{ frappe.db.get_value("Supplier", doc.cha, "supplier_name") }}{% endif %}
+			</td>
+			{{ exim.cell(_("Our Ref."), doc.name) }}
+			{{ exim.cell(_("Date"), exim.date(frappe.utils.today())) }}
+		</tr>
+		<tr>
+			<td colspan="2">
+				<span class="label">{{ _("Shipper") }}</span><b>{{ doc.company }}</b><br>
+				<span class="pre">{{ first.company_address_display if first else "" }}</span>
+				{%- set iec = exim.company_iec(doc.company) %}{% if iec %}<br>{{ _("IEC") }}: {{ iec }}{% endif %}
+			</td>
+			{{ exim.cell(_("Booking No."), doc.booking_number) }}
+			{{ exim.cell(_("Shipping Line / Vessel"), (doc.shipping_line or "") ~ (" / " ~ doc.vessel_voyage if doc.vessel_voyage else "")) }}
+		</tr>
+		<tr>
+			<td colspan="2">{% if first %}{{ exim.party(first, "consignee", _("Consignee (as on BL)")) }}{% else %}<span class="label">{{ _("Consignee") }}</span>{{ doc.customer_name }}{% endif %}</td>
+			<td colspan="2">{% if first %}{{ exim.party(first, "notify", _("Notify Party"), fallback=False) }}{% endif %}</td>
+		</tr>
+		<tr>
+			{{ exim.cell(_("Port of Loading"), doc.port_of_loading) }}
+			{{ exim.cell(_("Port of Discharge"), doc.port_of_discharge) }}
+			{{ exim.cell(_("Final Destination"), (doc.final_destination or "") ~ (", " ~ doc.destination_country if doc.destination_country else "")) }}
+			{{ exim.cell(_("Mode"), doc.mode_of_transport) }}
+		</tr>
+		<tr>
+			{{ exim.cell(_("Freight"), _("PREPAID") if prepaid else _("COLLECT")) }}
+			{{ exim.cell(_("Incoterm"), doc.incoterm) }}
+			{{ exim.cell(_("Transport Document"), doc.bl_type or _("Original BL")) }}
+			{{ exim.cell(_("Transhipment"), _("Allowed") if doc.transhipment_allowed else _("Not allowed")) }}
+		</tr>
+		<tr>
+			{{ exim.cell(_("Document Cut-off"), frappe.format(doc.cutoff_documents, {"fieldtype": "Datetime"}) if doc.cutoff_documents else "") }}
+			{{ exim.cell(_("VGM Cut-off"), frappe.format(doc.cutoff_vgm, {"fieldtype": "Datetime"}) if doc.cutoff_vgm else "") }}
+			{{ exim.cell(_("Gate-in Cut-off"), frappe.format(doc.cutoff_gate_in, {"fieldtype": "Datetime"}) if doc.cutoff_gate_in else "") }}
+			{{ exim.cell(_("ETD"), exim.date(doc.etd)) }}
+		</tr>
+	</table>
+
+	<table class="gap">
+		<thead><tr><th>{{ _("Marks & Nos.") }}</th><th>{{ _("Description of Goods") }}</th><th style="width: 11%">{{ _("HS Code") }}</th><th class="num" style="width: 14%">{{ _("Quantity") }}</th></tr></thead>
+		<tbody>
+		{%- for invoice in invoices %}{% for item in invoice.items %}
+			<tr>
+				<td>{% if loop.first %}<span class="pre">{{ doc.marks_and_numbers or invoice.get("exim_marks_and_numbers") or "" }}</span>{% endif %}</td>
+				<td>{{ item.item_name }}</td>
+				<td>{{ exim.hs_code(item) }}</td>
+				<td class="num">{{ frappe.format(item.qty, {"fieldtype": "Float"}) }} {{ item.uom }}</td>
+			</tr>
+		{%- endfor %}{% endfor %}
+		</tbody>
+	</table>
+
+	<table class="gap">
+		<thead><tr><th>{{ _("Container No.") }}</th><th>{{ _("Seal No.") }}</th><th>{{ _("Size / Type") }}</th><th>{{ _("Stuffing") }}</th><th class="num">{{ _("Packages") }}</th><th class="num">{{ _("Gross Wt. (kg)") }}</th><th class="num">{{ _("VGM (kg)") }}</th></tr></thead>
+		<tbody>
+		{%- for c in doc.containers %}
+			<tr><td>{{ c.container_number or "" }}</td><td>{{ c.seal_number or "" }}</td><td>{{ c.size_type or "" }}</td><td>{{ c.stuffing or "" }}</td><td class="num">{{ c.packages or "" }}</td><td class="num">{{ frappe.format(c.gross_weight, {"fieldtype": "Float"}) if c.gross_weight else "" }}</td><td class="num">{{ frappe.format(c.vgm_weight, {"fieldtype": "Float"}) if c.vgm_weight else "" }}</td></tr>
+		{%- else %}
+			<tr><td colspan="7">{{ _("Containers to be advised.") }}</td></tr>
+		{%- endfor %}
+		</tbody>
+	</table>
+
+	<table class="gap">
+		<tr><td>
+			<span class="label">{{ _("Special Instructions") }}</span>
+			{%- if doc.is_dangerous_goods %}{{ _("Dangerous goods — UN No. {0}. DG declaration and MSDS attached.").format(doc.un_number or "-") }}<br>{% endif %}
+			{%- if doc.is_reefer %}{{ _("Reefer cargo — set temperature {0}.").format(doc.temperature_setting or "-") }}<br>{% endif %}
+			{%- if first and first.get("exim_lc_number") %}{{ _("Shipment under LC No. {0}: the transport document must match the LC terms exactly.").format(first.exim_lc_number) }}<br>{% endif %}
+			{%- if first and first.get("exim_latest_shipment_date") %}{{ _("Latest shipment date: {0}.").format(exim.date(first.exim_latest_shipment_date)) }}<br>{% endif %}
+			{{ _("Please send the draft transport document for our approval before release.") }}
+			{%- if doc.remarks %}<br>{{ doc.remarks }}{% endif %}
+		</td></tr>
+	</table>
+	<table class="gap plain"><tr><td style="text-align: right">{{ exim.signature(doc.company) }}</td></tr></table>
+</div>

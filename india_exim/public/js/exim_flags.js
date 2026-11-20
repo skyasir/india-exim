@@ -5,6 +5,7 @@
 		Customer: "exim_is_export",
 		Quotation: "exim_is_export",
 		"Sales Order": "exim_is_export",
+		"Delivery Note": "exim_is_export",
 		"Sales Invoice": "exim_is_export",
 		Supplier: "exim_is_import",
 		"Purchase Invoice": "exim_is_import",

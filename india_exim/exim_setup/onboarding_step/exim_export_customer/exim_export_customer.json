@@ -1,0 +1,21 @@
+{
+ "action": "Go to Page",
+ "action_label": "Open",
+ "creation": "2026-11-20 21:00:00.000000",
+ "description": "Tick **Export Customer** on each overseas buyer and fill the Export Details tab: document instructions, denied-party screening and ECGC limit.",
+ "docstatus": 0,
+ "doctype": "Onboarding Step",
+ "idx": 6,
+ "is_complete": 0,
+ "is_single": 0,
+ "is_skipped": 0,
+ "modified": "2026-11-20 21:00:00.000000",
+ "modified_by": "Administrator",
+ "name": "EXIM Export Customer",
+ "owner": "Administrator",
+ "path": "List/Customer",
+ "show_form_tour": 0,
+ "show_full_form": 1,
+ "title": "Set up an overseas buyer",
+ "validate_action": 1
+}

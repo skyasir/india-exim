@@ -14,14 +14,20 @@
   "fema_section",
   "export_realisation_months",
   "import_payment_months",
+  "export_advance_shipment_months",
   "column_break_fema",
   "realisation_alert_days",
   "gst_section",
   "lut_check",
+  "merchant_export_days",
   "imports_section",
   "capitalise_customs_duty",
   "documents_section",
-  "checklist_gate"
+  "checklist_gate",
+  "controls_section",
+  "pre_shipment_checks",
+  "column_break_controls",
+  "buyer_screening_months"
  ],
  "fields": [
   {
@@ -76,6 +82,13 @@
    "reqd": 1
   },
   {
+   "fieldname": "export_advance_shipment_months",
+   "fieldtype": "Int",
+   "label": "Ship Against Advance Within (Months)",
+   "default": "12",
+   "description": "Period allowed by the RBI's Master Direction (or the export contract) to ship goods against an advance received. RBI has changed this period by notification, so check the current rule."
+  },
+  {
    "fieldname": "column_break_fema",
    "fieldtype": "Column Break"
   },
@@ -97,6 +110,13 @@
    "fieldtype": "Select",
    "label": "Check LUT on Zero-rated Exports",
    "options": "Block\nWarn\nOff"
+  },
+  {
+   "fieldname": "merchant_export_days",
+   "fieldtype": "Int",
+   "label": "Merchant Export Within (Days)",
+   "default": "90",
+   "description": "Goods bought at 0.1% GST for merchant export must be exported within this period from the supplier's invoice date."
   },
   {
    "fieldname": "imports_section",
@@ -121,11 +141,36 @@
    "fieldtype": "Select",
    "label": "When Mandatory Documents Are Pending",
    "options": "Warn\nBlock\nOff"
+  },
+  {
+   "fieldname": "controls_section",
+   "fieldtype": "Section Break",
+   "label": "Pre-shipment Controls",
+   "description": "Checks on quotations, sales orders and export invoices: destination country risk, export policy of the goods (ITC-HS) and buyer screening."
+  },
+  {
+   "fieldname": "pre_shipment_checks",
+   "fieldtype": "Select",
+   "label": "Pre-shipment Checks",
+   "options": "Off\nWarn\nBlock",
+   "default": "Warn",
+   "description": "Block stops a sanctioned destination, prohibited goods or an unscreened buyer; Warn only shows a message. Restricted goods and SCOMET items always warn."
+  },
+  {
+   "fieldname": "column_break_controls",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "buyer_screening_months",
+   "fieldtype": "Int",
+   "label": "Buyer Screening Valid For (Months)",
+   "default": "12",
+   "description": "How long a denied-party screening of a buyer counts. 0 turns the screening check off."
   }
  ],
  "issingle": 1,
  "links": [],
- "modified": "2026-11-19 13:00:00.000000",
+ "modified": "2026-11-20 20:00:00.000000",
  "modified_by": "Administrator",
  "module": "EXIM Setup",
  "name": "India EXIM Settings",

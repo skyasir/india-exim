@@ -1,0 +1,46 @@
+{#- Bill of Exchange (Sales Invoice), FIRST and SECOND of exchange.
+    Tenor: at sight for DP, advance and sight LCs; for DA, the days from invoice date to due date.
+    Drawn on the buyer, or on the LC issuing bank when the LC says so (edit the drawee then).
+    Payable to the order of the company's default bank. -#}
+{%- import "india_exim/templates/print_formats/exim_macros.html" as exim -%}
+{%- set terms = doc.get("exim_payment_terms_type") or "" -%}
+{%- set days = frappe.utils.date_diff(doc.due_date, doc.posting_date) if doc.due_date else 0 -%}
+{%- if "Acceptance" in terms and days > 0 -%}
+{%- set tenor = _("At {0} days from the date of Bill of Lading / Invoice").format(days) -%}
+{%- else -%}
+{%- set tenor = _("At sight") -%}
+{%- endif -%}
+{%- set bank = frappe.db.get_value("Bank Account", {"company": doc.company, "is_company_account": 1, "is_default": 1, "disabled": 0}, "bank")
+	or frappe.db.get_value("Bank Account", {"company": doc.company, "is_company_account": 1, "disabled": 0}, "bank") -%}
+{%- set amount = doc.rounded_total or doc.grand_total -%}
+{{ exim.style() }}
+<div class="exim">
+{%- for copy, other in [(_("FIRST"), _("SECOND")), (_("SECOND"), _("FIRST"))] %}
+	<table {% if not loop.first %}class="gap" style="page-break-before: always"{% endif %}>
+		<tr><td colspan="2" class="title">{{ _("BILL OF EXCHANGE") }} — {{ copy }}</td></tr>
+		<tr>
+			{{ exim.cell(_("No."), doc.name) }}
+			{{ exim.cell(_("Place & Date"), (frappe.db.get_value("Address", doc.company_address, "city") if doc.get("company_address") else "") ~ ", " ~ exim.date(doc.posting_date)) }}
+		</tr>
+		<tr>
+			{{ exim.cell(_("Exchange for"), doc.currency ~ " " ~ frappe.format(amount, {"fieldtype": "Float", "precision": 2})) }}
+			{{ exim.cell(_("Tenor"), tenor) }}
+		</tr>
+		<tr><td colspan="2" class="letter" style="padding: 10px">
+			<p>{{ tenor }} {{ _("of this {0} of Exchange ({1} of the same tenor and date being unpaid)").format(copy, other) }}
+			{{ _("pay to the order of") }} <b>{{ bank or "__________________" }}</b>
+			{{ _("the sum of") }} <b>{{ frappe.utils.money_in_words(amount, doc.currency) }}</b></p>
+			<p>{{ _("Value received against our Invoice No. {0} dated {1}").format(doc.name, exim.date(doc.posting_date)) }}
+			{%- if doc.get("exim_lc_number") %}, {{ _("drawn under Letter of Credit No. {0} dated {1}").format(doc.exim_lc_number, exim.date(doc.exim_lc_date)) }}{% endif %}.</p>
+		</td></tr>
+		<tr>
+			<td style="width: 55%">
+				<span class="label">{{ _("To (Drawee)") }}</span>
+				<b>{{ doc.customer_name }}</b><br>
+				<span class="pre">{{ doc.get("address_display") or "" }}</span>
+			</td>
+			<td style="text-align: right">{{ exim.signature(doc.company, _("Drawer — Authorised Signatory")) }}</td>
+		</tr>
+	</table>
+{%- endfor %}
+</div>

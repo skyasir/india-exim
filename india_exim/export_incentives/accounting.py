@@ -82,10 +82,19 @@ def make_incentive_accrual(shipping_bill) -> str | None:
 
 
 def cancel_accrual(shipping_bill) -> None:
-	if not shipping_bill.accrual_journal_entry:
-		return
-	journal_entry = frappe.get_doc("Journal Entry", shipping_bill.accrual_journal_entry)
-	if journal_entry.docstatus == 1:
+	"""Cancel the LEO accrual and any later reversals posted for this shipping bill."""
+	names = frappe.get_all(
+		"Journal Entry",
+		filters={
+			"exim_reference_type": "Shipping Bill",
+			"exim_reference_name": shipping_bill.name,
+			"docstatus": 1,
+		},
+		pluck="name",
+		order_by="creation desc",
+	)
+	for name in names:
+		journal_entry = frappe.get_doc("Journal Entry", name)
 		journal_entry.flags.ignore_permissions = True
 		journal_entry.cancel()
 
@@ -105,3 +114,54 @@ def on_journal_entry_cancel(doc, method=None):
 		claim.set_totals()
 	claim.save(ignore_permissions=True)
 	claim.set_status(update=True)
+
+
+# scheme -> (accrued total field, reversed field) on Shipping Bill
+REVERSAL_FIELDS = {
+	"Duty Drawback": ("total_drawback", "drawback_reversed"),
+	"RoDTEP": ("total_rodtep", "rodtep_reversed"),
+}
+
+
+def sync_incentive_reversal(shipping_bill, reduced_value: float) -> str | None:
+	"""Take back incentives in proportion to the export value that will not be realised.
+
+	`reduced_value` is the invoice value credited (credit notes after shipment) or written off,
+	in the shipping bill currency. Drawback and RoDTEP are only due on realised exports, so the
+	same share of what was accrued is reversed: Dr Export Incentive Recovery, Cr the receivable.
+	The posted amounts are kept on the shipping bill, so a later change (another credit note, a
+	cancelled one) posts only the difference, in either direction.
+	"""
+	if not shipping_bill.accrual_journal_entry or not flt(shipping_bill.total_invoice_value):
+		return None
+	share = min(max(flt(reduced_value) / flt(shipping_bill.total_invoice_value), 0), 1)
+	company = shipping_bill.company
+	recovery_account = get_exim_account(company, "exim_incentive_recovery_account")
+
+	rows, updates = [], {}
+	for scheme, (total_field, reversed_field) in REVERSAL_FIELDS.items():
+		target = flt(flt(shipping_bill.get(total_field)) * share, 2)
+		delta = flt(target - flt(shipping_bill.get(reversed_field)), 2)
+		if abs(delta) < 0.01:
+			continue
+		receivable = get_exim_account(company, ACCRUAL_HEADS[scheme][1])
+		if delta > 0:
+			rows += [(recovery_account, delta, 0), (receivable, 0, delta)]
+		else:
+			rows += [(receivable, -delta, 0), (recovery_account, 0, -delta)]
+		updates[reversed_field] = target
+
+	if not rows:
+		return None
+	journal_entry = make_journal_entry(
+		company,
+		frappe.utils.today(),
+		rows,
+		_(
+			"Export incentives adjusted for Shipping Bill {0}: {1}% of the export value credited or written off"
+		).format(shipping_bill.shipping_bill_number, flt(share * 100, 2)),
+		"Shipping Bill",
+		shipping_bill.name,
+	)
+	shipping_bill.db_set(updates)
+	return journal_entry

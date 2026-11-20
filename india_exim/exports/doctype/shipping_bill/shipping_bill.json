@@ -12,6 +12,7 @@
   "customer",
   "customer_name",
   "export_shipment",
+  "is_opening",
   "column_break_head",
   "shipping_bill_number",
   "shipping_bill_date",
@@ -48,12 +49,16 @@
   "egm_date",
   "column_break_lifecycle",
   "accrual_journal_entry",
+  "drawback_reversed",
+  "rodtep_reversed",
   "realisation_section",
   "realisation_due_date",
   "realisation_status",
   "column_break_realisation",
   "realised_value",
   "credit_note_value",
+  "overseas_agent",
+  "agency_commission",
   "outstanding_value",
   "realisation_actions_section",
   "realisation_actions",
@@ -99,6 +104,13 @@
    "in_standard_filter": 1,
    "label": "Export Shipment",
    "options": "Export Shipment"
+  },
+  {
+   "fieldname": "is_opening",
+   "fieldtype": "Check",
+   "label": "Is Opening Entry",
+   "default": "0",
+   "description": "A shipping bill from before go-live. Its incentives are already in the opening balance of the receivable accounts, so no accrual entry is posted. Link the opening invoices made with the Opening Invoice Creation Tool so realisation is tracked."
   },
   {
    "fieldname": "column_break_head",
@@ -333,6 +345,25 @@
    "read_only": 1
   },
   {
+   "fieldname": "drawback_reversed",
+   "fieldtype": "Currency",
+   "label": "Drawback Reversed",
+   "options": "Company:company:default_currency",
+   "read_only": 1,
+   "no_copy": 1,
+   "allow_on_submit": 1,
+   "description": "Drawback taken back for credit notes and write-offs against this shipping bill."
+  },
+  {
+   "fieldname": "rodtep_reversed",
+   "fieldtype": "Currency",
+   "label": "RoDTEP Reversed",
+   "options": "Company:company:default_currency",
+   "read_only": 1,
+   "no_copy": 1,
+   "allow_on_submit": 1
+  },
+  {
    "fieldname": "realisation_section",
    "fieldtype": "Section Break",
    "label": "Realisation (FEMA)"
@@ -377,6 +408,21 @@
    "read_only": 1
   },
   {
+   "fieldname": "overseas_agent",
+   "fieldtype": "Link",
+   "label": "Overseas Agent",
+   "options": "Supplier",
+   "allow_on_submit": 1
+  },
+  {
+   "fieldname": "agency_commission",
+   "fieldtype": "Currency",
+   "label": "Agency Commission",
+   "options": "currency",
+   "allow_on_submit": 1,
+   "description": "Commission to the overseas agent deducted from the export proceeds. It is not counted as unrealised."
+  },
+  {
    "fieldname": "outstanding_value",
    "fieldtype": "Currency",
    "label": "Outstanding (Invoice Currency)",
@@ -411,7 +457,7 @@
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2026-11-19 18:00:00.000000",
+ "modified": "2026-11-20 20:00:00.000000",
  "modified_by": "Administrator",
  "module": "Exports",
  "name": "Shipping Bill",

@@ -1,0 +1,34 @@
+{
+ "attach_print": 0,
+ "channel": "System Notification",
+ "condition": "doc.docstatus == 1 and doc.exim_merchant_export and not doc.exim_merchant_shipping_bill",
+ "condition_type": "Python",
+ "creation": "2026-11-20 20:00:00.000000",
+ "date_changed": "exim_merchant_export_due",
+ "days_in_advance": 15,
+ "docstatus": 0,
+ "doctype": "Notification",
+ "document_type": "Purchase Invoice",
+ "enabled": 1,
+ "event": "Days Before",
+ "idx": 0,
+ "is_standard": 1,
+ "message_type": "Markdown",
+ "minutes_offset": 0,
+ "modified": "2026-11-20 20:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Exports",
+ "name": "Merchant Export Due",
+ "owner": "Administrator",
+ "recipients": [
+  {
+   "receiver_by_role": "EXIM Manager"
+  },
+  {
+   "receiver_by_role": "Accounts Manager"
+  }
+ ],
+ "send_system_notification": 0,
+ "send_to_all_assignees": 0,
+ "subject": "Merchant export due in 15 days: {{ doc.supplier_name }} invoice {{ doc.bill_no or doc.name }}"
+}

@@ -13,6 +13,9 @@ frappe.ui.form.on("Shipping Bill", {
 
 	refresh(frm) {
 		set_status_indicator(frm);
+		if (frm.doc.docstatus === 1) {
+			frm.add_custom_button(__("Evidence Pack"), () => download_evidence_pack(frm), __("View"));
+		}
 		if (frm.doc.docstatus === 1 && frm.doc.accrual_journal_entry) {
 			frm.add_custom_button(__("Incentive Accrual"), () =>
 				frappe.set_route("Form", "Journal Entry", frm.doc.accrual_journal_entry)
@@ -62,4 +65,13 @@ function set_status_indicator(frm) {
 		Cancelled: "red",
 	};
 	if (frm.doc.status) frm.page.set_indicator(__(frm.doc.status), colours[frm.doc.status] || "gray");
+}
+
+// One ZIP with every document, attachment, payment and change for an audit or enquiry.
+function download_evidence_pack(frm) {
+	const url = frappe.urllib.get_full_url(
+		"/api/method/india_exim.utils.evidence_pack.download_evidence_pack?" +
+			new URLSearchParams({ doctype: frm.doctype, name: frm.doc.name })
+	);
+	window.open(url);
 }

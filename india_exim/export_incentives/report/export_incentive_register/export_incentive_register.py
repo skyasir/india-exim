@@ -7,7 +7,10 @@ import frappe
 from frappe import _
 from frappe.utils import date_diff, flt, getdate, today
 
-SCHEMES = (("Duty Drawback", "total_drawback"), ("RoDTEP", "total_rodtep"))
+SCHEMES = (
+	("Duty Drawback", "total_drawback", "drawback_reversed"),
+	("RoDTEP", "total_rodtep", "rodtep_reversed"),
+)
 
 
 def execute(filters: dict | None = None):
@@ -36,7 +39,8 @@ def get_columns() -> list[dict]:
 			"width": 170,
 		},
 		{"label": _("Scheme"), "fieldname": "scheme", "fieldtype": "Data", "width": 110},
-		{"label": _("Accrued"), "fieldname": "accrued", "fieldtype": "Currency", "width": 120},
+		{"label": _("Accrued (Net)"), "fieldname": "accrued", "fieldtype": "Currency", "width": 120},
+		{"label": _("Reversed"), "fieldname": "reversed", "fieldtype": "Currency", "width": 100},
 		{
 			"label": _("Claim"),
 			"fieldname": "claim",
@@ -72,6 +76,8 @@ def get_data(filters) -> list[dict]:
 			"customer",
 			"total_drawback",
 			"total_rodtep",
+			"drawback_reversed",
+			"rodtep_reversed",
 		],
 		order_by="leo_date, name",
 	)
@@ -80,11 +86,12 @@ def get_data(filters) -> list[dict]:
 
 	data = []
 	for sb in shipping_bills:
-		for scheme, field in SCHEMES:
+		for scheme, field, reversed_field in SCHEMES:
 			if filters.scheme and filters.scheme != scheme:
 				continue
-			accrued = flt(sb.get(field))
-			if not accrued:
+			reversed_amount = flt(sb.get(reversed_field))
+			accrued = flt(sb.get(field)) - reversed_amount
+			if not flt(sb.get(field)):
 				continue
 			claim = claims.get((sb.name, scheme)) or frappe._dict()
 			sanctioned = flt(claim.sanctioned_amount) if claim.status not in (None, "Draft") else 0
@@ -101,6 +108,7 @@ def get_data(filters) -> list[dict]:
 				customer=sb.customer,
 				scheme=scheme,
 				accrued=accrued,
+				reversed=reversed_amount,
 				claim=claim.claim,
 				scroll_number=claim.scroll_number,
 				claim_status=claim.status or _("Not Claimed"),
