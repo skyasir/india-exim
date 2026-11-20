@@ -1,6 +1,6 @@
 # Compliance matrix
 
-Each row maps a legal or regulatory requirement to the India EXIM feature that handles it and the scenario that tests it. It covers Phase 1 (exports and imports of goods). Licences (Advance Authorisation, EPCG), FTA rules of origin, trade finance, SEZ/EOU and portal integrations come in later phases.
+Each row maps a legal or regulatory requirement to the India EXIM feature that handles it and the scenario that tests it. It covers Phase 1 (exports and imports of goods) and, from Phase 2, Advance Authorisation and EPCG. FTA rules of origin, trade finance, SEZ/EOU and portal integrations come later.
 
 > This is a working map for implementation, not legal advice. Rates, periods and forms change by notification; India EXIM keeps them as dated data or settings so they can be updated without code. Have a CA or customs broker review the setup for each client.
 
@@ -29,6 +29,15 @@ Status: **Done** = built and covered by automated tests. **Data** = the app hold
 | RoDTEP rates and e-scrips | RoDTEP rate by tariff and date with cap, accrual at LEO, e-scrip ledger, scrip used against import duty | Export Incentive Rate, RoDTEP Scrip, Bill of Entry | Done |
 | Incentive only on realised exports; recovery when proceeds are reduced or written off | Proportionate reversal for credit notes after shipment and write-offs, posted to Export Incentive Recovery | Shipping Bill (Drawback / RoDTEP Reversed) | Done |
 | Merchant exporter buying at concessional GST, export within 90 days | Purchase flag, export-by date, shipping bill link, proof to supplier, alert and register | Purchase Invoice, Merchant Export Register | Done |
+
+## Foreign Trade Policy 2023, Chapters 4 and 5: Advance Authorisation and EPCG
+
+| Requirement | Feature | Where | Status |
+|---|---|---|---|
+| Duty-free import of inputs (AA) or capital goods (EPCG) against an authorisation, within its import validity | Authorisation with the imports allowed (ITC-HS, quantity, CIF); Bill of Entry under it records basic customs duty as foregone, checks the validity and the quantity left | Export Authorisation, Bill of Entry > Import Under Authorisation | Done |
+| Export obligation within the EO period (AA: products and FOB; EPCG: a multiple of duty and taxes saved, with block-wise targets) | EO worked out per scheme, credited from shipping bills naming the authorisation, % fulfilled, status, alerts 60 days before the EO period ends | Export Authorisation, Shipping Bill > Export Under Authorisation, Authorisation Register | Done |
+| Incentives on exports discharging an obligation only where admissible | Drawback / RoDTEP admissible ticks on each authorisation, applied to its shipping bills | Export Authorisation | Done |
+| Redemption (EODC) or regularisation | EODC / regularisation fields set the status | Export Authorisation | Done |
 
 ## FEMA 1999, RBI Master Direction on Export of Goods and Services
 

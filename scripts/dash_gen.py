@@ -5,7 +5,7 @@ import re
 from pathlib import Path
 
 APP = Path(__file__).resolve().parents[1] / "india_exim"
-TS = "2026-11-20 21:00:00.000000"
+TS = "2026-11-21 10:00:00.000000"
 COMPANY = '"frappe.defaults.get_user_default(\\"Company\\")"'
 THIS_FY = "(frappe.boot.current_fiscal_year || [null, `${frappe.datetime.get_today().slice(0,4)}-01-01`, `${frappe.datetime.get_today().slice(0,4)}-12-31`]).slice(1)"
 TODAY = "frappe.datetime.get_today()"
@@ -262,6 +262,41 @@ IMPORT_CARDS = [
 	),
 ]
 
+LICENCE_CARDS = [
+	card(
+		"Active Authorisations",
+		"DGFT Licences",
+		"Export Authorisation",
+		filters=[("status", "=", "Active")],
+		dynamic=[("company", "=", 'frappe.defaults.get_user_default("Company")')],
+		color="#2490EF",
+		stats=False,
+	),
+	card(
+		"EO Due in 90 Days",
+		"DGFT Licences",
+		"Export Authorisation",
+		filters=[("status", "=", "Active")],
+		dynamic=[
+			("company", "=", 'frappe.defaults.get_user_default("Company")'),
+			("eo_period_upto", "<=", "frappe.datetime.add_days(frappe.datetime.get_today(), 90)"),
+		],
+		color="#E24C4C",
+		stats=False,
+	),
+	card(
+		"Duty Saved under Authorisations",
+		"DGFT Licences",
+		"Export Authorisation",
+		"Sum",
+		"total_duty_saved",
+		[("status", "in", ["Active", "EO Fulfilled"])],
+		[("company", "=", 'frappe.defaults.get_user_default("Company")')],
+		"#29CD42",
+		stats=False,
+	),
+]
+
 # ---- Charts
 CHARTS = [
 	chart(
@@ -445,7 +480,7 @@ REPORT_CARDS = [
 			"Costing vs Actual",
 		],
 	),
-	("Incentive Reports", ["Export Incentive Register", "LUT Register"]),
+	("Incentive Reports", ["Export Incentive Register", "LUT Register", "Authorisation Register"]),
 	("Import Reports", ["Customs Duty Register", "Import Payment Ageing", "Bill of Entry Summary"]),
 	("Shipment Reports", ["Shipment Tracker", "Pending Trade Documents"]),
 ]
@@ -657,9 +692,28 @@ MODULE_WORKSPACES = [
 		"reports": ["Shipment Tracker", "Pending Trade Documents"],
 	},
 	{
+		"name": "DGFT Licences",
+		"icon": "stamp",
+		"sequence": 35.0,
+		"cards": LICENCE_CARDS,
+		"charts": [],
+		"report_cards": [("Licence Reports", ["Authorisation Register"])],
+		"doctypes": [
+			(
+				"Export Authorisation",
+				"Blue",
+				"{} Active",
+				open_stats("Export Authorisation", ("status", "=", "Active")),
+			),
+			("Bill of Entry", "Grey", "", "[]"),
+			("Shipping Bill", "Grey", "", "[]"),
+		],
+		"reports": [],
+	},
+	{
 		"name": "EXIM Setup",
 		"icon": "settings",
-		"sequence": 35.0,
+		"sequence": 36.0,
 		"cards": ["Days to LUT Expiry"],
 		"charts": [],
 		"report_cards": [("Setup Reports", ["LUT Register"])],

@@ -3,7 +3,7 @@
 Export–import compliance for Indian businesses on ERPNext v16, built on top of
 [India Compliance](https://github.com/resilient-tech/india-compliance) (which keeps owning GST).
 
-## What it does (Phase 1: exports and imports of goods)
+## What it does
 
 - **Sales flow:** Quotation → Export Costing Sheet → Sales Order → Proforma Invoice → Delivery Note → Sales
   Invoice, with the export details (consignee, buyer, notify party, route, payment and LC terms, marks)
@@ -18,13 +18,15 @@ Export–import compliance for Indian businesses on ERPNext v16, built on top of
 - **FEMA:** realisation from ordinary payments and credit notes, ageing, extensions and write-offs, export
   advances, import payment status per Bill of Entry.
 - **Imports:** duty breakup on India Compliance's Bill of Entry, landed cost, RoDTEP scrip used against duty.
+- **DGFT licences (Phase 2):** Advance Authorisation and EPCG. Imports under a licence record duty foregone and
+  are debited to it; shipping bills credit the export obligation; % fulfilled, status, EODC and alerts.
 - **Incentives and refunds:** Export Incentive Claim, RoDTEP Scrip ledger, GST Refund Claim, merchant export at
   0.1% GST.
 - **Controls:** LUT check on zero-rated invoices, destination and buyer screening, export policy and SCOMET
   checks on export orders.
 - **Print formats:** Proforma Invoice, Export Invoice, Packing List, Bill of Exchange, Beneficiary
   Certificate, Bank Covering Letter, Shipping Instructions, VGM Declaration, Import Clearing Instructions.
-- **Reports and alerts:** 12 reports, standard notifications and daily alerts for realisation, incentives,
+- **Reports and alerts:** 13 reports, standard notifications and daily alerts for realisation, incentives,
   documents, LUT, scrips, advances and merchant exports. An evidence pack (one ZIP per Shipping Bill or Bill
   of Entry) for audits and enquiries.
 

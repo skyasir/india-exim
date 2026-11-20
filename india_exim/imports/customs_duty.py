@@ -39,6 +39,10 @@ def set_customs_duties(bill_of_entry) -> None:
 		)
 		set_item_duty(item, bill_of_entry.bill_of_entry_date)
 
+	from india_exim.dgft_licences.authorisation import set_duty_foregone
+
+	set_duty_foregone(bill_of_entry)
+
 
 def set_item_duty(item, on_date) -> None:
 	if not item.get("exim_manual_rates"):

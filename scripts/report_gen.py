@@ -15,6 +15,7 @@ REPORTS = {
 	"LUT Register": ("exim_setup", "EXIM Setup", "Letter of Undertaking", 1),
 	"Merchant Export Register": ("exports", "Exports", "Purchase Invoice", 1),
 	"Costing vs Actual": ("exports", "Exports", "Export Costing Sheet", 1),
+	"Authorisation Register": ("dgft_licences", "DGFT Licences", "Export Authorisation", 1),
 }
 
 for name in sys.argv[1:] or REPORTS:

@@ -1,0 +1,445 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "naming_series:",
+ "creation": "2026-11-19 20:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "scheme",
+  "company",
+  "authorisation_number",
+  "authorisation_date",
+  "column_break_head",
+  "status",
+  "port_of_registration",
+  "file_number",
+  "periods_section",
+  "import_validity_upto",
+  "column_break_periods",
+  "eo_period_upto",
+  "aa_section",
+  "sion_reference",
+  "column_break_aa",
+  "value_addition_percent",
+  "epcg_section",
+  "eo_multiple",
+  "block_1_percent",
+  "column_break_epcg",
+  "block_1_upto",
+  "installation_certificate_date",
+  "average_eo",
+  "incentives_section",
+  "drawback_admissible",
+  "column_break_incentives",
+  "rodtep_admissible",
+  "imports_section",
+  "imports",
+  "exports_section",
+  "exports",
+  "totals_section",
+  "total_cif_allowed",
+  "total_cif_imported",
+  "total_duty_saved",
+  "column_break_totals",
+  "eo_required",
+  "eo_fulfilled",
+  "eo_balance",
+  "eo_percent",
+  "redemption_section",
+  "eodc_number",
+  "eodc_date",
+  "column_break_redemption",
+  "regularisation_reference",
+  "is_cancelled",
+  "remarks"
+ ],
+ "fields": [
+  {
+   "default": "EAU-.YYYY.-.#####",
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "EAU-.YYYY.-.#####",
+   "print_hide": 1,
+   "reqd": 1
+  },
+  {
+   "default": "Advance Authorisation",
+   "fieldname": "scheme",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Scheme",
+   "options": "Advance Authorisation\nEPCG",
+   "reqd": 1
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Company",
+   "options": "Company",
+   "reqd": 1
+  },
+  {
+   "fieldname": "authorisation_number",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Authorisation No.",
+   "reqd": 1,
+   "search_index": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "authorisation_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Authorisation Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_head",
+   "fieldtype": "Column Break"
+  },
+  {
+   "bold": 1,
+   "default": "Active",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "no_copy": 1,
+   "options": "Active\nEO Fulfilled\nEO Period Over\nRedeemed\nRegularised\nCancelled",
+   "read_only": 1
+  },
+  {
+   "fieldname": "port_of_registration",
+   "fieldtype": "Data",
+   "label": "Port of Registration (Port Code)",
+   "length": 6
+  },
+  {
+   "fieldname": "file_number",
+   "fieldtype": "Data",
+   "label": "DGFT File No."
+  },
+  {
+   "fieldname": "periods_section",
+   "fieldtype": "Section Break",
+   "label": "Validity and Export Obligation Period"
+  },
+  {
+   "description": "Advance Authorisation: 12 months from issue; EPCG: 24 months. Set from the authorisation date when empty; enter the date on the licence if it differs.",
+   "fieldname": "import_validity_upto",
+   "fieldtype": "Date",
+   "label": "Import Valid Upto"
+  },
+  {
+   "fieldname": "column_break_periods",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "Advance Authorisation: 18 months from issue; EPCG: 6 years. Extend here when DGFT allows an extension.",
+   "fieldname": "eo_period_upto",
+   "fieldtype": "Date",
+   "label": "Export Obligation Period Ends"
+  },
+  {
+   "depends_on": "eval:doc.scheme=='Advance Authorisation'",
+   "fieldname": "aa_section",
+   "fieldtype": "Section Break",
+   "label": "Advance Authorisation"
+  },
+  {
+   "description": "Standard Input Output Norm serial number, or 'Self-declared' with the norms ratification reference.",
+   "fieldname": "sion_reference",
+   "fieldtype": "Data",
+   "label": "SION / Norms"
+  },
+  {
+   "fieldname": "column_break_aa",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "15",
+   "fieldname": "value_addition_percent",
+   "fieldtype": "Percent",
+   "label": "Minimum Value Addition %"
+  },
+  {
+   "depends_on": "eval:doc.scheme=='EPCG'",
+   "fieldname": "epcg_section",
+   "fieldtype": "Section Break",
+   "label": "EPCG"
+  },
+  {
+   "default": "6",
+   "description": "Export obligation as a multiple of the duty and taxes saved on the capital goods (6 under the Foreign Trade Policy; less for some categories).",
+   "fieldname": "eo_multiple",
+   "fieldtype": "Float",
+   "label": "EO Multiple of Duty Saved"
+  },
+  {
+   "default": "50",
+   "fieldname": "block_1_percent",
+   "fieldtype": "Percent",
+   "label": "Block 1 EO %"
+  },
+  {
+   "fieldname": "column_break_epcg",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "4 years from issue unless DGFT says otherwise.",
+   "fieldname": "block_1_upto",
+   "fieldtype": "Date",
+   "label": "Block 1 Ends"
+  },
+  {
+   "fieldname": "installation_certificate_date",
+   "fieldtype": "Date",
+   "label": "Installation Certificate Date"
+  },
+  {
+   "description": "Average exports to be kept up in addition to the specific obligation, when the authorisation sets one.",
+   "fieldname": "average_eo",
+   "fieldtype": "Currency",
+   "label": "Average Export Obligation (INR, per year)",
+   "options": "Company:company:default_currency"
+  },
+  {
+   "description": "Whether Duty Drawback and RoDTEP may be claimed on shipping bills that discharge this obligation. Check the current Foreign Trade Policy and RoDTEP notification; the rule has changed over time.",
+   "fieldname": "incentives_section",
+   "fieldtype": "Section Break",
+   "label": "Incentives on Exports Under This Authorisation"
+  },
+  {
+   "fieldname": "drawback_admissible",
+   "fieldtype": "Check",
+   "label": "Duty Drawback Admissible"
+  },
+  {
+   "fieldname": "column_break_incentives",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "rodtep_admissible",
+   "fieldtype": "Check",
+   "label": "RoDTEP Admissible"
+  },
+  {
+   "fieldname": "imports_section",
+   "fieldtype": "Section Break",
+   "label": "Imports Allowed"
+  },
+  {
+   "fieldname": "imports",
+   "fieldtype": "Table",
+   "label": "Imports",
+   "options": "Authorisation Import Item"
+  },
+  {
+   "fieldname": "exports_section",
+   "fieldtype": "Section Break",
+   "label": "Export Obligation"
+  },
+  {
+   "description": "Advance Authorisation: the products and FOB value to export. EPCG: the products whose exports count towards the obligation; the FOB required is worked out from the duty saved.",
+   "fieldname": "exports",
+   "fieldtype": "Table",
+   "label": "Exports",
+   "options": "Authorisation Export Item"
+  },
+  {
+   "fieldname": "totals_section",
+   "fieldtype": "Section Break",
+   "label": "Position"
+  },
+  {
+   "fieldname": "total_cif_allowed",
+   "fieldtype": "Currency",
+   "label": "CIF Allowed",
+   "options": "Company:company:default_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_cif_imported",
+   "fieldtype": "Currency",
+   "label": "CIF Imported",
+   "no_copy": 1,
+   "options": "Company:company:default_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_duty_saved",
+   "fieldtype": "Currency",
+   "label": "Duty Saved",
+   "no_copy": 1,
+   "options": "Company:company:default_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_totals",
+   "fieldtype": "Column Break"
+  },
+  {
+   "bold": 1,
+   "fieldname": "eo_required",
+   "fieldtype": "Currency",
+   "label": "Export Obligation (FOB INR)",
+   "options": "Company:company:default_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "eo_fulfilled",
+   "fieldtype": "Currency",
+   "label": "EO Fulfilled (FOB INR)",
+   "no_copy": 1,
+   "options": "Company:company:default_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "eo_balance",
+   "fieldtype": "Currency",
+   "label": "EO Balance",
+   "no_copy": 1,
+   "options": "Company:company:default_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "eo_percent",
+   "fieldtype": "Percent",
+   "in_list_view": 1,
+   "label": "EO Fulfilled %",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "redemption_section",
+   "fieldtype": "Section Break",
+   "label": "Redemption"
+  },
+  {
+   "fieldname": "eodc_number",
+   "fieldtype": "Data",
+   "label": "EODC / Redemption Letter No."
+  },
+  {
+   "fieldname": "eodc_date",
+   "fieldtype": "Date",
+   "label": "EODC Date"
+  },
+  {
+   "fieldname": "column_break_redemption",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "When the obligation was not met and duty with interest was paid to regularise.",
+   "fieldname": "regularisation_reference",
+   "fieldtype": "Data",
+   "label": "Regularisation Reference"
+  },
+  {
+   "fieldname": "is_cancelled",
+   "fieldtype": "Check",
+   "label": "Authorisation Cancelled / Surrendered"
+  },
+  {
+   "fieldname": "remarks",
+   "fieldtype": "Small Text",
+   "label": "Remarks"
+  }
+ ],
+ "links": [
+  {
+   "group": "Customs",
+   "link_doctype": "Bill of Entry",
+   "link_fieldname": "exim_authorisation"
+  },
+  {
+   "group": "Customs",
+   "link_doctype": "Shipping Bill",
+   "link_fieldname": "export_authorisation"
+  }
+ ],
+ "modified": "2026-11-19 20:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "DGFT Licences",
+ "name": "Export Authorisation",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "EXIM Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "EXIM User",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts Manager",
+   "share": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts User",
+   "share": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Auditor",
+   "share": 1
+  }
+ ],
+ "search_fields": "authorisation_number,scheme,status",
+ "show_title_field_in_link": 1,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "authorisation_number",
+ "track_changes": 1
+}

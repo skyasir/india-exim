@@ -24,6 +24,7 @@
   "column_break_customs",
   "iec",
   "export_type",
+  "export_authorisation",
   "destination_country",
   "value_section",
   "currency",
@@ -187,6 +188,13 @@
    "label": "Export Type",
    "options": "Under LUT / Bond (without IGST)\nWith Payment of IGST\nFree of Cost / Sample",
    "reqd": 1
+  },
+  {
+   "fieldname": "export_authorisation",
+   "fieldtype": "Link",
+   "label": "Export Under Authorisation",
+   "options": "Export Authorisation",
+   "description": "Advance Authorisation or EPCG whose export obligation this shipping bill discharges. Drawback and RoDTEP follow what the authorisation allows."
   },
   {
    "fieldname": "destination_country",
@@ -457,7 +465,7 @@
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2026-11-20 20:00:00.000000",
+ "modified": "2026-11-21 10:00:00.000000",
  "modified_by": "Administrator",
  "module": "Exports",
  "name": "Shipping Bill",

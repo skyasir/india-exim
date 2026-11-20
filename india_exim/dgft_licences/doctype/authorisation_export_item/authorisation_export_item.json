@@ -1,0 +1,108 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "creation": "2026-11-19 20:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "customs_tariff_item",
+  "item_code",
+  "description",
+  "uom",
+  "column_break_required",
+  "qty_required",
+  "fob_required",
+  "done_section",
+  "qty_exported",
+  "column_break_done",
+  "fob_exported"
+ ],
+ "fields": [
+  {
+   "columns": 2,
+   "fieldname": "customs_tariff_item",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "ITC-HS",
+   "options": "Customs Tariff Item",
+   "reqd": 1
+  },
+  {
+   "columns": 2,
+   "description": "Optional. Leave empty to count any item under this ITC-HS code.",
+   "fieldname": "item_code",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Item",
+   "options": "Item"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Small Text",
+   "label": "Description"
+  },
+  {
+   "columns": 1,
+   "fieldname": "uom",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "UOM",
+   "options": "UOM"
+  },
+  {
+   "fieldname": "column_break_required",
+   "fieldtype": "Column Break"
+  },
+  {
+   "columns": 1,
+   "fieldname": "qty_required",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Qty to Export"
+  },
+  {
+   "columns": 2,
+   "fieldname": "fob_required",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "FOB Required (INR)",
+   "options": "Company:company:default_currency"
+  },
+  {
+   "fieldname": "done_section",
+   "fieldtype": "Section Break",
+   "label": "Exported"
+  },
+  {
+   "fieldname": "qty_exported",
+   "fieldtype": "Float",
+   "label": "Qty Exported",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_done",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "fob_exported",
+   "fieldtype": "Currency",
+   "label": "FOB Exported (INR)",
+   "no_copy": 1,
+   "options": "Company:company:default_currency",
+   "read_only": 1
+  }
+ ],
+ "istable": 1,
+ "links": [],
+ "modified": "2026-11-19 20:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "DGFT Licences",
+ "name": "Authorisation Export Item",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

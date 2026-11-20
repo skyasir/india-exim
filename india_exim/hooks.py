@@ -114,8 +114,13 @@ doc_events = {
 		],
 	},
 	"Bill of Entry": {
-		"on_submit": "india_exim.overrides.bill_of_entry.on_submit",
+		"validate": "india_exim.dgft_licences.authorisation.validate_bill_of_entry",
+		"on_submit": [
+			"india_exim.overrides.bill_of_entry.on_submit",
+			"india_exim.dgft_licences.authorisation.on_customs_document_change",
+		],
 		"before_cancel": "india_exim.overrides.bill_of_entry.before_cancel",
+		"on_cancel": "india_exim.dgft_licences.authorisation.on_customs_document_change",
 	},
 }
 
@@ -126,5 +131,6 @@ scheduler_events = {
 		"india_exim.export_incentives.doctype.rodtep_scrip.rodtep_scrip.mark_expired_scrips",
 		"india_exim.fema.payments.refresh_open_documents",
 		"india_exim.alerts.send_daily_alerts",
+		"india_exim.dgft_licences.authorisation.refresh_statuses",
 	],
 }
