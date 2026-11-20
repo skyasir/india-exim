@@ -219,6 +219,62 @@ def chain(fields: list[dict], first_insert_after: str) -> list[dict]:
 	return fields
 
 
+def get_party_fields() -> list[dict]:
+	"""Consignee | Buyer | Notify Party side by side: pick a Customer, then one of
+	its Addresses and Contacts. The text under each link is filled from it
+	(india_exim/utils/parties.py) and is what prints."""
+	fields = [
+		{
+			"fieldname": "exim_parties_section",
+			"fieldtype": "Section Break",
+			"label": "Consignee, Buyer & Notify Party",
+		}
+	]
+	for index, (party, label) in enumerate(
+		(("consignee", "Consignee"), ("buyer", "Buyer"), ("notify", "Notify Party"))
+	):
+		if index:
+			fields.append({"fieldname": f"exim_{party}_column", "fieldtype": "Column Break"})
+		fields += [
+			{
+				"fieldname": f"exim_{party}",
+				"fieldtype": "Link",
+				"label": label,
+				"options": "Customer",
+				"allow_on_submit": 1,
+			},
+			{
+				"fieldname": f"exim_{party}_address",
+				"fieldtype": "Link",
+				"label": f"{label} Address",
+				"options": "Address",
+				"allow_on_submit": 1,
+			},
+			{
+				"fieldname": f"exim_{party}_address_display",
+				"fieldtype": "Small Text",
+				"label": "Address",
+				"read_only": 1,
+				"allow_on_submit": 1,
+			},
+			{
+				"fieldname": f"exim_{party}_contact",
+				"fieldtype": "Link",
+				"label": f"{label} Contact",
+				"options": "Contact",
+				"allow_on_submit": 1,
+			},
+			{
+				"fieldname": f"exim_{party}_contact_display",
+				"fieldtype": "Small Text",
+				"label": "Contact",
+				"read_only": 1,
+				"allow_on_submit": 1,
+			},
+		]
+	return fields
+
+
 def get_order_and_invoice_fields(insert_after: str, include_summary: bool) -> list[dict]:
 	"""Same fieldnames on Sales Order and Sales Invoice so ERPNext's mapper copies them."""
 	fields = [
@@ -229,6 +285,7 @@ def get_order_and_invoice_fields(insert_after: str, include_summary: bool) -> li
 			{"fieldname": "exim_summary_section", "fieldtype": "Section Break", "label": "Export Status"},
 			{"fieldname": "exim_summary", "fieldtype": "HTML", "label": "Export Status"},
 		]
+	fields += get_party_fields()
 	fields += [
 		{"fieldname": "exim_route_section", "fieldtype": "Section Break", "label": "Route"},
 		{
@@ -365,6 +422,12 @@ CUSTOM_FIELDS["Supplier"] = [
 	"customer_numbers",
 )
 
+# Quotation -> Sales Order -> Sales Invoice: the same fieldnames on all three, so ERPNext's
+# mappers carry the export details forward. A quotation's party can be a Lead, so the tick is
+# fetched from the customer in india_exim.overrides.quotation rather than by fetch_from.
+CUSTOM_FIELDS["Quotation"] = [
+	flag("exim_is_export", "Is Export", "order_type")
+] + get_order_and_invoice_fields("supplier_quotation", include_summary=False)
 CUSTOM_FIELDS["Sales Order"] = [
 	flag("exim_is_export", "Is Export", "is_subcontracted", fetch_from="customer.exim_is_export")
 ] + get_order_and_invoice_fields("proforma_html", include_summary=False)

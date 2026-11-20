@@ -1,6 +1,6 @@
 {
  "color": "#7575FF",
- "creation": "2026-11-20 15:00:00.000000",
+ "creation": "2026-11-20 18:00:00.000000",
  "docstatus": 0,
  "doctype": "Number Card",
  "filters_config": "[]",
@@ -11,7 +11,7 @@
  "is_standard": 1,
  "label": "Days to LUT Expiry",
  "method": "india_exim.utils.dashboard.get_days_to_lut_expiry",
- "modified": "2026-11-20 15:00:00.000000",
+ "modified": "2026-11-20 18:00:00.000000",
  "modified_by": "Administrator",
  "module": "EXIM Setup",
  "name": "Days to LUT Expiry",

@@ -1,0 +1,158 @@
+{#- Export Proforma Invoice. Printed from a Sales Order: ERPNext's Proforma Invoice renders a
+    copy of the order with only the proformed lines, and sets proforma_no / proforma_date on it. -#}
+{%- set company = frappe.get_doc("Company", doc.company) -%}
+{%- set iec = company.get("exim_iec") -%}
+{%- set proforma_no = doc.get("proforma_no") or doc.name -%}
+{%- set proforma_date = doc.get("proforma_date") or doc.transaction_date -%}
+{%- set hide_qty = doc.get("hide_item_qty") -%}
+{%- set bank = company.get("bank_details_for_printing") or [] -%}
+<style>
+	.epi { font-size: 10.5px; color: #111; }
+	.epi table { width: 100%; border-collapse: collapse; }
+	.epi td, .epi th { border: 1px solid #555; padding: 4px 6px; vertical-align: top; }
+	.epi th { background: #f2f2f2; text-align: left; font-weight: 600; }
+	.epi .title { text-align: center; font-size: 16px; font-weight: 700; letter-spacing: 1px; padding: 6px; }
+	.epi .label { color: #555; font-size: 9px; text-transform: uppercase; display: block; }
+	.epi .num { text-align: right; white-space: nowrap; }
+	.epi .pre { white-space: pre-line; }
+	.epi .no-border td { border: none; }
+</style>
+<div class="epi">
+	<table>
+		<tr><td colspan="4" class="title">{{ _("PROFORMA INVOICE") }}</td></tr>
+		<tr>
+			<td colspan="2" rowspan="3" style="width: 50%">
+				<span class="label">{{ _("Exporter") }}</span>
+				<b>{{ doc.company }}</b><br>
+				<span class="pre">{{ doc.company_address_display or "" }}</span>
+				{%- if doc.get("company_gstin") %}<br>{{ _("GSTIN") }}: {{ doc.company_gstin }}{% endif %}
+				{%- if iec %}<br>{{ _("IEC") }}: {{ iec }}{% endif %}
+			</td>
+			<td><span class="label">{{ _("Proforma Invoice No.") }}</span>{{ proforma_no }}</td>
+			<td><span class="label">{{ _("Date") }}</span>{{ frappe.format(proforma_date, {"fieldtype": "Date"}) }}</td>
+		</tr>
+		<tr>
+			<td><span class="label">{{ _("Buyer's Order No.") }}</span>{{ doc.po_no or "" }}</td>
+			<td><span class="label">{{ _("Order Date") }}</span>{{ frappe.format(doc.po_date, {"fieldtype": "Date"}) if doc.po_date else "" }}</td>
+		</tr>
+		<tr>
+			<td><span class="label">{{ _("Our Reference") }}</span>{{ doc.name }}</td>
+			<td><span class="label">{{ _("Currency") }}</span>{{ doc.currency }}</td>
+		</tr>
+		<tr>
+			<td colspan="2">
+				<span class="label">{{ _("Consignee") }}</span>
+				<b>{{ doc.get("exim_consignee") and frappe.db.get_value("Customer", doc.exim_consignee, "customer_name") or doc.customer_name }}</b><br>
+				<span class="pre">{{ doc.get("exim_consignee_address_display") or doc.shipping_address or doc.address_display or "" }}</span>
+			</td>
+			<td colspan="2">
+				<span class="label">{{ _("Buyer (if other than consignee)") }}</span>
+				{%- if doc.get("exim_buyer") %}
+				<b>{{ frappe.db.get_value("Customer", doc.exim_buyer, "customer_name") }}</b><br>
+				<span class="pre">{{ doc.get("exim_buyer_address_display") or "" }}</span>
+				{%- else %}
+				<b>{{ doc.customer_name }}</b><br><span class="pre">{{ doc.address_display or "" }}</span>
+				{%- endif %}
+			</td>
+		</tr>
+		{%- if doc.get("exim_notify") %}
+		<tr>
+			<td colspan="4">
+				<span class="label">{{ _("Notify Party") }}</span>
+				<b>{{ frappe.db.get_value("Customer", doc.exim_notify, "customer_name") }}</b>
+				<span class="pre">{{ doc.get("exim_notify_address_display") or "" }}</span>
+			</td>
+		</tr>
+		{%- endif %}
+		<tr>
+			<td><span class="label">{{ _("Country of Origin of Goods") }}</span>{{ _("India") }}</td>
+			<td><span class="label">{{ _("Country of Final Destination") }}</span>{{ doc.get("exim_destination_country") or "" }}</td>
+			<td><span class="label">{{ _("Terms of Delivery (Incoterms 2020)") }}</span>{{ doc.incoterm or "" }}{% if doc.get("named_place") %} {{ doc.named_place }}{% endif %}</td>
+			<td><span class="label">{{ _("Terms of Payment") }}</span>{{ doc.get("exim_payment_terms_type") or doc.payment_terms_template or "" }}</td>
+		</tr>
+		<tr>
+			<td><span class="label">{{ _("Pre-carriage By") }}</span>{{ doc.get("exim_pre_carriage_by") or "" }}</td>
+			<td><span class="label">{{ _("Place of Receipt by Pre-carrier") }}</span>{{ doc.get("exim_place_of_receipt") or "" }}</td>
+			<td><span class="label">{{ _("Port of Discharge") }}</span>{{ doc.get("exim_port_of_discharge") or "" }}</td>
+			<td><span class="label">{{ _("Final Destination") }}</span>{{ doc.get("exim_final_destination") or "" }}</td>
+		</tr>
+		<tr>
+			<td><span class="label">{{ _("Mode of Transport") }}</span>{{ doc.get("exim_mode_of_transport") or "" }}</td>
+			<td><span class="label">{{ _("Latest Shipment Date") }}</span>{{ frappe.format(doc.exim_latest_shipment_date, {"fieldtype": "Date"}) if doc.get("exim_latest_shipment_date") else (frappe.format(doc.delivery_date, {"fieldtype": "Date"}) if doc.delivery_date else "") }}</td>
+			<td colspan="2"><span class="label">{{ _("Marks and Numbers") }}</span><span class="pre">{{ doc.get("exim_marks_and_numbers") or "" }}</span></td>
+		</tr>
+	</table>
+
+	<table style="margin-top: 6px">
+		<thead>
+			<tr>
+				<th style="width: 4%">{{ _("Sr.") }}</th>
+				<th>{{ _("Description of Goods") }}</th>
+				<th style="width: 11%">{{ _("HS Code") }}</th>
+				{%- if not hide_qty %}
+				<th class="num" style="width: 10%">{{ _("Quantity") }}</th>
+				<th class="num" style="width: 12%">{{ _("Rate") }} ({{ doc.currency }})</th>
+				{%- endif %}
+				<th class="num" style="width: 14%">{{ _("Amount") }} ({{ doc.currency }})</th>
+			</tr>
+		</thead>
+		<tbody>
+			{%- for item in doc.items %}
+			{%- set tariff = frappe.db.get_value("Item", item.item_code, "exim_customs_tariff_item") if item.item_code else None %}
+			<tr>
+				<td>{{ loop.index }}</td>
+				<td><b>{{ item.item_name }}</b>{% if item.description and item.description != item.item_name %}<br>{{ item.description }}{% endif %}</td>
+				<td>{{ tariff or item.get("gst_hsn_code") or "" }}</td>
+				{%- if not hide_qty %}
+				<td class="num">{{ frappe.format(item.qty, {"fieldtype": "Float"}) }} {{ item.uom }}</td>
+				<td class="num">{{ frappe.format(item.rate, {"fieldtype": "Currency", "options": "currency"}, item) }}</td>
+				{%- endif %}
+				<td class="num">{{ frappe.format(item.amount, {"fieldtype": "Currency", "options": "currency"}, item) }}</td>
+			</tr>
+			{%- endfor %}
+		</tbody>
+		<tfoot>
+			{%- set span = 3 if hide_qty else 5 %}
+			{%- if doc.taxes %}
+			<tr><td colspan="{{ span }}" class="num">{{ _("Total") }}</td><td class="num">{{ doc.get_formatted("total") }}</td></tr>
+			{%- for tax in doc.taxes if tax.tax_amount %}
+			<tr><td colspan="{{ span }}" class="num">{{ tax.description }}</td><td class="num">{{ tax.get_formatted("tax_amount") }}</td></tr>
+			{%- endfor %}
+			{%- endif %}
+			{%- if doc.discount_amount %}
+			<tr><td colspan="{{ span }}" class="num">{{ _("Discount") }}</td><td class="num">- {{ doc.get_formatted("discount_amount") }}</td></tr>
+			{%- endif %}
+			<tr>
+				<th colspan="{{ span }}" class="num">{{ _("Total") }} ({{ doc.get("incoterm") or doc.currency }})</th>
+				<th class="num">{{ doc.get_formatted("grand_total") }}</th>
+			</tr>
+			<tr><td colspan="{{ span + 1 }}"><span class="label">{{ _("Amount in Words") }}</span>{{ frappe.utils.money_in_words(doc.grand_total, doc.currency) }}</td></tr>
+		</tfoot>
+	</table>
+
+	<table style="margin-top: 6px">
+		<tr>
+			<td style="width: 55%">
+				{%- if doc.get("exim_payment_terms_type") == "Letter of Credit" and doc.get("exim_lc_number") %}
+				<span class="label">{{ _("Letter of Credit") }}</span>{{ doc.exim_lc_number }}{% if doc.get("exim_lc_date") %} {{ _("dated") }} {{ frappe.format(doc.exim_lc_date, {"fieldtype": "Date"}) }}{% endif %}<br>
+				{%- endif %}
+				{%- if bank %}
+				<span class="label">{{ _("Bank Details for Remittance") }}</span>
+				{%- for row in bank if row.print_value %}
+				{{ row.print_label }}: {{ row.print_value }}<br>
+				{%- endfor %}
+				{%- endif %}
+				{%- if doc.terms %}
+				<span class="label" style="margin-top: 4px">{{ _("Terms and Conditions") }}</span>
+				<div>{{ doc.terms }}</div>
+				{%- endif %}
+			</td>
+			<td style="text-align: right">
+				<span class="label" style="text-align: left">{{ _("Declaration") }}</span>
+				<div style="text-align: left">{{ _("We declare that this proforma invoice shows the actual price of the goods described and that all particulars are true and correct.") }}</div>
+				<div style="margin-top: 40px">{{ _("For") }} <b>{{ doc.company }}</b></div>
+				<div style="margin-top: 30px">{{ _("Authorised Signatory") }}</div>
+			</td>
+		</tr>
+	</table>
+</div>

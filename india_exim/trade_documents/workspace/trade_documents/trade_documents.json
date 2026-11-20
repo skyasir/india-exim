@@ -7,7 +7,7 @@
   }
  ],
  "content": "[{\"id\": \"n_shipments_\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Shipments in Progress\", \"col\": 6}}, {\"id\": \"n_shipments_\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Shipments with Pending Documents\", \"col\": 6}}, {\"id\": \"c_export_shi\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Export Shipments by Status\", \"col\": 12}}, {\"id\": \"h_quick\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Quick Access</b></span>\", \"col\": 12}}, {\"id\": \"s_export_shi\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Export Shipment\", \"col\": 4}}, {\"id\": \"s_document_r\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Document Requirement Template\", \"col\": 4}}, {\"id\": \"s_trade_docu\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Trade Document Type\", \"col\": 4}}, {\"id\": \"s_country_gr\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Country Group\", \"col\": 4}}, {\"id\": \"rs_pending_tr\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Pending Trade Documents\", \"col\": 4}}, {\"id\": \"h_reports\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Reports</b></span>\", \"col\": 12}}, {\"id\": \"r_document_r\", \"type\": \"card\", \"data\": {\"card_name\": \"Document Reports\", \"col\": 4}}]",
- "creation": "2026-11-20 15:00:00.000000",
+ "creation": "2026-11-20 18:00:00.000000",
  "custom_blocks": [],
  "docstatus": 0,
  "doctype": "Workspace",
@@ -38,7 +38,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-11-20 15:00:00.000000",
+ "modified": "2026-11-20 18:00:00.000000",
  "modified_by": "Administrator",
  "module": "Trade Documents",
  "name": "Trade Documents",

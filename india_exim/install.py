@@ -19,6 +19,7 @@ def after_install():
 		for company in frappe.get_all("Company", pluck="name"):
 			setup_exim_accounts(company)
 		seed_master_data()
+		enable_proforma_invoice()
 	except Exception:
 		click.secho(
 			"India EXIM installation failed. Please re-run the install or report the issue.", fg="red"
@@ -33,6 +34,22 @@ def before_migrate():
 def after_migrate():
 	setup_custom_fields()
 	seed_master_data()
+
+
+def enable_proforma_invoice():
+	"""Turn on ERPNext's Proforma Invoice (made from a submitted Sales Order) with the Export
+	Proforma Invoice as its print format, unless a format is already chosen. Run once, so a
+	user who turns the feature off keeps it off."""
+	settings = frappe.get_single("Selling Settings")
+	if not settings.meta.has_field("enable_proforma_invoice"):
+		return
+	settings.enable_proforma_invoice = 1
+	if not settings.default_proforma_print_format and frappe.db.exists(
+		"Print Format", "Export Proforma Invoice"
+	):
+		settings.default_proforma_print_format = "Export Proforma Invoice"
+	settings.flags.ignore_permissions = True
+	settings.save()
 
 
 def before_uninstall():

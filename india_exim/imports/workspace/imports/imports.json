@@ -7,7 +7,7 @@
   }
  ],
  "content": "[{\"id\": \"n_customs_du\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Customs Duty This Year\", \"col\": 6}}, {\"id\": \"n_import_pay\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Import Payments Pending\", \"col\": 6}}, {\"id\": \"c_customs_du\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Customs Duty by Month\", \"col\": 12}}, {\"id\": \"h_quick\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Quick Access</b></span>\", \"col\": 12}}, {\"id\": \"s_bill_of_en\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Bill of Entry\", \"col\": 4}}, {\"id\": \"s_purchase_i\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Purchase Invoice\", \"col\": 4}}, {\"id\": \"s_landed_cos\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Landed Cost Voucher\", \"col\": 4}}, {\"id\": \"rs_customs_du\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Customs Duty Register\", \"col\": 4}}, {\"id\": \"rs_import_pay\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Import Payment Ageing\", \"col\": 4}}, {\"id\": \"h_reports\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Reports</b></span>\", \"col\": 12}}, {\"id\": \"r_import_rep\", \"type\": \"card\", \"data\": {\"card_name\": \"Import Reports\", \"col\": 4}}]",
- "creation": "2026-11-20 15:00:00.000000",
+ "creation": "2026-11-20 18:00:00.000000",
  "custom_blocks": [],
  "docstatus": 0,
  "doctype": "Workspace",
@@ -58,7 +58,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-11-20 15:00:00.000000",
+ "modified": "2026-11-20 18:00:00.000000",
  "modified_by": "Administrator",
  "module": "Imports",
  "name": "Imports",
