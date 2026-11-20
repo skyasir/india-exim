@@ -44,6 +44,7 @@ def get_columns() -> list[dict]:
 		{"label": _("Invoiced"), "fieldname": "actual_price", **currency},
 		{"label": _("Costed Cost"), "fieldname": "costed_cost", **currency},
 		{"label": _("Goods Cost"), "fieldname": "actual_goods_cost", **currency},
+		{"label": _("Goods Cost Basis"), "fieldname": "goods_cost_basis", "fieldtype": "Data", "width": 150},
 		{"label": _("Shipment Charges"), "fieldname": "actual_charges", **currency},
 		{"label": _("Costed Incentives"), "fieldname": "costed_incentives", **currency},
 		{"label": _("Actual Incentives"), "fieldname": "actual_incentives", **currency},
@@ -72,6 +73,7 @@ def get_data(filters) -> list[dict]:
 			"total_cost_at_basis",
 			"total_incentives",
 			"margin_amount",
+			"total_exw",
 		],
 		order_by="posting_date desc",
 	)
@@ -96,6 +98,12 @@ def get_data(filters) -> list[dict]:
 				)
 			)
 			row.actual_goods_cost = get_goods_cost(invoices)
+			row.goods_cost_basis = _("Stock valuation")
+			if not row.actual_goods_cost:
+				# goods without stock valuation (non-stock items, drop-ship): the costed ex-works
+				# cost for the quantity actually invoiced, net of returns
+				row.actual_goods_cost = get_costed_goods_cost(sheet, invoices)
+				row.goods_cost_basis = _("Costed (no valuation)")
 			row.actual_charges = get_shipment_charges(invoices)
 			row.actual_incentives = get_incentives(invoices)
 			row.actual_margin = (
@@ -139,6 +147,21 @@ def get_goods_cost(invoices: list[str]) -> float:
 		)
 	)
 	return sum(flt(row.incoming_rate or dn_rates.get(row.dn_detail)) * flt(row.stock_qty) for row in items)
+
+
+def get_costed_goods_cost(sheet, invoices: list[str]) -> float:
+	costed_qty = sum(
+		flt(qty) for qty in frappe.get_all("Export Costing Item", filters={"parent": sheet.name}, pluck="qty")
+	)
+	if not costed_qty:
+		return 0.0
+	invoiced_qty = sum(
+		flt(qty)
+		for qty in frappe.get_all(
+			"Sales Invoice Item", filters={"parent": ("in", invoices)}, pluck="stock_qty"
+		)
+	)
+	return flt(sheet.total_exw) * invoiced_qty / costed_qty
 
 
 def get_shipment_charges(invoices: list[str]) -> float:
