@@ -16,7 +16,8 @@ from frappe.utils import add_months, flt, getdate, today
 
 
 def validate(doc, method=None):
-	if not doc.get("exim_is_export") or doc.docstatus != 0:
+	# on submit, validate runs with docstatus already 1; only cancelled documents are skipped
+	if not doc.get("exim_is_export") or doc.docstatus == 2:
 		return
 	mode = frappe.db.get_single_value("India EXIM Settings", "pre_shipment_checks") or "Warn"
 	if mode == "Off":
