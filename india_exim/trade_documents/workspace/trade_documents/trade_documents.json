@@ -1,0 +1,125 @@
+{
+ "app": "india_exim",
+ "charts": [
+  {
+   "chart_name": "Export Shipments by Status",
+   "label": "Export Shipments by Status"
+  }
+ ],
+ "content": "[{\"id\": \"n_shipments_\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Shipments in Progress\", \"col\": 6}}, {\"id\": \"n_shipments_\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Shipments with Pending Documents\", \"col\": 6}}, {\"id\": \"c_export_shi\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Export Shipments by Status\", \"col\": 12}}, {\"id\": \"h_quick\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Quick Access</b></span>\", \"col\": 12}}, {\"id\": \"s_export_shi\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Export Shipment\", \"col\": 4}}, {\"id\": \"s_document_r\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Document Requirement Template\", \"col\": 4}}, {\"id\": \"s_trade_docu\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Trade Document Type\", \"col\": 4}}, {\"id\": \"s_country_gr\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Country Group\", \"col\": 4}}, {\"id\": \"rs_pending_tr\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Pending Trade Documents\", \"col\": 4}}, {\"id\": \"h_reports\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Reports</b></span>\", \"col\": 12}}, {\"id\": \"r_document_r\", \"type\": \"card\", \"data\": {\"card_name\": \"Document Reports\", \"col\": 4}}]",
+ "creation": "2026-11-20 15:00:00.000000",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "files",
+ "idx": 0,
+ "is_hidden": 0,
+ "label": "Trade Documents",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Document Reports",
+   "link_count": 1,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Pending Trade Documents",
+   "link_count": 0,
+   "link_to": "Pending Trade Documents",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2026-11-20 15:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Trade Documents",
+ "name": "Trade Documents",
+ "number_cards": [
+  {
+   "label": "Shipments in Progress",
+   "number_card_name": "Shipments in Progress"
+  },
+  {
+   "label": "Shipments with Pending Documents",
+   "number_card_name": "Shipments with Pending Documents"
+  }
+ ],
+ "owner": "Administrator",
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [],
+ "restrict_to_domain": "",
+ "roles": [
+  {
+   "role": "EXIM Manager"
+  },
+  {
+   "role": "EXIM User"
+  },
+  {
+   "role": "System Manager"
+  },
+  {
+   "role": "Accounts Manager"
+  }
+ ],
+ "sequence_id": 34.0,
+ "shortcuts": [
+  {
+   "color": "Orange",
+   "doc_view": "List",
+   "format": "{} In Progress",
+   "label": "Export Shipment",
+   "link_to": "Export Shipment",
+   "stats_filter": "[[\"Export Shipment\", \"status\", \"not in\", [\"Delivered\", \"Closed\", \"Cancelled\"]]]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "format": "",
+   "label": "Document Requirement Template",
+   "link_to": "Document Requirement Template",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "format": "",
+   "label": "Trade Document Type",
+   "link_to": "Trade Document Type",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "format": "",
+   "label": "Country Group",
+   "link_to": "Country Group",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Orange",
+   "doc_view": "",
+   "format": "",
+   "label": "Pending Trade Documents",
+   "link_to": "Pending Trade Documents",
+   "report_ref_doctype": "Export Shipment",
+   "stats_filter": "",
+   "type": "Report"
+  }
+ ],
+ "title": "Trade Documents",
+ "type": "Workspace"
+}

@@ -1,0 +1,146 @@
+{
+ "app": "india_exim",
+ "charts": [
+  {
+   "chart_name": "Customs Duty by Month",
+   "label": "Customs Duty by Month"
+  }
+ ],
+ "content": "[{\"id\": \"n_customs_du\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Customs Duty This Year\", \"col\": 6}}, {\"id\": \"n_import_pay\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Import Payments Pending\", \"col\": 6}}, {\"id\": \"c_customs_du\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Customs Duty by Month\", \"col\": 12}}, {\"id\": \"h_quick\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Quick Access</b></span>\", \"col\": 12}}, {\"id\": \"s_bill_of_en\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Bill of Entry\", \"col\": 4}}, {\"id\": \"s_purchase_i\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Purchase Invoice\", \"col\": 4}}, {\"id\": \"s_landed_cos\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Landed Cost Voucher\", \"col\": 4}}, {\"id\": \"rs_customs_du\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Customs Duty Register\", \"col\": 4}}, {\"id\": \"rs_import_pay\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Import Payment Ageing\", \"col\": 4}}, {\"id\": \"h_reports\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Reports</b></span>\", \"col\": 12}}, {\"id\": \"r_import_rep\", \"type\": \"card\", \"data\": {\"card_name\": \"Import Reports\", \"col\": 4}}]",
+ "creation": "2026-11-20 15:00:00.000000",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "package-open",
+ "idx": 0,
+ "is_hidden": 0,
+ "label": "Imports",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Import Reports",
+   "link_count": 3,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Customs Duty Register",
+   "link_count": 0,
+   "link_to": "Customs Duty Register",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Import Payment Ageing",
+   "link_count": 0,
+   "link_to": "Import Payment Ageing",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Bill of Entry Summary",
+   "link_count": 0,
+   "link_to": "Bill of Entry Summary",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2026-11-20 15:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Imports",
+ "name": "Imports",
+ "number_cards": [
+  {
+   "label": "Customs Duty This Year",
+   "number_card_name": "Customs Duty This Year"
+  },
+  {
+   "label": "Import Payments Pending",
+   "number_card_name": "Import Payments Pending"
+  }
+ ],
+ "owner": "Administrator",
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [],
+ "restrict_to_domain": "",
+ "roles": [
+  {
+   "role": "EXIM Manager"
+  },
+  {
+   "role": "EXIM User"
+  },
+  {
+   "role": "System Manager"
+  },
+  {
+   "role": "Accounts Manager"
+  }
+ ],
+ "sequence_id": 32.0,
+ "shortcuts": [
+  {
+   "color": "Purple",
+   "doc_view": "List",
+   "format": "{} Unpaid",
+   "label": "Bill of Entry",
+   "link_to": "Bill of Entry",
+   "stats_filter": "[[\"Bill of Entry\", \"exim_payment_status\", \"!=\", \"Paid\"], [\"Bill of Entry\", \"docstatus\", \"=\", 1]]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "format": "{} Import Invoices",
+   "label": "Purchase Invoice",
+   "link_to": "Purchase Invoice",
+   "stats_filter": "[[\"Purchase Invoice\", \"exim_is_import\", \"=\", 1], [\"Purchase Invoice\", \"docstatus\", \"=\", 1]]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "format": "",
+   "label": "Landed Cost Voucher",
+   "link_to": "Landed Cost Voucher",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Purple",
+   "doc_view": "",
+   "format": "",
+   "label": "Customs Duty Register",
+   "link_to": "Customs Duty Register",
+   "report_ref_doctype": "Bill of Entry",
+   "stats_filter": "",
+   "type": "Report"
+  },
+  {
+   "color": "Yellow",
+   "doc_view": "",
+   "format": "",
+   "label": "Import Payment Ageing",
+   "link_to": "Import Payment Ageing",
+   "report_ref_doctype": "Bill of Entry",
+   "stats_filter": "",
+   "type": "Report"
+  }
+ ],
+ "title": "Imports",
+ "type": "Workspace"
+}

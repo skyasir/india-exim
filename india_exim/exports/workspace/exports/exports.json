@@ -1,0 +1,192 @@
+{
+ "app": "india_exim",
+ "charts": [
+  {
+   "chart_name": "Exports by Month (FOB INR)",
+   "label": "Exports by Month (FOB INR)"
+  },
+  {
+   "chart_name": "Exports by Destination",
+   "label": "Exports by Destination"
+  },
+  {
+   "chart_name": "Export Realisation Status",
+   "label": "Export Realisation Status"
+  },
+  {
+   "chart_name": "Top Export Customers",
+   "label": "Top Export Customers"
+  }
+ ],
+ "content": "[{\"id\": \"n_exports_th\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Exports This Year (FOB)\", \"col\": 4}}, {\"id\": \"n_awaiting_l\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Awaiting LEO\", \"col\": 4}}, {\"id\": \"n_awaiting_r\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Awaiting Realisation\", \"col\": 4}}, {\"id\": \"n_realisatio\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Realisation Overdue\", \"col\": 4}}, {\"id\": \"n_shipments_\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Shipments in Progress\", \"col\": 4}}, {\"id\": \"n_shipments_\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Shipments with Pending Documents\", \"col\": 4}}, {\"id\": \"c_exports_by\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Exports by Month (FOB INR)\", \"col\": 12}}, {\"id\": \"c_exports_by\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Exports by Destination\", \"col\": 6}}, {\"id\": \"c_export_rea\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Export Realisation Status\", \"col\": 6}}, {\"id\": \"c_top_export\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Top Export Customers\", \"col\": 12}}, {\"id\": \"h_quick\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Quick Access</b></span>\", \"col\": 12}}, {\"id\": \"s_export_shi\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Export Shipment\", \"col\": 4}}, {\"id\": \"s_shipping_b\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Shipping Bill\", \"col\": 4}}, {\"id\": \"s_sales_invo\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Sales Invoice\", \"col\": 4}}, {\"id\": \"s_sales_orde\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Sales Order\", \"col\": 4}}, {\"id\": \"s_payment_en\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Payment Entry\", \"col\": 4}}, {\"id\": \"rs_export_rea\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Export Realisation Ageing\", \"col\": 4}}, {\"id\": \"rs_shipping_b\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Shipping Bill Register\", \"col\": 4}}, {\"id\": \"h_reports\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Reports</b></span>\", \"col\": 12}}, {\"id\": \"r_export_rep\", \"type\": \"card\", \"data\": {\"card_name\": \"Export Reports\", \"col\": 4}}]",
+ "creation": "2026-11-20 15:00:00.000000",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "ship",
+ "idx": 0,
+ "is_hidden": 0,
+ "label": "Exports",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Export Reports",
+   "link_count": 3,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Shipping Bill Register",
+   "link_count": 0,
+   "link_to": "Shipping Bill Register",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Export Realisation Ageing",
+   "link_count": 0,
+   "link_to": "Export Realisation Ageing",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Pending Trade Documents",
+   "link_count": 0,
+   "link_to": "Pending Trade Documents",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2026-11-20 15:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Exports",
+ "name": "Exports",
+ "number_cards": [
+  {
+   "label": "Exports This Year (FOB)",
+   "number_card_name": "Exports This Year (FOB)"
+  },
+  {
+   "label": "Awaiting LEO",
+   "number_card_name": "Awaiting LEO"
+  },
+  {
+   "label": "Awaiting Realisation",
+   "number_card_name": "Awaiting Realisation"
+  },
+  {
+   "label": "Realisation Overdue",
+   "number_card_name": "Realisation Overdue"
+  },
+  {
+   "label": "Shipments in Progress",
+   "number_card_name": "Shipments in Progress"
+  },
+  {
+   "label": "Shipments with Pending Documents",
+   "number_card_name": "Shipments with Pending Documents"
+  }
+ ],
+ "owner": "Administrator",
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [],
+ "restrict_to_domain": "",
+ "roles": [
+  {
+   "role": "EXIM Manager"
+  },
+  {
+   "role": "EXIM User"
+  },
+  {
+   "role": "System Manager"
+  },
+  {
+   "role": "Accounts Manager"
+  }
+ ],
+ "sequence_id": 31.0,
+ "shortcuts": [
+  {
+   "color": "Orange",
+   "doc_view": "List",
+   "format": "{} In Progress",
+   "label": "Export Shipment",
+   "link_to": "Export Shipment",
+   "stats_filter": "[[\"Export Shipment\", \"status\", \"not in\", [\"Delivered\", \"Closed\", \"Cancelled\"]]]",
+   "type": "DocType"
+  },
+  {
+   "color": "Yellow",
+   "doc_view": "List",
+   "format": "{} Awaiting LEO",
+   "label": "Shipping Bill",
+   "link_to": "Shipping Bill",
+   "stats_filter": "[[\"Shipping Bill\", \"status\", \"=\", \"Filed\"]]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "format": "{} Export Invoices",
+   "label": "Sales Invoice",
+   "link_to": "Sales Invoice",
+   "stats_filter": "[[\"Sales Invoice\", \"exim_is_export\", \"=\", 1], [\"Sales Invoice\", \"docstatus\", \"=\", 1]]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "format": "",
+   "label": "Sales Order",
+   "link_to": "Sales Order",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "format": "",
+   "label": "Payment Entry",
+   "link_to": "Payment Entry",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Red",
+   "doc_view": "",
+   "format": "",
+   "label": "Export Realisation Ageing",
+   "link_to": "Export Realisation Ageing",
+   "report_ref_doctype": "Shipping Bill",
+   "stats_filter": "",
+   "type": "Report"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "",
+   "format": "",
+   "label": "Shipping Bill Register",
+   "link_to": "Shipping Bill Register",
+   "report_ref_doctype": "Shipping Bill",
+   "stats_filter": "",
+   "type": "Report"
+  }
+ ],
+ "title": "Exports",
+ "type": "Workspace"
+}

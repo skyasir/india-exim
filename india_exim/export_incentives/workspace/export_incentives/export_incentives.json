@@ -1,0 +1,133 @@
+{
+ "app": "india_exim",
+ "charts": [
+  {
+   "chart_name": "Incentives Sanctioned by Month",
+   "label": "Incentives Sanctioned by Month"
+  }
+ ],
+ "content": "[{\"id\": \"n_incentives\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Incentives Receivable\", \"col\": 4}}, {\"id\": \"n_shipping_b\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Shipping Bills Not Yet Claimed\", \"col\": 4}}, {\"id\": \"n_rodtep_scr\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"RoDTEP Scrip Balance\", \"col\": 4}}, {\"id\": \"n_days_to_lu\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Days to LUT Expiry\", \"col\": 4}}, {\"id\": \"c_incentives\", \"type\": \"chart\", \"data\": {\"chart_name\": \"Incentives Sanctioned by Month\", \"col\": 12}}, {\"id\": \"h_quick\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Quick Access</b></span>\", \"col\": 12}}, {\"id\": \"s_export_inc\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Export Incentive Claim\", \"col\": 4}}, {\"id\": \"s_rodtep_scr\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"RoDTEP Scrip\", \"col\": 4}}, {\"id\": \"s_gst_refund\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"GST Refund Claim\", \"col\": 4}}, {\"id\": \"s_export_inc\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Export Incentive Rate\", \"col\": 4}}, {\"id\": \"rs_export_inc\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Export Incentive Register\", \"col\": 4}}, {\"id\": \"h_reports\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Reports</b></span>\", \"col\": 12}}, {\"id\": \"r_incentive_\", \"type\": \"card\", \"data\": {\"card_name\": \"Incentive Reports\", \"col\": 4}}]",
+ "creation": "2026-11-20 15:00:00.000000",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "badge-indian-rupee",
+ "idx": 0,
+ "is_hidden": 0,
+ "label": "Export Incentives",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Incentive Reports",
+   "link_count": 1,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Export Incentive Register",
+   "link_count": 0,
+   "link_to": "Export Incentive Register",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2026-11-20 15:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Export Incentives",
+ "name": "Export Incentives",
+ "number_cards": [
+  {
+   "label": "Incentives Receivable",
+   "number_card_name": "Incentives Receivable"
+  },
+  {
+   "label": "Shipping Bills Not Yet Claimed",
+   "number_card_name": "Shipping Bills Not Yet Claimed"
+  },
+  {
+   "label": "RoDTEP Scrip Balance",
+   "number_card_name": "RoDTEP Scrip Balance"
+  },
+  {
+   "label": "Days to LUT Expiry",
+   "number_card_name": "Days to LUT Expiry"
+  }
+ ],
+ "owner": "Administrator",
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [],
+ "restrict_to_domain": "",
+ "roles": [
+  {
+   "role": "EXIM Manager"
+  },
+  {
+   "role": "EXIM User"
+  },
+  {
+   "role": "System Manager"
+  },
+  {
+   "role": "Accounts Manager"
+  }
+ ],
+ "sequence_id": 33.0,
+ "shortcuts": [
+  {
+   "color": "Blue",
+   "doc_view": "List",
+   "format": "{} Awaiting Receipt",
+   "label": "Export Incentive Claim",
+   "link_to": "Export Incentive Claim",
+   "stats_filter": "[[\"Export Incentive Claim\", \"status\", \"in\", [\"Sanctioned\", \"Partly Received\"]]]",
+   "type": "DocType"
+  },
+  {
+   "color": "Green",
+   "doc_view": "List",
+   "format": "{} Active",
+   "label": "RoDTEP Scrip",
+   "link_to": "RoDTEP Scrip",
+   "stats_filter": "[[\"RoDTEP Scrip\", \"status\", \"in\", [\"Active\", \"Partly Used\"]]]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "format": "",
+   "label": "GST Refund Claim",
+   "link_to": "GST Refund Claim",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "format": "",
+   "label": "Export Incentive Rate",
+   "link_to": "Export Incentive Rate",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Blue",
+   "doc_view": "",
+   "format": "",
+   "label": "Export Incentive Register",
+   "link_to": "Export Incentive Register",
+   "report_ref_doctype": "Shipping Bill",
+   "stats_filter": "",
+   "type": "Report"
+  }
+ ],
+ "title": "Export Incentives",
+ "type": "Workspace"
+}
