@@ -213,7 +213,9 @@ def net_incentive(shipping_bill: dict, scheme: str) -> float:
 
 
 @frappe.whitelist()
-def get_unclaimed_shipping_bills(company: str, scheme: str, from_date=None, to_date=None) -> list[dict]:
+def get_unclaimed_shipping_bills(
+	company: str, scheme: str, from_date: str | None = None, to_date: str | None = None
+) -> list[dict]:
 	frappe.has_permission("Shipping Bill", "read", throw=True)
 	total_field = SCHEME_HEADS[scheme][0]
 	filters = {"company": company, "docstatus": 1, "leo_date": ("is", "set")}
