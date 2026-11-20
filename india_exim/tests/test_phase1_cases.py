@@ -284,6 +284,14 @@ class TestPhaseOneCases(IntegrationTestCase):
 			frappe.db.set_value("Country", "United States", "exim_trade_risk", "Sanctioned")
 			with change_settings("India EXIM Settings", {"pre_shipment_checks": "Block"}):
 				self.assertRaisesRegex(frappe.ValidationError, "Sanctioned", validate, order)
+				# end to end: a draft saves with a warning, the submit is stopped
+				draft = frappe.copy_doc(order)
+				draft.update(
+					{"currency": "USD", "conversion_rate": 80, "delivery_date": add_days(today(), 5)}
+				)
+				draft.items[0].delivery_date = draft.delivery_date
+				draft.insert()
+				self.assertRaisesRegex(frappe.ValidationError, "Sanctioned", draft.submit)
 			with change_settings("India EXIM Settings", {"pre_shipment_checks": "Warn"}):
 				validate(order)  # only a message
 
