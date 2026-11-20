@@ -59,7 +59,7 @@
 			{{ exim.cell(_("LC No. & Date"), (doc.get("exim_lc_number") or "") ~ ((" / " ~ exim.date(doc.exim_lc_date)) if doc.get("exim_lc_date") else "")) }}
 		</tr>
 		<tr>
-			<td colspan="2"><span class="label">{{ _("Marks & Nos. / Container No.") }}</span>
+			<td colspan="2"><span class="exim-label">{{ _("Marks & Nos. / Container No.") }}</span>
 				<span class="pre">{{ doc.get("exim_marks_and_numbers") or "" }}</span>
 				{%- if shipment %}{% for c in shipment.containers %}<br>{{ c.container_number or "" }}{% if c.seal_number %} / {{ _("Seal") }} {{ c.seal_number }}{% endif %}{% if c.size_type %} ({{ c.size_type }}){% endif %}{% endfor %}{% endif %}
 			</td>
@@ -99,8 +99,8 @@
 			{%- set insurance = doc.get("exim_insurance") or 0 %}
 			{%- if freight or insurance %}
 			<tr><td colspan="{{ span }}" class="num">{{ _("FOB Value") }}</td><td class="num">{{ exim.money(doc.total - freight - insurance, doc.currency) }}</td></tr>
-			<tr><td colspan="{{ span }}" class="num">{{ _("Freight") }}</td><td class="num">{{ exim.money(freight, doc.currency) }}</td></tr>
-			<tr><td colspan="{{ span }}" class="num">{{ _("Insurance") }}</td><td class="num">{{ exim.money(insurance, doc.currency) }}</td></tr>
+			{%- if freight %}<tr><td colspan="{{ span }}" class="num">{{ _("Freight") }}</td><td class="num">{{ exim.money(freight, doc.currency) }}</td></tr>{% endif %}
+			{%- if insurance %}<tr><td colspan="{{ span }}" class="num">{{ _("Insurance") }}</td><td class="num">{{ exim.money(insurance, doc.currency) }}</td></tr>{% endif %}
 			{%- endif %}
 			{%- for tax in doc.taxes if tax.tax_amount %}
 			<tr><td colspan="{{ span }}" class="num">{{ tax.description }}</td><td class="num">{{ tax.get_formatted("tax_amount") }}</td></tr>
@@ -112,9 +112,9 @@
 				<th colspan="{{ span }}" class="num">{{ _("Total") }} {{ doc.incoterm or "" }} ({{ doc.currency }})</th>
 				<th class="num">{{ doc.get_formatted("rounded_total") if doc.rounded_total else doc.get_formatted("grand_total") }}</th>
 			</tr>
-			<tr><td colspan="{{ span + 1 }}"><span class="label">{{ _("Amount in Words") }}</span>{{ frappe.utils.money_in_words(doc.rounded_total or doc.grand_total, doc.currency) }}</td></tr>
+			<tr><td colspan="{{ span + 1 }}"><span class="exim-label">{{ _("Amount in Words") }}</span>{{ frappe.utils.money_in_words(doc.rounded_total or doc.grand_total, doc.currency) }}</td></tr>
 			{%- if igst_route %}
-			<tr><td colspan="{{ span + 1 }}"><span class="label">{{ _("IGST Paid") }}</span>{{ frappe.utils.fmt_money(doc.base_total_taxes_and_charges, currency="INR") }}</td></tr>
+			<tr><td colspan="{{ span + 1 }}"><span class="exim-label">{{ _("IGST Paid") }}</span>{{ frappe.utils.fmt_money(doc.base_total_taxes_and_charges, currency="INR") }}</td></tr>
 			{%- endif %}
 		</tfoot>
 	</table>
@@ -122,9 +122,9 @@
 	<table class="gap">
 		<tr>
 			<td style="width: 60%">
-				<span class="label">{{ _("Declaration") }}</span>
+				<span class="exim-label">{{ _("Declaration") }}</span>
 				{{ _("We declare that this invoice shows the actual price of the goods described and that all particulars are true and correct.") }}
-				{%- if doc.terms %}<br><br><span class="label">{{ _("Terms") }}</span>{{ doc.terms }}{% endif %}
+				{%- if doc.terms %}<br><br><span class="exim-label">{{ _("Terms") }}</span>{{ doc.terms }}{% endif %}
 			</td>
 			<td style="text-align: right">{{ exim.signature(doc.company) }}</td>
 		</tr>

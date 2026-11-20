@@ -12,7 +12,7 @@
 		<tr><td colspan="4" class="title">{{ _("SHIPPING INSTRUCTIONS") }}</td></tr>
 		<tr>
 			<td colspan="2" style="width: 50%">
-				<span class="label">{{ _("To (Forwarder / CHA)") }}</span>
+				<span class="exim-label">{{ _("To (Forwarder / CHA)") }}</span>
 				<b>{{ frappe.db.get_value("Supplier", forwarder, "supplier_name") if forwarder else "__________________" }}</b>
 				{%- if doc.cha and doc.freight_forwarder %}<br>{{ _("CHA") }}: {{ frappe.db.get_value("Supplier", doc.cha, "supplier_name") }}{% endif %}
 			</td>
@@ -21,15 +21,15 @@
 		</tr>
 		<tr>
 			<td colspan="2">
-				<span class="label">{{ _("Shipper") }}</span><b>{{ doc.company }}</b><br>
-				<span class="pre">{{ first.company_address_display if first else "" }}</span>
+				<span class="exim-label">{{ _("Shipper") }}</span><b>{{ doc.company }}</b><br>
+				<span>{{ first.company_address_display if first else "" }}</span>
 				{%- set iec = exim.company_iec(doc.company) %}{% if iec %}<br>{{ _("IEC") }}: {{ iec }}{% endif %}
 			</td>
 			{{ exim.cell(_("Booking No."), doc.booking_number) }}
 			{{ exim.cell(_("Shipping Line / Vessel"), (doc.shipping_line or "") ~ (" / " ~ doc.vessel_voyage if doc.vessel_voyage else "")) }}
 		</tr>
 		<tr>
-			<td colspan="2">{% if first %}{{ exim.party(first, "consignee", _("Consignee (as on BL)")) }}{% else %}<span class="label">{{ _("Consignee") }}</span>{{ doc.customer_name }}{% endif %}</td>
+			<td colspan="2">{% if first %}{{ exim.party(first, "consignee", _("Consignee (as on BL)")) }}{% else %}<span class="exim-label">{{ _("Consignee") }}</span>{{ doc.customer_name }}{% endif %}</td>
 			<td colspan="2">{% if first %}{{ exim.party(first, "notify", _("Notify Party"), fallback=False) }}{% endif %}</td>
 		</tr>
 		<tr>
@@ -79,7 +79,7 @@
 
 	<table class="gap">
 		<tr><td>
-			<span class="label">{{ _("Special Instructions") }}</span>
+			<span class="exim-label">{{ _("Special Instructions") }}</span>
 			{%- if doc.is_dangerous_goods %}{{ _("Dangerous goods — UN No. {0}. DG declaration and MSDS attached.").format(doc.un_number or "-") }}<br>{% endif %}
 			{%- if doc.is_reefer %}{{ _("Reefer cargo — set temperature {0}.").format(doc.temperature_setting or "-") }}<br>{% endif %}
 			{%- if first and first.get("exim_lc_number") %}{{ _("Shipment under LC No. {0}: the transport document must match the LC terms exactly.").format(first.exim_lc_number) }}<br>{% endif %}
