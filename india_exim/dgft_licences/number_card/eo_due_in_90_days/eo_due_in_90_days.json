@@ -1,0 +1,23 @@
+{
+ "color": "#E24C4C",
+ "creation": "2026-11-21 10:00:00.000000",
+ "docstatus": 0,
+ "doctype": "Number Card",
+ "document_type": "Export Authorisation",
+ "dynamic_filters_json": "[[\"Export Authorisation\", \"company\", \"=\", \"frappe.defaults.get_user_default(\\\"Company\\\")\"], [\"Export Authorisation\", \"eo_period_upto\", \"<=\", \"frappe.datetime.add_days(frappe.datetime.get_today(), 90)\"]]",
+ "filters_json": "[[\"Export Authorisation\", \"status\", \"=\", \"Active\"]]",
+ "function": "Count",
+ "idx": 0,
+ "is_public": 1,
+ "is_standard": 1,
+ "label": "EO Due in 90 Days",
+ "modified": "2026-11-21 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "DGFT Licences",
+ "name": "EO Due in 90 Days",
+ "owner": "Administrator",
+ "show_full_number": 1,
+ "show_percentage_stats": 0,
+ "stats_time_interval": "Monthly",
+ "type": "Document Type"
+}
