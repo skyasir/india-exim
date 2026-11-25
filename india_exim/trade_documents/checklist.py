@@ -64,15 +64,12 @@ def get_context(shipment) -> ShipmentContext:
 
 
 def get_item_codes(shipment) -> set[str]:
-	child_doctype, invoice_field = (
-		("Sales Invoice Item", "sales_invoice")
-		if shipment.doctype == "Export Shipment"
-		else ("Purchase Invoice Item", "purchase_invoice")
-	)
-	invoices = [row.get(invoice_field) for row in shipment.get("invoices") or [] if row.get(invoice_field)]
+	if shipment.doctype == "Import Shipment":
+		return {row.item_code for row in shipment.get_items() if row.item_code}
+	invoices = [row.sales_invoice for row in shipment.get("invoices") or [] if row.sales_invoice]
 	if not invoices:
 		return set()
-	return set(frappe.get_all(child_doctype, filters={"parent": ("in", invoices)}, pluck="item_code"))
+	return set(frappe.get_all("Sales Invoice Item", filters={"parent": ("in", invoices)}, pluck="item_code"))
 
 
 def get_country_groups(country: str | None) -> set[str]:
@@ -124,6 +121,18 @@ def get_matching_templates(context: ShipmentContext) -> list:
 	return sorted(matched, key=lambda template: (specificity(template), template.name))
 
 
+def get_vgm_requirement(context: ShipmentContext) -> list:
+	"""SOLAS: every full container loaded on a ship needs its verified gross mass declared."""
+	if context.direction != "Export" or context.mode_of_transport != "Sea FCL":
+		return []
+	if not frappe.db.exists("Trade Document Type", VGM_DOCUMENT):
+		return []
+	row = frappe._dict(
+		document_type=VGM_DOCUMENT, mandatory=1, stage="At Shipment", due_event="ETD", due_offset_days=-2
+	)
+	return [frappe._dict(name=_("Sea FCL (SOLAS)"), requirements=[row])]
+
+
 def merge_requirements(templates: list) -> dict[str, frappe._dict]:
 	merged: dict[str, frappe._dict] = {}
 	for template in templates:
@@ -135,7 +144,7 @@ def merge_requirements(templates: list) -> dict[str, frappe._dict]:
 				stage=requirement.stage,
 				due_event=requirement.due_event,
 				due_offset_days=cint(requirement.due_offset_days),
-				responsible=requirement.responsible,
+				responsible=requirement.get("responsible"),
 				instructions=requirement.instructions or "",
 				source=template.name,
 			)
@@ -173,7 +182,8 @@ def get_due_date(row, event_dates: dict):
 
 def apply_checklist(shipment) -> int:
 	"""Add or refresh rule-based rows on the shipment. Returns the number of rows added."""
-	required = merge_requirements(get_matching_templates(get_context(shipment)))
+	context = get_context(shipment)
+	required = merge_requirements(get_vgm_requirement(context) + get_matching_templates(context))
 	existing = {row.document_type: row for row in shipment.documents}
 	added = 0
 
@@ -241,6 +251,7 @@ def enforce_gate(shipment, action_label: str) -> None:
 
 # Documents the app itself produces or records. Their checklist rows are ticked when the source
 # record exists, so nobody types the same number twice.
+VGM_DOCUMENT = "VGM Declaration (SOLAS)"
 OPEN_STATUSES = ("Pending", "Applied")
 TRANSPORT_DOCUMENTS = ("Bill of Lading", "Sea Waybill / Telex Release", "Air Waybill", "Courier Waybill")
 
@@ -275,8 +286,46 @@ def sync_system_documents(shipment) -> None:
 		)
 		if invoice and invoice.docstatus == 1:
 			mark_received(shipment, "Commercial Invoice", row.sales_invoice, invoice.posting_date)
+			# printed from the same invoice
+			mark_received(shipment, "Packing List", row.sales_invoice, invoice.posting_date)
+	if shipment.containers and all(row.vgm_weight for row in shipment.containers):
+		mark_received(shipment, VGM_DOCUMENT, date=getdate())
+	for bill in get_shipping_bills(shipment):
+		mark_received(shipment, "Shipping Bill", bill.shipping_bill_number, bill.shipping_bill_date)
+		if bill.leo_date:
+			mark_received(shipment, "Let Export Order (LEO)", bill.shipping_bill_number, bill.leo_date)
+		if bill.bl_number and not shipment.bl_number:
+			shipment.bl_number, shipment.bl_date = bill.bl_number, bill.bl_date
 	if shipment.bl_number:
 		mark_received(shipment, TRANSPORT_DOCUMENTS, shipment.bl_number, shipment.bl_date)
+
+
+def get_shipping_bills(shipment) -> list:
+	"""Submitted shipping bills of this shipment: linked to it, or made earlier from its invoices."""
+	invoices = [row.sales_invoice for row in shipment.invoices if row.sales_invoice]
+	of_invoices = (
+		frappe.get_all(
+			"Shipping Bill Item",
+			filters={"sales_invoice": ("in", invoices), "parenttype": "Shipping Bill"},
+			pluck="parent",
+		)
+		if invoices
+		else []
+	)
+	return frappe.get_all(
+		"Shipping Bill",
+		filters={"docstatus": 1, "export_shipment": ("in", ["", shipment.name or ""])},
+		or_filters=[["name", "in", of_invoices or [""]], ["export_shipment", "=", shipment.name or "-"]],
+		fields=[
+			"name",
+			"export_shipment",
+			"shipping_bill_number",
+			"shipping_bill_date",
+			"leo_date",
+			"bl_number",
+			"bl_date",
+		],
+	)
 
 
 def update_shipment_from_shipping_bill(shipping_bill) -> None:
@@ -296,7 +345,15 @@ def update_shipment_from_shipping_bill(shipping_bill) -> None:
 			mark_received(
 				shipment, "Let Export Order (LEO)", shipping_bill.shipping_bill_number, shipping_bill.leo_date
 			)
-	if before == [(row.status, row.document_number) for row in shipment.documents]:
+	if shipping_bill.docstatus == 1 and shipping_bill.bl_number and not shipment.bl_number:
+		shipment.bl_number, shipment.bl_date = shipping_bill.bl_number, shipping_bill.bl_date
+	status, bl_number = shipment.status, frappe.db.get_value("Export Shipment", shipment.name, "bl_number")
+	shipment.advance_status()
+	if (
+		status == shipment.status
+		and bl_number == shipment.bl_number
+		and before == [(row.status, row.document_number) for row in shipment.documents]
+	):
 		return
 	shipment.flags.ignore_permissions = True
 	shipment.save()

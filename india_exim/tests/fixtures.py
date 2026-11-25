@@ -11,26 +11,30 @@ FY_START = getdate("2000-01-01")
 
 
 def make_tariff_item(code: str = TARIFF_CODE, bcd: float = 10, sws: float = 10) -> str:
+	"""The tariff item with a duty rate. India EXIM's tariff data may already have created it
+	(without duty rates), so the rate is added when missing."""
+	rate = {"effective_from": FY_START, "bcd_rate": bcd, "sws_rate": sws, "notification": "TEST"}
 	if not frappe.db.exists("Customs Tariff Item", code):
 		frappe.get_doc(
 			{
 				"doctype": "Customs Tariff Item",
 				"tariff_code": code,
 				"description": "Test tariff item",
-				"rates": [
-					{"effective_from": FY_START, "bcd_rate": bcd, "sws_rate": sws, "notification": "TEST"}
-				],
+				"rates": [rate],
 			}
 		).insert(ignore_permissions=True)
+	elif not frappe.db.exists("Customs Tariff Rate", {"parent": code, "parenttype": "Customs Tariff Item"}):
+		tariff = frappe.get_doc("Customs Tariff Item", code)
+		tariff.append("rates", rate)
+		tariff.save(ignore_permissions=True)
 	return code
 
 
 def make_incentive_rate(
 	scheme: str, rate: float, cap: float = 0, tariff: str = TARIFF_CODE, effective_from=FY_START
 ):
-	existing = frappe.db.get_value("Export Incentive Rate", {"scheme": scheme, "customs_tariff_item": tariff})
-	if existing:
-		frappe.delete_doc("Export Incentive Rate", existing, force=True)
+	# replace every rate of the scheme for the tariff, including India EXIM's tariff data
+	frappe.db.delete("Export Incentive Rate", {"scheme": scheme, "customs_tariff_item": tariff})
 	return frappe.get_doc(
 		{
 			"doctype": "Export Incentive Rate",

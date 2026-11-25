@@ -13,6 +13,7 @@ frappe.ui.form.on("Sales Invoice", {
 				}),
 			__("Create")
 		);
+		if (!frappe.boot.exim_features?.shipments) return;
 		frm.add_custom_button(
 			__("Export Shipment"),
 			() =>
@@ -63,7 +64,9 @@ function render_export_status(frm) {
 						frappe.datetime.str_to_user(sb.realisation_due_date) || "-"
 					}</td>
 						<td>${money(
-							(sb.total_drawback || 0) + (sb.total_rodtep || 0),
+							(sb.total_drawback || 0) +
+								(sb.total_rodtep || 0) +
+								(sb.total_rosctl || 0),
 							frappe.defaults.get_default("currency")
 						)}</td>
 					</tr>`
@@ -92,7 +95,9 @@ function render_export_status(frm) {
 							"No shipping bill yet."
 						)}</td></tr>`
 					}</tbody>
-				</table>
+				</table>`);
+			if (!shipments.length && !frappe.boot.exim_features?.shipments) return;
+			wrapper.append(`
 				<table class="table table-bordered table-sm">
 					<thead><tr><th>${__("Export Shipment")}</th><th>${__("Status")}</th><th>${__(
 				"Documents"

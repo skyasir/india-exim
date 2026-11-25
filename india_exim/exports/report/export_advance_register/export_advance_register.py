@@ -10,7 +10,9 @@ advance is an ordinary Payment Entry; what is adjusted is read from ERPNext's Pa
 
 import frappe
 from frappe import _
-from frappe.utils import add_months, date_diff, flt, getdate, today
+from frappe.utils import date_diff, flt, getdate, today
+
+from india_exim.fema.periods import ADVANCE_SHIPMENT, get_due_date
 
 DUE_SOON_DAYS = 60
 
@@ -76,7 +78,6 @@ def get_columns() -> list[dict]:
 
 def get_data(filters) -> list[dict]:
 	as_on = getdate(filters.get("as_on_date") or today())
-	months = frappe.db.get_single_value("India EXIM Settings", "export_advance_shipment_months") or 12
 	conditions = {
 		"docstatus": 1,
 		"payment_type": "Receive",
@@ -102,7 +103,7 @@ def get_data(filters) -> list[dict]:
 		unadjusted = flt(row.paid_amount) - adjusted.get(row.name, 0)
 		if unadjusted <= 0.01:
 			continue
-		ship_by = add_months(row.posting_date, months)
+		ship_by = get_due_date(ADVANCE_SHIPMENT, row.posting_date)
 		days_left = date_diff(ship_by, as_on)
 		status = _("Overdue") if days_left < 0 else _("Due Soon") if days_left <= DUE_SOON_DAYS else _("Open")
 		if filters.get("overdue_only") and days_left >= 0:

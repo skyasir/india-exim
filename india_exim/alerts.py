@@ -11,7 +11,8 @@ from frappe.desk.doctype.notification_log.notification_log import enqueue_create
 from frappe.utils import add_days, get_link_to_form, getdate
 from frappe.utils.user import get_users_with_role
 
-STALE_RATE_DAYS = 16  # CBIC notifies customs exchange rates twice a month
+from india_exim.utils.rates import STALE_RATE_DAYS
+
 OPEN_DOCUMENT_STATUSES = ("Pending", "Applied", "Discrepancy")
 CLOSED_SHIPMENT_STATUSES = ("Delivered", "Closed", "Cancelled")
 

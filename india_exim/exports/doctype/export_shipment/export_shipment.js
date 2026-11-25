@@ -16,6 +16,12 @@ frappe.ui.form.on("Export Shipment", {
 		}
 	},
 
+	onload(frm) {
+		// Frappe fills a new Country link with the company's own, where an export never goes
+		if (frm.is_new() && frm.doc.destination_country === frappe.boot.sysdefaults.country)
+			frm.set_value("destination_country", "");
+	},
+
 	refresh(frm) {
 		if (frm.is_new()) return;
 		frm.dashboard.add_indicator(

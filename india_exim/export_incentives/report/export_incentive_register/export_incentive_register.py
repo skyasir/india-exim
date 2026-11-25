@@ -10,6 +10,7 @@ from frappe.utils import date_diff, flt, getdate, today
 SCHEMES = (
 	("Duty Drawback", "total_drawback", "drawback_reversed"),
 	("RoDTEP", "total_rodtep", "rodtep_reversed"),
+	("RoSCTL", "total_rosctl", "rosctl_reversed"),
 )
 
 
@@ -78,6 +79,8 @@ def get_data(filters) -> list[dict]:
 			"total_rodtep",
 			"drawback_reversed",
 			"rodtep_reversed",
+			"total_rosctl",
+			"rosctl_reversed",
 		],
 		order_by="leo_date, name",
 	)

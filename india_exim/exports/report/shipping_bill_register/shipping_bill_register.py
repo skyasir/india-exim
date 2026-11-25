@@ -69,6 +69,7 @@ def get_columns() -> list[dict]:
 		{"label": _("FOB (INR)"), "fieldname": "total_fob_value_inr", "fieldtype": "Currency", "width": 130},
 		{"label": _("Drawback"), "fieldname": "total_drawback", "fieldtype": "Currency", "width": 110},
 		{"label": _("RoDTEP"), "fieldname": "total_rodtep", "fieldtype": "Currency", "width": 110},
+		{"label": _("RoSCTL"), "fieldname": "total_rosctl", "fieldtype": "Currency", "width": 110},
 		{"label": _("IGST Paid"), "fieldname": "total_igst", "fieldtype": "Currency", "width": 110},
 		{"label": _("Status"), "fieldname": "status", "fieldtype": "Data", "width": 100},
 		{"label": _("Realisation"), "fieldname": "realisation_status", "fieldtype": "Data", "width": 120},

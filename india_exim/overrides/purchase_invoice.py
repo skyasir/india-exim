@@ -38,3 +38,15 @@ def set_merchant_export_due(doc, method=None):
 			title=_("Merchant Export Deadline Missed"),
 			indicator="orange",
 		)
+
+
+def set_origin_country(doc, method=None):
+	"""The supplier's country until the user says otherwise (goods can come from elsewhere)."""
+	if not doc.get("exim_is_import") or doc.docstatus != 0:
+		return
+	home = frappe.get_cached_value("Company", doc.company, "country")
+	if doc.exim_origin_country and doc.exim_origin_country != home:
+		return
+	country = frappe.db.get_value("Supplier", doc.supplier, "country")
+	if country and country != home:
+		doc.exim_origin_country = country

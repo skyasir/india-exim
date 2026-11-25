@@ -6,7 +6,9 @@ covers, so there is one owner for payment data and nothing to keep in sync by ha
 """
 
 import frappe
-from frappe.utils import add_months, flt, getdate
+from frappe.utils import flt, getdate
+
+from india_exim.fema.periods import EXPORT_REALISATION, IMPORT_PAYMENT, get_due_date
 
 TOLERANCE = 0.01
 
@@ -74,10 +76,7 @@ def update_shipping_bill_realisation(name: str) -> None:
 	extensions = [
 		getdate(row.extended_upto) for row in shipping_bill.realisation_actions if row.extended_upto
 	]
-	base_due = add_months(
-		shipping_bill.shipping_bill_date,
-		frappe.db.get_single_value("India EXIM Settings", "export_realisation_months") or 9,
-	)
+	base_due = get_due_date(EXPORT_REALISATION, shipping_bill.shipping_bill_date)
 
 	if outstanding <= TOLERANCE:
 		status = "Written Off" if written_off and realised <= TOLERANCE else "Fully Realised"
@@ -126,13 +125,12 @@ def update_bill_of_entry_payment(name: str) -> None:
 	else:
 		status = "Unpaid"
 
-	months = frappe.db.get_single_value("India EXIM Settings", "import_payment_months") or 6
 	bill_of_entry.db_set(
 		{
 			"exim_invoice_value": flt(invoice_value, 2),
 			"exim_paid_value": flt(paid, 2),
 			"exim_payment_status": status,
-			"exim_payment_due_date": add_months(bill_of_entry.bill_of_entry_date, months),
+			"exim_payment_due_date": get_due_date(IMPORT_PAYMENT, bill_of_entry.bill_of_entry_date),
 		}
 	)
 

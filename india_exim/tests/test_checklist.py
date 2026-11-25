@@ -82,6 +82,7 @@ class TestDocumentChecklist(IntegrationTestCase):
 				"customer": FOREIGN_CUSTOMER,
 				"destination_country": "United States",
 				"etd": add_days(getdate(), 20),
+				"mode_of_transport": "Air",  # no VGM row
 				**values,
 			}
 		).insert()

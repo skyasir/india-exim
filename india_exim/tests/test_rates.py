@@ -49,7 +49,8 @@ class TestRates(IntegrationTestCase):
 		make_incentive_rate("RoDTEP", 2, effective_from="2001-01-01")
 		self.assertEqual(get_incentive_rate("RoDTEP", "52083190", "2001-06-01").rate, 2)
 		self.assertIsNone(get_incentive_rate("RoDTEP", "52083190", "2000-06-01"))
-		duplicate = frappe.get_doc(
+		# a newer rate ends the open-ended one before it (e.g. a new notification loaded)
+		newer = frappe.get_doc(
 			{
 				"doctype": "Export Incentive Rate",
 				"scheme": "RoDTEP",
@@ -57,8 +58,27 @@ class TestRates(IntegrationTestCase):
 				"rate": 3,
 				"effective_from": "2002-01-01",
 			}
+		).insert()
+		self.assertEqual(get_incentive_rate("RoDTEP", "52083190", "2001-12-31").rate, 2)
+		self.assertEqual(get_incentive_rate("RoDTEP", "52083190", "2002-01-01").name, newer.name)
+
+		# a rate that starts before an existing one and runs into it is refused
+		earlier = frappe.get_doc(
+			{
+				"doctype": "Export Incentive Rate",
+				"scheme": "RoDTEP",
+				"customs_tariff_item": "52083190",
+				"rate": 4,
+				"effective_from": "2000-06-01",
+			}
 		)
-		self.assertRaises(frappe.ValidationError, duplicate.insert)
+		self.assertRaises(frappe.ValidationError, earlier.insert)
+
+		# a fixed amount per unit instead of a % of FOB
+		from india_exim.exports.doctype.shipping_bill.shipping_bill import compute_incentive
+
+		fixed = frappe._dict(rate=0, amount_per_unit=400, cap_per_unit=0)
+		self.assertEqual(compute_incentive(100000, fixed, 2.5), 1000)
 
 	def test_customs_exchange_rate(self):
 		make_exchange_rate("EUR", export_rate=90, import_rate=92, on="2001-01-01")

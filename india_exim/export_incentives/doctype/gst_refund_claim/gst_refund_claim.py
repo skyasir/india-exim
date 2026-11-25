@@ -99,3 +99,35 @@ def record_refund_receipt(claim: str, posting_date: str, amount: float, bank_acc
 	doc.flags.ignore_validate_update_after_submit = True
 	doc.save(ignore_permissions=True)
 	return journal_entry
+
+
+@frappe.whitelist()
+def get_shipping_bills(company: str, from_date: str, to_date: str, claim: str | None = None) -> dict:
+	"""Shipping bills with IGST paid, with LEO in the period and on no other refund claim."""
+	frappe.has_permission("Shipping Bill", "read", throw=True)
+	bills = frappe.get_list(
+		"Shipping Bill",
+		filters={
+			"company": company,
+			"docstatus": 1,
+			"export_type": "With Payment of IGST",
+			"total_igst": (">", 0),
+			"leo_date": ("between", [from_date, to_date]),
+		},
+		fields=["name", "total_igst"],
+		order_by="leo_date",
+		limit=0,
+	)
+	claimed = set(
+		frappe.get_all(
+			"GST Refund Shipping Bill",
+			filters={
+				"shipping_bill": ("in", [row.name for row in bills] or [""]),
+				"docstatus": ("<", 2),
+				"parent": ("!=", claim or ""),
+			},
+			pluck="shipping_bill",
+		)
+	)
+	bills = [row for row in bills if row.name not in claimed]
+	return {"shipping_bills": [row.name for row in bills], "igst": sum(flt(row.total_igst) for row in bills)}

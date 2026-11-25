@@ -16,7 +16,7 @@
 		</tr>
 		<tr>
 			{{ exim.cell(_("Vessel / Voyage"), doc.vessel_voyage) }}
-			{{ exim.cell(_("Port of Loading"), doc.port_of_loading) }}
+			{{ exim.cell(_("Port of Loading"), exim_port(doc.port_of_loading)) }}
 			{{ exim.cell(_("Port of Discharge"), doc.port_of_discharge) }}
 			{{ exim.cell(_("Method of Weighing"), _("Method 1 / Method 2 (strike out one)")) }}
 		</tr>

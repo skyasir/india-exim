@@ -6,34 +6,120 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "incentives_section",
+  "features_section",
+  "do_imports",
+  "claim_incentives",
+  "track_shipments",
+  "use_dgft_licences",
+  "column_break_features",
+  "do_merchant_export",
+  "ship_special_cargo",
+  "use_ecgc",
+  "checks_section",
+  "lut_check",
+  "checklist_gate",
+  "column_break_checks",
+  "pre_shipment_checks",
   "incentive_accrual_point",
-  "column_break_inc",
+  "advanced_tab",
+  "incentives_section",
   "incentive_unclaimed_alert_days",
+  "column_break_inc",
   "scrip_validity_months",
   "fema_section",
-  "export_realisation_months",
-  "import_payment_months",
-  "export_advance_shipment_months",
-  "column_break_fema",
+  "fema_periods",
   "realisation_alert_days",
   "gst_section",
-  "lut_check",
   "merchant_export_days",
   "imports_section",
   "capitalise_customs_duty",
-  "documents_section",
-  "checklist_gate",
   "controls_section",
-  "pre_shipment_checks",
-  "column_break_controls",
   "buyer_screening_months"
  ],
  "fields": [
   {
-   "fieldname": "incentives_section",
+   "description": "Only what is ticked is shown on forms and in the menu. Nothing already entered is hidden, and no check depends on these.",
+   "fieldname": "features_section",
    "fieldtype": "Section Break",
-   "label": "Export Incentives"
+   "label": "What You Do"
+  },
+  {
+   "default": "0",
+   "fieldname": "do_imports",
+   "fieldtype": "Check",
+   "label": "Imports"
+  },
+  {
+   "default": "1",
+   "fieldname": "claim_incentives",
+   "fieldtype": "Check",
+   "label": "Duty Drawback, RoDTEP and Other Incentives"
+  },
+  {
+   "default": "0",
+   "fieldname": "track_shipments",
+   "fieldtype": "Check",
+   "label": "Shipment Tracking and Document Checklist (Export Shipment)"
+  },
+  {
+   "default": "0",
+   "fieldname": "use_dgft_licences",
+   "fieldtype": "Check",
+   "label": "DGFT Licences (Advance Authorisation, EPCG)"
+  },
+  {
+   "fieldname": "column_break_features",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "do_merchant_export",
+   "fieldtype": "Check",
+   "label": "Merchant Export (buying at 0.1% GST)"
+  },
+  {
+   "default": "0",
+   "fieldname": "ship_special_cargo",
+   "fieldtype": "Check",
+   "label": "Dangerous Goods or Temperature-controlled Cargo"
+  },
+  {
+   "default": "0",
+   "fieldname": "use_ecgc",
+   "fieldtype": "Check",
+   "label": "ECGC Credit Cover"
+  },
+  {
+   "fieldname": "checks_section",
+   "fieldtype": "Section Break",
+   "label": "Checks"
+  },
+  {
+   "default": "Block",
+   "description": "Exports without IGST (Overseas / SEZ) require a valid Letter of Undertaking for the invoice date.",
+   "fieldname": "lut_check",
+   "fieldtype": "Select",
+   "label": "Check LUT on Zero-rated Exports",
+   "options": "Block\nWarn\nOff"
+  },
+  {
+   "default": "Warn",
+   "fieldname": "checklist_gate",
+   "fieldtype": "Select",
+   "label": "When Mandatory Documents Are Pending",
+   "options": "Warn\nBlock\nOff"
+  },
+  {
+   "fieldname": "column_break_checks",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Warn",
+   "description": "Block stops a sanctioned destination, prohibited goods or an unscreened buyer; Warn only shows a message. Restricted goods and SCOMET items always warn.",
+   "fieldname": "pre_shipment_checks",
+   "fieldtype": "Select",
+   "label": "Pre-shipment Checks",
+   "options": "Off\nWarn\nBlock"
   },
   {
    "default": "On LEO",
@@ -41,11 +127,18 @@
    "fieldname": "incentive_accrual_point",
    "fieldtype": "Select",
    "label": "Book Incentive Income On",
-   "options": "On LEO\nOn Scroll\nOn Receipt"
+   "options": "On LEO\nOn Scroll\nOn Receipt",
+   "depends_on": "claim_incentives"
   },
   {
-   "fieldname": "column_break_inc",
-   "fieldtype": "Column Break"
+   "fieldname": "advanced_tab",
+   "fieldtype": "Tab Break",
+   "label": "Advanced"
+  },
+  {
+   "fieldname": "incentives_section",
+   "fieldtype": "Section Break",
+   "label": "Alerts and Incentives"
   },
   {
    "default": "60",
@@ -54,43 +147,27 @@
    "label": "Alert When Incentive Unclaimed For (Days)"
   },
   {
-   "default": "12",
-   "description": "Default validity used when recording an e-scrip. Check the validity printed on the scrip.",
+   "fieldname": "column_break_inc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "24",
+   "description": "Two years since Notification 79/2022-Customs (N.T.). Used when an e-scrip is recorded.",
    "fieldname": "scrip_validity_months",
    "fieldtype": "Int",
    "label": "RoDTEP Scrip Validity (Months)"
   },
   {
+   "description": "RBI sets these periods by regulation and changes them from a date. Each row applies to shipping bills, advances or bills of entry dated on or after its Effective From, so older documents keep the period that applied to them.",
    "fieldname": "fema_section",
    "fieldtype": "Section Break",
    "label": "FEMA / RBI"
   },
   {
-   "default": "9",
-   "description": "Period from shipment within which export proceeds must be realised under the RBI Master Direction in force. Update this if RBI changes it.",
-   "fieldname": "export_realisation_months",
-   "fieldtype": "Int",
-   "label": "Export Realisation Period (Months)",
-   "reqd": 1
-  },
-  {
-   "default": "6",
-   "description": "Period from shipment within which import payments are expected to be settled.",
-   "fieldname": "import_payment_months",
-   "fieldtype": "Int",
-   "label": "Import Payment Period (Months)",
-   "reqd": 1
-  },
-  {
-   "fieldname": "export_advance_shipment_months",
-   "fieldtype": "Int",
-   "label": "Ship Against Advance Within (Months)",
-   "default": "12",
-   "description": "Period allowed by the RBI's Master Direction (or the export contract) to ship goods against an advance received. RBI has changed this period by notification, so check the current rule."
-  },
-  {
-   "fieldname": "column_break_fema",
-   "fieldtype": "Column Break"
+   "fieldname": "fema_periods",
+   "fieldtype": "Table",
+   "label": "Periods",
+   "options": "FEMA Period"
   },
   {
    "default": "30",
@@ -104,24 +181,17 @@
    "label": "GST on Exports"
   },
   {
-   "default": "Block",
-   "description": "Exports without IGST (Overseas / SEZ) require a valid Letter of Undertaking for the invoice date.",
-   "fieldname": "lut_check",
-   "fieldtype": "Select",
-   "label": "Check LUT on Zero-rated Exports",
-   "options": "Block\nWarn\nOff"
-  },
-  {
+   "default": "90",
+   "description": "Goods bought at 0.1% GST for merchant export must be exported within this period from the supplier's invoice date.",
    "fieldname": "merchant_export_days",
    "fieldtype": "Int",
-   "label": "Merchant Export Within (Days)",
-   "default": "90",
-   "description": "Goods bought at 0.1% GST for merchant export must be exported within this period from the supplier's invoice date."
+   "label": "Merchant Export Within (Days)"
   },
   {
    "fieldname": "imports_section",
    "fieldtype": "Section Break",
-   "label": "Imports"
+   "label": "Imports",
+   "depends_on": "do_imports"
   },
   {
    "default": "1",
@@ -131,46 +201,21 @@
    "label": "Add Non-creditable Customs Duty to Stock Value"
   },
   {
-   "fieldname": "documents_section",
-   "fieldtype": "Section Break",
-   "label": "Trade Documents"
-  },
-  {
-   "default": "Warn",
-   "fieldname": "checklist_gate",
-   "fieldtype": "Select",
-   "label": "When Mandatory Documents Are Pending",
-   "options": "Warn\nBlock\nOff"
-  },
-  {
    "fieldname": "controls_section",
    "fieldtype": "Section Break",
-   "label": "Pre-shipment Controls",
-   "description": "Checks on quotations, sales orders and export invoices: destination country risk, export policy of the goods (ITC-HS) and buyer screening."
+   "label": "Buyer Screening"
   },
   {
-   "fieldname": "pre_shipment_checks",
-   "fieldtype": "Select",
-   "label": "Pre-shipment Checks",
-   "options": "Off\nWarn\nBlock",
-   "default": "Warn",
-   "description": "Block stops a sanctioned destination, prohibited goods or an unscreened buyer; Warn only shows a message. Restricted goods and SCOMET items always warn."
-  },
-  {
-   "fieldname": "column_break_controls",
-   "fieldtype": "Column Break"
-  },
-  {
+   "default": "12",
+   "description": "How long a denied-party screening of a buyer counts. 0 turns the screening check off.",
    "fieldname": "buyer_screening_months",
    "fieldtype": "Int",
-   "label": "Buyer Screening Valid For (Months)",
-   "default": "12",
-   "description": "How long a denied-party screening of a buyer counts. 0 turns the screening check off."
+   "label": "Buyer Screening Valid For (Months)"
   }
  ],
  "issingle": 1,
  "links": [],
- "modified": "2026-11-20 20:00:00.000000",
+ "modified": "2026-11-26 12:00:00.000000",
  "modified_by": "Administrator",
  "module": "EXIM Setup",
  "name": "India EXIM Settings",

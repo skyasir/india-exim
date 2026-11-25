@@ -18,7 +18,8 @@ from frappe import _
 from frappe.model.document import Document
 from frappe.utils import flt, getdate
 
-from india_exim.utils.rates import get_incentive_rate
+from india_exim.utils.item_details import get_item_details
+from india_exim.utils.rates import get_incentive_rate, get_rosctl_rate
 
 FREIGHT_TERMS = ("CFR", "CPT", "CIF", "CIP", "DAP", "DPU", "DDP")
 INSURANCE_TERMS = ("CIF", "CIP", "DAP", "DPU", "DDP")
@@ -33,11 +34,24 @@ class ExportCostingSheet(Document):
 
 	def set_incentive_rates(self):
 		for row in self.items:
+			serial = get_item_details(row.item_code).exim_drawback_serial_no
 			for scheme, field in (("Duty Drawback", "drawback_rate"), ("RoDTEP", "rodtep_rate")):
 				if row.get(field) or not row.customs_tariff_item:
 					continue
-				rate = get_incentive_rate(scheme, row.customs_tariff_item, getdate(self.posting_date))
+				rate = get_incentive_rate(
+					scheme,
+					row.customs_tariff_item,
+					getdate(self.posting_date),
+					serial if scheme == "Duty Drawback" else None,
+					row.item_code,
+				)
 				row.set(field, flt(rate.rate) if rate else 0)
+
+			if not row.rosctl_rate and row.customs_tariff_item:
+				rate = get_rosctl_rate(row.customs_tariff_item, getdate(self.posting_date), serial)
+				row.rosctl_rate = flt(rate.rate) + flt(rate.central_rate) if rate else 0
+			if flt(row.rosctl_rate):
+				row.rodtep_rate = 0  # not given on the same goods
 
 	def calculate(self):
 		charges = (
@@ -64,7 +78,9 @@ class ExportCostingSheet(Document):
 			row.cost_at_basis = row.fob_amount + carriage
 
 			incentive_rate = (
-				(flt(row.drawback_rate) + flt(row.rodtep_rate)) / 100 if self.include_incentives else 0
+				(flt(row.drawback_rate) + flt(row.rodtep_rate) + flt(row.rosctl_rate)) / 100
+				if self.include_incentives
+				else 0
 			)
 			if self.incoterm == "EXW":
 				incentive_rate = 0  # the buyer exports; the incentives are not ours
@@ -116,6 +132,12 @@ def update_quotation_rates(name: str) -> int:
 		frappe.throw(_("None of the costed items is on quotation {0}.").format(quotation.name))
 	if sheet.incoterm and not quotation.incoterm:
 		quotation.incoterm = sheet.incoterm
+	# freight and insurance in the price, which the shipping bill takes out again to reach FOB
+	if quotation.get("exim_is_export"):
+		if sheet.incoterm in FREIGHT_TERMS and not flt(quotation.exim_freight):
+			quotation.exim_freight = flt(flt(sheet.freight) / flt(sheet.exchange_rate), 2)
+		if sheet.incoterm in INSURANCE_TERMS and not flt(quotation.exim_insurance):
+			quotation.exim_insurance = flt(flt(sheet.insurance) / flt(sheet.exchange_rate), 2)
 	quotation.save()
 	return updated
 

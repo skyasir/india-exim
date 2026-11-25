@@ -4,35 +4,17 @@ import json
 from pathlib import Path
 
 APP = Path(__file__).resolve().parents[1] / "india_exim" / "exim_setup"
-TS = "2026-11-20 21:00:00.000000"
+TS = "2026-11-24 20:00:00.000000"
 ONBOARDING = "India EXIM Onboarding"
 
 # (name, title, action, target, description, optional, extra)
 STEPS = [
 	(
-		"EXIM Company Details",
-		"Add your IEC and export accounts",
+		"EXIM Quick Setup",
+		"Quick setup",
 		"Go to Page",
-		"List/Company",
-		"Open your company and fill the **Export & Import** tab: IEC, RCMC and the accounts for drawback, RoDTEP and customs. Missing accounts were created for you; check that they sit in the right groups.",
-		0,
-		{},
-	),
-	(
-		"EXIM AD Code",
-		"Register your AD code",
-		"Create Entry",
-		"AD Code Registration",
-		"The Authorised Dealer code your bank registered with customs for each port. Shipping bills pick it up by port.",
-		0,
-		{},
-	),
-	(
-		"EXIM Letter of Undertaking",
-		"Record this year's LUT",
-		"Create Entry",
-		"Letter of Undertaking",
-		"Exports without IGST need a valid LUT (GST RFD-11) on the invoice date. Enter the ARN and validity; export invoices are checked against it.",
+		"Form/India EXIM Settings",
+		"Press **Quick Setup**: IEC, AD code and port, LUT, and what you do. The accounts, tariff codes and RoDTEP rates are set up for you.",
 		0,
 		{},
 	),
@@ -46,39 +28,12 @@ STEPS = [
 		{},
 	),
 	(
-		"EXIM Tariff Item",
-		"Add your ITC-HS codes",
-		"Create Entry",
-		"Customs Tariff Item",
-		"One record per 8-digit ITC-HS code you trade: export and import policy, duty rates with their dates, and SCOMET status. Then set the code on each Item.",
-		0,
-		{},
-	),
-	(
-		"EXIM Incentive Rate",
-		"Add Drawback and RoDTEP rates",
-		"Create Entry",
-		"Export Incentive Rate",
-		"The All Industry Rate of Drawback and the RoDTEP rate for each ITC-HS code, with per-unit caps. Shipping bills calculate incentives from these.",
-		1,
-		{},
-	),
-	(
 		"EXIM Export Customer",
 		"Set up an overseas buyer",
 		"Go to Page",
 		"List/Customer",
 		"Tick **Export Customer** on each overseas buyer and fill the Export Details tab: document instructions, denied-party screening and ECGC limit.",
 		0,
-		{},
-	),
-	(
-		"EXIM Settings",
-		"Review India EXIM Settings",
-		"Go to Page",
-		"Form/India EXIM Settings",
-		"When incentives are booked, realisation periods, the LUT check, the document checklist gate and the pre-shipment checks.",
-		1,
 		{},
 	),
 	(

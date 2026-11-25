@@ -10,8 +10,7 @@ DEFAULTS = {
 	"pre_shipment_checks": "Warn",
 	"buyer_screening_months": 12,
 	"merchant_export_days": 90,
-	"export_advance_shipment_months": 12,
-	"scrip_validity_months": 12,
+	"scrip_validity_months": 24,
 }
 
 

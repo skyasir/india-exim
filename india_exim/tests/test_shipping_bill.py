@@ -72,14 +72,45 @@ class TestShippingBill(IntegrationTestCase):
 		invoice = make_export_invoice()
 		first = self.make_shipping_bill(invoice)
 		first.insert()
-		second = self.make_shipping_bill(invoice, shipping_bill_number=first.shipping_bill_number)
+		second = self.make_shipping_bill(
+			make_export_invoice(), shipping_bill_number=first.shipping_bill_number
+		)
 		self.assertRaises(frappe.ValidationError, second.insert)
 
-	def test_realisation_due_date_follows_settings(self):
+	def test_realisation_due_date_follows_the_rbi_period_of_its_date(self):
 		invoice = make_export_invoice()
 		shipping_bill = self.make_shipping_bill(invoice).insert()
-		self.assertEqual(getdate(shipping_bill.realisation_due_date), getdate(add_months(today(), 9)))
+		# 15 months for exports from 14.11.2025 (FEM Second Amendment Regulations, 2025)
+		self.assertEqual(getdate(shipping_bill.realisation_due_date), getdate(add_months(today(), 15)))
 		self.assertEqual(shipping_bill.outstanding_value, shipping_bill.total_invoice_value)
+
+	def test_rbi_periods_are_dated(self):
+		from india_exim.fema.periods import (
+			ADVANCE_SHIPMENT,
+			EXPORT_REALISATION,
+			IMPORT_PAYMENT,
+			get_months,
+		)
+
+		self.assertEqual(get_months(EXPORT_REALISATION, "2025-11-13"), 9)
+		self.assertEqual(get_months(EXPORT_REALISATION, "2025-11-14"), 15)
+		self.assertEqual(get_months(ADVANCE_SHIPMENT, "2025-06-01"), 12)
+		self.assertEqual(get_months(ADVANCE_SHIPMENT, "2026-01-01"), 36)
+		self.assertEqual(get_months(IMPORT_PAYMENT, "2026-01-01"), 6)
+
+		# a later change by RBI applies from its date only
+		settings = frappe.get_single("India EXIM Settings")
+		settings.append(
+			"fema_periods", {"period_for": EXPORT_REALISATION, "effective_from": "2030-01-01", "months": 12}
+		)
+		settings.save()
+		self.assertEqual(get_months(EXPORT_REALISATION, "2029-12-31"), 15)
+		self.assertEqual(get_months(EXPORT_REALISATION, "2030-01-01"), 12)
+		settings.reload()
+		settings.fema_periods = [
+			row for row in settings.fema_periods if str(row.effective_from) != "2030-01-01"
+		]
+		settings.save()
 
 	@change_settings("India EXIM Settings", {"incentive_accrual_point": "On LEO"})
 	def test_leo_accrues_incentives_and_cancel_reverses(self):

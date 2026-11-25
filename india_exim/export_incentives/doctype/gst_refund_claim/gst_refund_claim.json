@@ -56,7 +56,8 @@
    "in_standard_filter": 1,
    "label": "Refund Type",
    "options": "IGST Paid on Exports\nAccumulated ITC (Exports under LUT)\nSupplies to SEZ",
-   "reqd": 1
+   "reqd": 1,
+   "default": "IGST Paid on Exports"
   },
   {
    "fieldname": "from_date",
@@ -199,7 +200,7 @@
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2026-11-19 20:00:00.000000",
+ "modified": "2026-11-25 15:00:00.000000",
  "modified_by": "Administrator",
  "module": "Export Incentives",
  "name": "GST Refund Claim",

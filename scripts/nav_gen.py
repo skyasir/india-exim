@@ -9,7 +9,7 @@ from pathlib import Path
 APP = Path(__file__).resolve().parents[1] / "india_exim"
 # apps folder of a bench with frappe, erpnext and india_compliance, to check that linked doctypes and reports exist
 UPSTREAM = Path(os.environ.get("BENCH_APPS", "~/frappe-bench/apps")).expanduser()
-TS = "2026-11-21 12:00:00.000000"
+TS = "2026-11-26 10:00:00.000000"
 HOME = "India EXIM"
 
 # module -> (dock icon, [items]); item = (label, link_type, link_to, icon) or ("section", label, icon)
@@ -38,6 +38,7 @@ SIDEBARS = {
 			("Proforma Invoice", "DocType", "Proforma Invoice", "file-badge"),
 			("Delivery Note", "DocType", "Delivery Note", "truck"),
 			("Sales Invoice", "DocType", "Sales Invoice", "receipt"),
+			("Export Shipment", "DocType", "Export Shipment", "container"),
 			("Shipping Bill", "DocType", "Shipping Bill", "file-output"),
 			("Payment Entry", "DocType", "Payment Entry", "landmark"),
 			("section", "Reports", "notepad-text"),
@@ -50,7 +51,6 @@ SIDEBARS = {
 			("section", "Setup", "database"),
 			("Customer", "DocType", "Customer", None),
 			("Item", "DocType", "Item", None),
-			("Letter of Undertaking", "DocType", "Letter of Undertaking", None),
 		],
 	),
 	"Imports": (
@@ -58,6 +58,8 @@ SIDEBARS = {
 		[
 			home("Imports"),
 			*TOP,
+			("Purchase Order", "DocType", "Purchase Order", "file-pen"),
+			("Import Shipment", "DocType", "Import Shipment", "container"),
 			("Purchase Invoice", "DocType", "Purchase Invoice", "receipt"),
 			("Bill of Entry", "DocType", "Bill of Entry", "file-input"),
 			("Landed Cost Voucher", "DocType", "Landed Cost Voucher", "package-plus"),
@@ -69,7 +71,6 @@ SIDEBARS = {
 			("section", "Setup", "database"),
 			("Supplier", "DocType", "Supplier", None),
 			("Item", "DocType", "Item", None),
-			("Customs Tariff Item", "DocType", "Customs Tariff Item", None),
 		],
 	),
 	"Trade Documents": (
@@ -83,10 +84,6 @@ SIDEBARS = {
 			("section", "Reports", "notepad-text"),
 			("Shipment Tracker", "Report", "Shipment Tracker", None),
 			("Pending Trade Documents", "Report", "Pending Trade Documents", None),
-			("section", "Setup", "database"),
-			("Document Requirement Template", "DocType", "Document Requirement Template", None),
-			("Trade Document Type", "DocType", "Trade Document Type", None),
-			("Country Group", "DocType", "Country Group", None),
 		],
 	),
 	"Export Incentives": (
@@ -100,8 +97,6 @@ SIDEBARS = {
 			("section", "Reports", "notepad-text"),
 			("Export Incentive Register", "Report", "Export Incentive Register", None),
 			("RoDTEP Scrip Ledger", "Report", "RoDTEP Scrip Ledger", None),
-			("section", "Setup", "database"),
-			("Export Incentive Rate", "DocType", "Export Incentive Rate", None),
 		],
 	),
 	"DGFT Licences": (
@@ -127,6 +122,9 @@ SIDEBARS = {
 			("Customs Tariff Item", "DocType", "Customs Tariff Item", None),
 			("Customs Exchange Rate", "DocType", "Customs Exchange Rate", None),
 			("Export Incentive Rate", "DocType", "Export Incentive Rate", None),
+			("section", "Document Rules", "files"),
+			("Document Requirement Template", "DocType", "Document Requirement Template", None),
+			("Trade Document Type", "DocType", "Trade Document Type", None),
 			("section", "Countries", "globe"),
 			("Country", "DocType", "Country", None),
 			("Country Group", "DocType", "Country Group", None),

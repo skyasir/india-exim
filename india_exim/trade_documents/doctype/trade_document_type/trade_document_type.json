@@ -2,7 +2,7 @@
  "actions": [],
  "allow_rename": 0,
  "autoname": "field:document_name",
- "creation": "2026-11-19 13:00:00.000000",
+ "creation": "2026-11-19 20:00:00.000000",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
@@ -117,7 +117,7 @@
   }
  ],
  "links": [],
- "modified": "2026-11-19 13:00:00.000000",
+ "modified": "2026-11-19 20:00:00.000000",
  "modified_by": "Administrator",
  "module": "Trade Documents",
  "name": "Trade Document Type",

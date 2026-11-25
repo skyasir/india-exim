@@ -13,7 +13,7 @@ from india_exim.setup.accounts import get_exim_account
 SCHEME_HEADS = {
 	"Duty Drawback": ("total_drawback", "exim_drawback_receivable_account", "exim_drawback_income_account"),
 	"RoDTEP": ("total_rodtep", "exim_rodtep_receivable_account", "exim_rodtep_income_account"),
-	"RoSCTL": (None, "exim_rosctl_receivable_account", "exim_rosctl_income_account"),
+	"RoSCTL": ("total_rosctl", "exim_rosctl_receivable_account", "exim_rosctl_income_account"),
 }
 
 
@@ -201,7 +201,13 @@ def get_existing_claim(shipping_bill: str, scheme: str, exclude: str | None = No
 
 
 # incentive taken back for credit notes / write-offs (india_exim.export_incentives.accounting)
-REVERSED_FIELDS = {"Duty Drawback": "drawback_reversed", "RoDTEP": "rodtep_reversed"}
+REVERSED_FIELDS = {
+	"Duty Drawback": "drawback_reversed",
+	"RoDTEP": "rodtep_reversed",
+	"RoSCTL": "rosctl_reversed",
+}
+# credited as a transferable e-scrip in the ICEGATE ledger, not as cash
+SCRIP_SCHEMES = ("RoDTEP", "RoSCTL")
 
 
 def net_incentive(shipping_bill: dict, scheme: str) -> float:
@@ -252,13 +258,13 @@ def get_unclaimed_shipping_bills(
 
 @frappe.whitelist()
 def record_receipt(claim: str, posting_date: str, amount: float, bank_account: str) -> str:
-	"""Cash received for a Drawback / RoSCTL claim."""
+	"""Cash received for a Drawback claim."""
 	doc = frappe.get_doc("Export Incentive Claim", claim)
 	doc.check_permission("submit")
 	if doc.docstatus != 1:
 		frappe.throw(_("Submit the claim before recording receipts."))
-	if doc.scheme == "RoDTEP":
-		frappe.throw(_("RoDTEP is received as an e-scrip. Use Create RoDTEP Scrip instead."))
+	if doc.scheme in SCRIP_SCHEMES:
+		frappe.throw(_("{0} is received as an e-scrip. Use Create e-Scrip instead.").format(doc.scheme))
 	if frappe.db.get_value("Account", bank_account, "company") != doc.company:
 		frappe.throw(_("Account {0} does not belong to {1}.").format(bank_account, doc.company))
 
@@ -276,11 +282,11 @@ def record_receipt(claim: str, posting_date: str, amount: float, bank_account: s
 
 @frappe.whitelist()
 def create_rodtep_scrip(claim: str, scrip_number: str, scrip_date: str, face_value: float) -> str:
-	"""Record the e-scrip generated on ICEGATE against a sanctioned RoDTEP claim."""
+	"""Record the e-scrip generated on ICEGATE against a sanctioned RoDTEP or RoSCTL claim."""
 	doc = frappe.get_doc("Export Incentive Claim", claim)
 	doc.check_permission("submit")
-	if doc.docstatus != 1 or doc.scheme != "RoDTEP":
-		frappe.throw(_("Scrips can only be created from a submitted RoDTEP claim."))
+	if doc.docstatus != 1 or doc.scheme not in SCRIP_SCHEMES:
+		frappe.throw(_("Scrips can only be created from a submitted RoDTEP or RoSCTL claim."))
 
 	scrip = frappe.get_doc(
 		{

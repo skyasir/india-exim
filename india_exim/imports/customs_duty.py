@@ -7,7 +7,7 @@ so its IGST, ITC and GL logic keeps working unchanged.
 import frappe
 from frappe.utils import flt
 
-from india_exim.utils.rates import get_customs_exchange_rate, get_tariff_rate
+from india_exim.utils.rates import get_customs_exchange_rate, get_tariff_rate, warn_stale_exchange_rate
 
 RATE_FIELDS = ("bcd_rate", "sws_rate", "aidc_rate", "other_duty_rate")
 
@@ -24,6 +24,7 @@ def set_customs_duties(bill_of_entry) -> None:
 	bill_of_entry.exim_customs_exchange_rate = get_customs_exchange_rate(
 		currency, bill_of_entry.bill_of_entry_date, "Import"
 	)
+	warn_stale_exchange_rate(currency, bill_of_entry.bill_of_entry_date)
 	items = [item for item in bill_of_entry.items if item.get("exim_customs_tariff_item")]
 	for item in items:
 		if not flt(item.get("exim_value_fc")):

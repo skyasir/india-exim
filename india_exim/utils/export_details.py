@@ -7,6 +7,8 @@ Get Items From, or by the API. Only empty fields are filled, so what the user ty
 
 import frappe
 
+from india_exim.exim_setup.doctype.ad_code_registration.ad_code_registration import get_only_port
+
 ORDER_LINK = {"Delivery Note": "against_sales_order", "Sales Invoice": "sales_order"}
 # fields that describe this document rather than the order
 SKIP = {"exim_tab", "exim_summary", "exim_summary_section"}
@@ -41,3 +43,75 @@ def fill_from_sales_order(doc, method=None):
 			doc.port_code = value
 		else:
 			doc.set(field, value)
+
+
+def set_destination(doc, method=None):
+	"""Destination from the buyer's address. Frappe fills a new document's Country link with the
+	company's own country, which an export is never going to, so that counts as empty."""
+	if not doc.get("exim_is_export") or doc.docstatus != 0:
+		return
+	home = frappe.get_cached_value("Company", doc.company, "country")
+	if doc.exim_destination_country and doc.exim_destination_country != home:
+		return
+	address = doc.get("shipping_address_name") or doc.get("customer_address")
+	country = frappe.db.get_value("Address", address, "country") if address else None
+	if country and country != home:
+		doc.exim_destination_country = country
+
+
+def fill_from_last_invoice(doc, method=None):
+	"""A repeat buyer's port, mode and terms, from their last export invoice. Only on a new document
+	and only what is empty; the port is otherwise the one the company has an AD code at."""
+	customer = doc.get("customer") or (
+		doc.get("party_name") if doc.get("quotation_to") == "Customer" else None
+	)
+	if not doc.get("exim_is_export") or not doc.is_new() or doc.docstatus != 0:
+		return
+	last = (
+		frappe.get_all(
+			"Sales Invoice",
+			filters={
+				"customer": customer,
+				"company": doc.company,
+				"docstatus": 1,
+				"is_return": 0,
+				"exim_is_export": 1,
+			},
+			fields=[
+				"port_code",
+				"exim_destination_country",
+				"exim_port_of_discharge",
+				"exim_mode_of_transport",
+				"exim_payment_terms_type",
+			],
+			order_by="posting_date desc, creation desc",
+			limit=1,
+		)
+		if customer
+		else []
+	)
+	values = last[0] if last else frappe._dict()
+	if values.exim_payment_terms_type == "Letter of Credit":
+		values.exim_payment_terms_type = None  # every LC is its own
+	port_field = "port_code" if doc.meta.has_field("port_code") else "exim_port_of_loading"
+	values[port_field] = values.pop("port_code", None) or get_only_port(doc.company)
+	home = frappe.get_cached_value("Company", doc.company, "country")
+	if doc.exim_destination_country == home and values.exim_destination_country:
+		doc.exim_destination_country = None  # Frappe's own default, see set_destination
+	for field, value in values.items():
+		if value and doc.meta.has_field(field) and not doc.get(field):
+			doc.set(field, value)
+
+
+def set_port_address(doc, method=None):
+	"""The port's address for the export e-Way Bill, from the AD code registered for the port."""
+	if not doc.get("exim_is_export") or doc.docstatus != 0 or not doc.get("port_code"):
+		return
+	if doc.get("port_address") or not doc.meta.has_field("port_address"):
+		return
+	doc.port_address = frappe.db.get_value(
+		"AD Code Registration",
+		{"company": doc.company, "port_code": doc.port_code, "port_address": ("is", "set"), "disabled": 0},
+		"port_address",
+		order_by="is_default desc",
+	)

@@ -357,8 +357,11 @@
  "links": [
   {
    "group": "Customs",
-   "link_doctype": "Bill of Entry",
-   "link_fieldname": "exim_authorisation"
+   "link_doctype": "Bill of Entry Item",
+   "link_fieldname": "exim_authorisation",
+   "parent_doctype": "Bill of Entry",
+   "is_child_table": 1,
+   "table_fieldname": "items"
   },
   {
    "group": "Customs",
@@ -366,7 +369,7 @@
    "link_fieldname": "export_authorisation"
   }
  ],
- "modified": "2026-11-19 20:00:00.000000",
+ "modified": "2026-11-26 10:00:00.000000",
  "modified_by": "Administrator",
  "module": "DGFT Licences",
  "name": "Export Authorisation",

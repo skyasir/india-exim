@@ -1,0 +1,61 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "creation": "2026-11-24 18:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "period_for",
+  "effective_from",
+  "months",
+  "reference"
+ ],
+ "fields": [
+  {
+   "columns": 3,
+   "fieldname": "period_for",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Period For",
+   "options": "Export Realisation\nShipment Against Advance\nImport Payment",
+   "reqd": 1
+  },
+  {
+   "columns": 2,
+   "description": "Applies to documents dated on or after this date (shipping bill, advance receipt or bill of entry date).",
+   "fieldname": "effective_from",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Effective From",
+   "reqd": 1
+  },
+  {
+   "columns": 1,
+   "fieldname": "months",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Months",
+   "reqd": 1
+  },
+  {
+   "columns": 4,
+   "description": "e.g. FEM (Export of Goods and Services) (Second Amendment) Regulations, 2025",
+   "fieldname": "reference",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "RBI Reference"
+  }
+ ],
+ "istable": 1,
+ "links": [],
+ "modified": "2026-11-24 18:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "EXIM Setup",
+ "name": "FEMA Period",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

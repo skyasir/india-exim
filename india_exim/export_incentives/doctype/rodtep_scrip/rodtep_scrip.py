@@ -13,7 +13,7 @@ from india_exim.setup.accounts import get_exim_account
 class RoDTEPScrip(Document):
 	def validate(self):
 		if not self.export_incentive_claim:
-			frappe.throw(_("Create RoDTEP scrips from a sanctioned RoDTEP Export Incentive Claim."))
+			frappe.throw(_("Create e-scrips from a sanctioned RoDTEP or RoSCTL Export Incentive Claim."))
 		if flt(self.face_value) <= 0:
 			frappe.throw(_("Face value must be greater than zero."))
 		duplicate = frappe.db.get_value(
@@ -23,7 +23,7 @@ class RoDTEPScrip(Document):
 		if duplicate:
 			frappe.throw(_("e-Scrip {0} is already recorded in {1}.").format(self.scrip_number, duplicate))
 		if not self.valid_upto:
-			months = frappe.db.get_single_value("India EXIM Settings", "scrip_validity_months") or 12
+			months = frappe.db.get_single_value("India EXIM Settings", "scrip_validity_months") or 24
 			self.valid_upto = add_months(self.scrip_date, months)
 		if getdate(self.valid_upto) < getdate(self.scrip_date):
 			frappe.throw(_("Valid Upto cannot be before the Scrip Date."))
@@ -126,6 +126,13 @@ class RoDTEPScrip(Document):
 			)
 			if not details or details.company != self.company or details.docstatus != 1:
 				frappe.throw(_("Bill of Entry must be submitted and belong to {0}.").format(self.company))
+			duty_left = get_duty_left(row.bill_of_entry)
+			if row.amount - duty_left > 0.005:
+				frappe.throw(
+					_("Only {0} of customs duty is left to pay on Bill of Entry {1}.").format(
+						frappe.format(duty_left, "Currency"), row.bill_of_entry
+					)
+				)
 		elif not row.bank_account or flt(row.sale_value) <= 0:
 			frappe.throw(_("Enter the sale consideration and the bank account it was received in."))
 		elif flt(row.sale_value) - row.amount > 0.005:
@@ -148,6 +155,23 @@ class RoDTEPScrip(Document):
 		if loss:
 			rows.append((get_exim_account(self.company, "exim_scrip_sale_loss_account"), loss, 0))
 		return rows
+
+
+@frappe.whitelist()
+def get_duty_left(bill_of_entry: str) -> float:
+	"""Customs duty on a Bill of Entry not yet paid with scrips. IGST is not counted: a scrip pays
+	customs duty only."""
+	frappe.has_permission("Bill of Entry", "read", bill_of_entry, throw=True)
+	duty = flt(frappe.db.get_value("Bill of Entry", bill_of_entry, "total_customs_duty"))
+	paid = sum(
+		flt(amount)
+		for amount in frappe.get_all(
+			"RoDTEP Scrip Utilisation",
+			filters={"bill_of_entry": bill_of_entry, "docstatus": 1},
+			pluck="amount",
+		)
+	)
+	return max(flt(duty - paid, 2), 0.0)
 
 
 def remove_claim_receipt(scrip) -> None:

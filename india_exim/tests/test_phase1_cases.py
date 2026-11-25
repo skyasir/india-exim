@@ -263,7 +263,7 @@ class TestPhaseOneCases(IntegrationTestCase):
 		rows, _summary = run_report("Export Advance Register")
 		row = next(r for r in rows if r["payment_entry"] == payment.name)
 		self.assertEqual(row["unadjusted"], 500)
-		self.assertEqual(getdate(row["ship_by"]), getdate(add_months(payment.posting_date, 12)))
+		self.assertEqual(getdate(row["ship_by"]), getdate(add_months(payment.posting_date, 36)))
 
 	def test_pre_shipment_controls(self):
 		from india_exim.controls import validate
@@ -379,14 +379,16 @@ class TestPhaseOneCases(IntegrationTestCase):
 
 		invoice = make_export_invoice(qty=10, rate=100)
 		shipment = make_export_shipment(invoice.name)
-		shipment.append("documents", {"document_type": "Packing List", "mandatory": 1, "status": "Pending"})
+		shipment.append(
+			"documents", {"document_type": "Bill of Exchange", "mandatory": 1, "status": "Pending"}
+		)
 		shipment.insert()
 
 		tower = get_control_tower(company=COMPANY)
 		card = next(s for s in tower["shipments"] if s.name == shipment.name)
-		self.assertIn("Packing List", [d["document_type"] for d in card.pending_documents])
+		self.assertIn("Bill of Exchange", [d["document_type"] for d in card.pending_documents])
 
-		row = next(r for r in shipment.documents if r.document_type == "Packing List")
+		row = next(r for r in shipment.documents if r.document_type == "Bill of Exchange")
 		update_document(shipment.name, row.name, status="Received")
 		board = get_document_board(company=COMPANY)
 		received = next(c for c in board["columns"] if c["status"] == "Received")

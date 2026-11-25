@@ -89,7 +89,7 @@ def get_imports(name: str) -> list:
 			item.exim_igst_foregone,
 		)
 		.where(boe.docstatus == 1)
-		.where(boe.exim_authorisation == name)
+		.where(item.exim_authorisation == name)
 	).run(as_dict=True)
 
 
@@ -147,17 +147,41 @@ def get_active_authorisation(name: str, company: str, on_date, purpose: str) -> 
 
 def validate_bill_of_entry(doc, method=None):
 	"""Bill of Entry under a licence: licence valid, items allowed, quantities within balance."""
-	name = doc.get("exim_authorisation")
-	if not name:
-		return
+	validate_row_quantities(doc)
+	for name in dict.fromkeys(row.exim_authorisation for row in doc.items if row.get("exim_authorisation")):
+		validate_licence(doc, name)
+
+
+def validate_row_quantities(doc) -> None:
+	"""A line split over licences: the parts together cannot exceed what is pending on the invoice."""
+	parts = {}
+	for row in doc.items:
+		if row.get("pi_detail"):
+			parts.setdefault(row.pi_detail, []).append(row)
+	for detail, rows in parts.items():
+		if len(rows) < 2 or doc.docstatus == 2:
+			continue
+		pending = frappe.db.get_value("Purchase Invoice Item", detail, "pending_boe_qty")
+		total = sum(flt(row.qty) for row in rows)
+		if total - flt(pending) > 0.0001:
+			frappe.throw(
+				_("Rows {0}: {1} of {2} together, but only {3} is pending on the purchase invoice.").format(
+					", ".join(str(row.idx) for row in rows), total, rows[0].item_code, flt(pending)
+				)
+			)
+
+
+def validate_licence(doc, name: str) -> None:
 	get_active_authorisation(name, doc.company, doc.bill_of_entry_date or today(), _("Bill of Entry"))
 	licence = frappe.get_doc("Export Authorisation", name)
-	used = {}
+	used, used_cif = {}, {}  # submitted bills, then the rows of this one as they are checked
 	for item in get_imports(name):
 		row = match_row(licence.imports, item.item_code, item.exim_customs_tariff_item)
 		if row:
 			used[row.name] = used.get(row.name, 0) + flt(item.qty)
-	for item in doc.items:
+			used_cif[row.name] = used_cif.get(row.name, 0) + flt(item.assessable_value)
+	over_value = {}
+	for item in [row for row in doc.items if row.get("exim_authorisation") == name]:
 		row = match_row(licence.imports, item.item_code, item.get("exim_customs_tariff_item"))
 		if not row:
 			frappe.throw(
@@ -166,21 +190,42 @@ def validate_bill_of_entry(doc, method=None):
 				)
 			)
 		if flt(row.qty_allowed):
-			already = used.get(row.name, 0)  # submitted bills only; this one is still a draft
+			already = used.get(row.name, 0)
 			if already + flt(item.qty) > flt(row.qty_allowed) + 0.0001:
 				frappe.throw(
 					_("Row {0}: only {1} {2} of {3} is left under {4}.").format(
 						item.idx, flt(row.qty_allowed) - already, row.uom or "", row.customs_tariff_item, name
 					)
 				)
+		used[row.name] = used.get(row.name, 0) + flt(item.qty)
+		used_cif[row.name] = used_cif.get(row.name, 0) + flt(item.assessable_value)
+		if flt(row.cif_allowed) and used_cif[row.name] - flt(row.cif_allowed) > 0.5:
+			over_value[row.name] = row
+	if over_value and doc.docstatus < 2:
+		# a warning, not an error: the bill records what Customs accepted, and the rupee value of
+		# the same licence moves with the exchange rate
+		frappe.msgprint(
+			"<br>".join(
+				_("CIF value of {0} would reach {1} against {2} allowed under {3}.").format(
+					row.customs_tariff_item,
+					frappe.format(used_cif[row.name], "Currency"),
+					frappe.format(row.cif_allowed, "Currency"),
+					name,
+				)
+				for row in over_value.values()
+			)
+			+ "<br>"
+			+ _("Check the licence, and have its value enhanced before filing if needed."),
+			title=_("Licence Value Exceeded"),
+			indicator="orange",
+		)
 
 
 def set_duty_foregone(bill_of_entry) -> None:
 	"""Imports under a licence pay no basic customs duty: what would have been paid is recorded as
 	duty foregone and the payable duty is zero. Called after the duty is worked out."""
-	authorised = bool(bill_of_entry.get("exim_authorisation"))
 	for item in bill_of_entry.items:
-		if authorised:
+		if item.get("exim_authorisation"):
 			item.exim_duty_foregone = flt(item.customs_duty)
 			item.customs_duty = 0
 		else:
@@ -189,18 +234,40 @@ def set_duty_foregone(bill_of_entry) -> None:
 
 def set_igst_foregone(bill_of_entry) -> None:
 	"""IGST not charged on an authorised import counts as saved (EPCG obligation is a multiple of
-	duties and taxes saved). Worked out at the item's GST rate; zero when IGST was charged."""
-	authorised = bool(bill_of_entry.get("exim_authorisation"))
+	duties and taxes saved). Worked out at the rate the bill would have charged; zero when IGST
+	was charged."""
 	total = 0.0
 	for item in bill_of_entry.items:
 		item.exim_igst_foregone = 0
-		if authorised and not flt(item.get("igst_amount")):
-			rate = get_gst_rate(item.item_code)
+		if item.get("exim_authorisation") and not flt(item.get("igst_amount")):
+			rate = (bill_of_entry.flags.exempt_tax_rates or {}).get(item.name) or get_gst_rate(item.item_code)
 			item.exim_igst_foregone = flt(
 				(flt(item.assessable_value) + flt(item.exim_duty_foregone)) * rate / 100, 2
 			)
 		total += flt(item.exim_duty_foregone) + flt(item.exim_igst_foregone)
 	bill_of_entry.exim_total_duty_foregone = total
+
+
+def exempt_taxes(bill_of_entry) -> None:
+	"""IGST and compensation cess are exempt too on imports under a licence: the tax rows stay (India
+	Compliance needs the IGST row) with a zero rate for the items under a licence. Called once India Compliance
+	has set the item-wise rates and before it works out the amounts."""
+	bill_of_entry.flags.exempt_tax_rates = {}
+	exempt = {item.name for item in bill_of_entry.items if item.get("exim_authorisation")}
+	if not exempt or not bill_of_entry.get("exim_igst_exempt"):
+		return
+	for tax in bill_of_entry.taxes:
+		if tax.charge_type == "Actual":
+			continue  # entered by the user
+		rates = frappe.parse_json(tax.item_wise_tax_rates or "{}")
+		if tax.charge_type == "On Net Total":
+			for name, rate in rates.items():
+				saved = bill_of_entry.flags.exempt_tax_rates
+				if name in exempt:
+					saved[name] = saved.get(name, 0) + flt(rate)
+		tax.item_wise_tax_rates = frappe.as_json(
+			{name: 0 if name in exempt else rate for name, rate in rates.items()}, indent=None
+		)
 
 
 def get_gst_rate(item_code: str | None) -> float:
@@ -229,15 +296,34 @@ def apply_to_shipping_bill(shipping_bill) -> None:
 			row.claim_drawback = 0
 		if not details.rodtep_admissible:
 			row.claim_rodtep = 0
+			row.claim_rosctl = 0
+
+
+def licences_of(doc) -> set:
+	if doc.doctype == "Bill of Entry":
+		return {row.get("exim_authorisation") for row in doc.items}
+	return {doc.get("export_authorisation")}
+
+
+def set_row_authorisations(bill_of_entry) -> None:
+	"""The licence is kept on each row, as Customs debits it. One picked on the header fills every row
+	that has none of its own, and changing it there changes those rows."""
+	before = bill_of_entry.get_doc_before_save()
+	old = before.get("exim_authorisation") if before else None
+	new = bill_of_entry.get("exim_authorisation")
+	for row in bill_of_entry.items:
+		if old != new and row.get("exim_authorisation") == old:
+			row.exim_authorisation = None
+		if new and not row.get("exim_authorisation"):
+			row.exim_authorisation = new
 
 
 def on_customs_document_change(doc, method=None):
 	"""doc_event / controller hook for Bill of Entry and Shipping Bill submit and cancel."""
-	field = "exim_authorisation" if doc.doctype == "Bill of Entry" else "export_authorisation"
-	names = {doc.get(field)}
+	names = licences_of(doc)
 	before = doc.get_doc_before_save() if hasattr(doc, "get_doc_before_save") else None
 	if before:
-		names.add(before.get(field))
+		names |= licences_of(before)
 	for name in [name for name in names if name]:
 		refresh_authorisation(name)
 
