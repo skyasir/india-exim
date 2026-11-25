@@ -3,6 +3,8 @@
 {%- import "india_exim/templates/print_formats/exim_macros.html" as exim -%}
 {%- set shipment_name = frappe.db.get_value("Export Shipment Invoice", {"sales_invoice": doc.name, "parenttype": "Export Shipment"}, "parent") -%}
 {%- set shipment = frappe.get_doc("Export Shipment", shipment_name) if shipment_name else None -%}
+{%- set bill_name = frappe.db.get_value("Shipping Bill Item", {"sales_invoice": doc.name, "parenttype": "Shipping Bill", "docstatus": 1}, "parent") -%}
+{%- set bl = shipment if shipment and shipment.bl_number else (frappe.db.get_value("Shipping Bill", bill_name, ["bl_number", "bl_date"], as_dict=True) if bill_name else None) -%}
 {{ exim.style() }}
 <div class="exim">
 	<table>
@@ -18,8 +20,8 @@
 		<tr><td colspan="2" class="letter" style="padding: 10px">
 			<p>{{ _("We hereby certify that:") }}</p>
 			<p>1. {{ _("One full set of non-negotiable shipping documents, including copies of the commercial invoice, packing list and transport document{0}, has been sent to the applicant by courier{1}.").format(
-				(" " ~ _("No.") ~ " " ~ shipment.bl_number) if shipment and shipment.bl_number else "",
-				(" " ~ _("on or before {0}").format(exim.date(frappe.utils.add_days(shipment.bl_date, 5)))) if shipment and shipment.bl_date else "") }}</p>
+				(" " ~ _("No.") ~ " " ~ bl.bl_number) if bl and bl.bl_number else "",
+				(" " ~ _("on or before {0}").format(exim.date(frappe.utils.add_days(bl.bl_date, 5)))) if bl and bl.bl_date else "") }}</p>
 			<p>2. {{ _("The goods shipped are of {0} origin and conform to the description, quantity and quality stated in the letter of credit and the buyer's order{1}.").format(_("Indian"), (" " ~ doc.po_no) if doc.po_no else "") }}</p>
 			<p>3. {{ _("The marks and numbers on the packages are as stated in the invoice: {0}").format(doc.get("exim_marks_and_numbers") or "-") }}</p>
 		</td></tr>

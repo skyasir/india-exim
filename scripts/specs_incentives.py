@@ -123,7 +123,7 @@ doctype(
 	[
 		"naming_series:Select:Series|opt=GRC-.YYYY.-.#####|reqd|default=GRC-.YYYY.-.#####|phide",
 		"company:Link:Company|opt=Company|reqd|filter",
-		"refund_type:Select:Refund Type|opt=IGST Paid on Exports\\nAccumulated ITC (Exports under LUT)\\nSupplies to SEZ|reqd|list|filter",
+		"refund_type:Select:Refund Type|opt=IGST Paid on Exports\\nAccumulated ITC (Exports under LUT)\\nSupplies to SEZ|reqd|default=IGST Paid on Exports|list|filter",
 		"from_date:Date:Tax Period From|reqd",
 		"to_date:Date:Tax Period To|reqd",
 		"column_break_head:Column Break",

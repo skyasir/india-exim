@@ -1,11 +1,12 @@
 {#- Export Proforma Invoice. Printed from a Sales Order: ERPNext's Proforma Invoice renders a
     copy of the order with only the proformed lines, and sets proforma_no / proforma_date on it. -#}
+{%- import "india_exim/templates/print_formats/exim_macros.html" as exim -%}
 {%- set company = frappe.get_doc("Company", doc.company) -%}
 {%- set iec = company.get("exim_iec") -%}
 {%- set proforma_no = doc.get("proforma_no") or doc.name -%}
 {%- set proforma_date = doc.get("proforma_date") or doc.transaction_date -%}
 {%- set hide_qty = doc.get("hide_item_qty") -%}
-{%- set bank = company.get("bank_details_for_printing") or [] -%}
+{%- set bank = exim_bank_lines(doc.company, doc.get("exim_port_of_loading")) -%}
 <style>
 	.epi { font-size: 10.5px; color: #111; }
 	.epi table { width: 100%; border-collapse: collapse; }
@@ -77,7 +78,7 @@
 			<td><span class="exim-label">{{ _("Final Destination") }}</span>{{ doc.get("exim_final_destination") or "" }}</td>
 		</tr>
 		<tr>
-			<td><span class="exim-label">{{ _("Port of Loading") }}</span>{{ doc.get("exim_port_of_loading") or "" }}</td>
+			<td><span class="exim-label">{{ _("Port of Loading") }}</span>{{ exim_port(doc.get("exim_port_of_loading")) }}</td>
 			<td><span class="exim-label">{{ _("Mode of Transport") }}</span>{{ doc.get("exim_mode_of_transport") or "" }}</td>
 			<td><span class="exim-label">{{ _("Latest Shipment Date") }}</span>{{ frappe.format(doc.exim_latest_shipment_date, {"fieldtype": "Date"}) if doc.get("exim_latest_shipment_date") else (frappe.format(doc.delivery_date, {"fieldtype": "Date"}) if doc.delivery_date else "") }}</td>
 			<td><span class="exim-label">{{ _("Marks and Numbers") }}</span><span class="pre">{{ doc.get("exim_marks_and_numbers") or "" }}</span></td>
@@ -102,7 +103,7 @@
 			{%- set tariff = frappe.db.get_value("Item", item.item_code, "exim_customs_tariff_item") if item.item_code else None %}
 			<tr>
 				<td>{{ loop.index }}</td>
-				<td><b>{{ item.item_name }}</b>{% if item.description and item.description != item.item_name %}<br>{{ item.description }}{% endif %}</td>
+				<td>{{ exim.goods(item) }}</td>
 				<td>{{ tariff or item.get("gst_hsn_code") or "" }}</td>
 				{%- if not hide_qty %}
 				<td class="num">{{ frappe.format(item.qty, {"fieldtype": "Float"}) }} {{ item.uom }}</td>
@@ -139,8 +140,8 @@
 				{%- endif %}
 				{%- if bank %}
 				<span class="exim-label">{{ _("Bank Details for Remittance") }}</span>
-				{%- for row in bank if row.print_value %}
-				{{ row.print_label }}: {{ row.print_value }}<br>
+				{%- for label, value in bank %}
+				{{ label }}: {{ value }}<br>
 				{%- endfor %}
 				{%- endif %}
 				{%- if doc.terms %}

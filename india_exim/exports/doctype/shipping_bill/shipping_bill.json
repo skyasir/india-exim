@@ -43,6 +43,7 @@
   "column_break_totals",
   "total_drawback",
   "total_rodtep",
+  "total_rosctl",
   "total_igst",
   "lifecycle_tab",
   "leo_date",
@@ -52,6 +53,11 @@
   "accrual_journal_entry",
   "drawback_reversed",
   "rodtep_reversed",
+  "rosctl_reversed",
+  "transport_section",
+  "bl_number",
+  "column_break_transport",
+  "bl_date",
   "realisation_section",
   "realisation_due_date",
   "realisation_status",
@@ -63,7 +69,8 @@
   "outstanding_value",
   "realisation_actions_section",
   "realisation_actions",
-  "amended_from"
+  "amended_from",
+  "connections_tab"
  ],
  "fields": [
   {
@@ -104,7 +111,8 @@
    "fieldtype": "Link",
    "in_standard_filter": 1,
    "label": "Export Shipment",
-   "options": "Export Shipment"
+   "options": "Export Shipment",
+   "depends_on": "eval:frappe.boot.exim_features?.shipments || doc.export_shipment"
   },
   {
    "fieldname": "is_opening",
@@ -194,7 +202,8 @@
    "fieldtype": "Link",
    "label": "Export Under Authorisation",
    "options": "Export Authorisation",
-   "description": "Advance Authorisation or EPCG whose export obligation this shipping bill discharges. Drawback and RoDTEP follow what the authorisation allows."
+   "description": "Advance Authorisation or EPCG whose export obligation this shipping bill discharges. Drawback and RoDTEP follow what the authorisation allows.",
+   "depends_on": "eval:frappe.boot.exim_features?.licences || doc.export_authorisation"
   },
   {
    "fieldname": "destination_country",
@@ -237,13 +246,15 @@
    "fieldname": "freight",
    "fieldtype": "Currency",
    "label": "Freight (Invoice Currency)",
-   "options": "currency"
+   "options": "currency",
+   "depends_on": "eval:[doc.incoterm && !['EXW', 'FCA', 'FAS', 'FOB'].includes(doc.incoterm), doc.freight, doc.insurance].some(Boolean)"
   },
   {
    "fieldname": "insurance",
    "fieldtype": "Currency",
    "label": "Insurance (Invoice Currency)",
-   "options": "currency"
+   "options": "currency",
+   "depends_on": "eval:[doc.incoterm && !['EXW', 'FCA', 'FAS', 'FOB'].includes(doc.incoterm), doc.freight, doc.insurance].some(Boolean)"
   },
   {
    "fieldname": "items_section",
@@ -298,14 +309,24 @@
    "fieldtype": "Currency",
    "label": "Duty Drawback",
    "options": "Company:company:default_currency",
-   "read_only": 1
+   "read_only": 1,
+   "depends_on": "eval:frappe.boot.exim_features?.incentives || doc.total_drawback"
   },
   {
    "fieldname": "total_rodtep",
    "fieldtype": "Currency",
    "label": "RoDTEP",
    "options": "Company:company:default_currency",
-   "read_only": 1
+   "read_only": 1,
+   "depends_on": "eval:frappe.boot.exim_features?.incentives || doc.total_rodtep"
+  },
+  {
+   "fieldname": "total_rosctl",
+   "fieldtype": "Currency",
+   "label": "RoSCTL",
+   "options": "Company:company:default_currency",
+   "read_only": 1,
+   "depends_on": "total_rosctl"
   },
   {
    "fieldname": "total_igst",
@@ -370,6 +391,39 @@
    "read_only": 1,
    "no_copy": 1,
    "allow_on_submit": 1
+  },
+  {
+   "fieldname": "rosctl_reversed",
+   "fieldtype": "Currency",
+   "label": "RoSCTL Reversed",
+   "options": "Company:company:default_currency",
+   "read_only": 1,
+   "no_copy": 1,
+   "allow_on_submit": 1,
+   "depends_on": "rosctl_reversed"
+  },
+  {
+   "fieldname": "transport_section",
+   "fieldtype": "Section Break",
+   "label": "Bill of Lading / Airway Bill"
+  },
+  {
+   "fieldname": "bl_number",
+   "fieldtype": "Data",
+   "label": "BL / AWB No.",
+   "allow_on_submit": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "column_break_transport",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "bl_date",
+   "fieldtype": "Date",
+   "label": "BL / AWB Date",
+   "allow_on_submit": 1,
+   "no_copy": 1
   },
   {
    "fieldname": "realisation_section",
@@ -461,11 +515,17 @@
    "print_hide": 1,
    "read_only": 1,
    "search_index": 1
+  },
+  {
+   "fieldname": "connections_tab",
+   "fieldtype": "Tab Break",
+   "label": "Connections",
+   "show_dashboard": 1
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2026-11-21 10:00:00.000000",
+ "modified": "2026-11-26 12:00:00.000000",
  "modified_by": "Administrator",
  "module": "Exports",
  "name": "Shipping Bill",

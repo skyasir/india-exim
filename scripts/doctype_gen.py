@@ -22,6 +22,7 @@ FLAGS = {
 	"nocopy": ("no_copy", 1),
 	"aos": ("allow_on_submit", 1),
 	"collapsible": ("collapsible", 1),
+	"dashboard": ("show_dashboard", 1),
 	"phide": ("print_hide", 1),
 	"search": ("search_index", 1),
 	"translatable": ("translatable", 1),

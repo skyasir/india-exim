@@ -27,20 +27,49 @@ before_tests = "india_exim.tests.before_tests"
 
 app_include_css = "/assets/india_exim/css/exim_boards.css"
 
+extend_bootinfo = "india_exim.features.extend_bootinfo"
+
+jinja = {
+	"methods": [
+		"india_exim.utils.jinja.exim_item_packing",
+		"india_exim.utils.jinja.exim_customs_description",
+		"india_exim.utils.jinja.exim_port",
+		"india_exim.utils.jinja.exim_bank_lines",
+	],
+}
+
 doctype_js = {
 	"Company": "public/js/company.js",
 	"Customer": "public/js/exim_flags.js",
+	"Item": ["public/js/exim_rates.js", "public/js/item.js"],
 	"Supplier": "public/js/exim_flags.js",
-	"Quotation": ["public/js/exim_flags.js", "public/js/export_parties.js", "public/js/quotation.js"],
-	"Sales Order": ["public/js/exim_flags.js", "public/js/export_parties.js"],
-	"Delivery Note": ["public/js/exim_flags.js", "public/js/export_parties.js"],
+	"Quotation": [
+		"public/js/exim_flags.js",
+		"public/js/export_parties.js",
+		"public/js/quotation.js",
+	],
+	"Sales Order": [
+		"public/js/exim_flags.js",
+		"public/js/export_parties.js",
+	],
+	"Delivery Note": [
+		"public/js/exim_flags.js",
+		"public/js/export_parties.js",
+	],
 	"Sales Invoice": [
 		"public/js/exim_flags.js",
 		"public/js/export_parties.js",
 		"public/js/sales_invoice.js",
 	],
-	"Purchase Invoice": "public/js/exim_flags.js",
-	"Bill of Entry": "public/js/bill_of_entry.js",
+	"Purchase Order": ["public/js/exim_flags.js", "public/js/import_purchase.js"],
+	"Purchase Invoice": ["public/js/exim_flags.js", "public/js/import_purchase.js"],
+	"Bill of Entry": ["public/js/exim_rates.js", "public/js/bill_of_entry.js"],
+}
+
+override_doctype_dashboards = {
+	"Sales Invoice": "india_exim.overrides.dashboards.sales_invoice",
+	"Purchase Order": "india_exim.overrides.dashboards.purchase_order",
+	"Purchase Invoice": "india_exim.overrides.dashboards.purchase_invoice",
 }
 
 extend_doctype_class = {
@@ -63,6 +92,8 @@ doc_events = {
 	"Quotation": {
 		"validate": [
 			"india_exim.overrides.quotation.validate",
+			"india_exim.utils.export_details.set_destination",
+			"india_exim.utils.export_details.fill_from_last_invoice",
 			"india_exim.controls.validate",
 			"india_exim.utils.parties.fill_party_details",
 		],
@@ -70,6 +101,8 @@ doc_events = {
 	},
 	"Sales Order": {
 		"validate": [
+			"india_exim.utils.export_details.set_destination",
+			"india_exim.utils.export_details.fill_from_last_invoice",
 			"india_exim.utils.parties.fill_party_details",
 			"india_exim.controls.validate",
 		],
@@ -78,6 +111,9 @@ doc_events = {
 	"Delivery Note": {
 		"validate": [
 			"india_exim.utils.export_details.fill_from_sales_order",
+			"india_exim.utils.export_details.set_destination",
+			"india_exim.utils.export_details.fill_from_last_invoice",
+			"india_exim.utils.export_details.set_port_address",
 			"india_exim.utils.parties.fill_party_details",
 		],
 		"before_update_after_submit": "india_exim.utils.parties.fill_party_details",
@@ -85,6 +121,9 @@ doc_events = {
 	"Sales Invoice": {
 		"validate": [
 			"india_exim.utils.export_details.fill_from_sales_order",
+			"india_exim.utils.export_details.set_destination",
+			"india_exim.utils.export_details.fill_from_last_invoice",
+			"india_exim.utils.export_details.set_port_address",
 			"india_exim.overrides.sales_invoice.validate",
 			"india_exim.controls.validate",
 			"india_exim.utils.parties.fill_party_details",
@@ -95,6 +134,7 @@ doc_events = {
 	},
 	"Purchase Invoice": {
 		"validate": [
+			"india_exim.overrides.purchase_invoice.set_origin_country",
 			"india_exim.overrides.purchase_invoice.set_free_time_end",
 			"india_exim.overrides.purchase_invoice.set_merchant_export_due",
 		],
@@ -102,10 +142,16 @@ doc_events = {
 			"india_exim.overrides.purchase_invoice.set_free_time_end",
 			"india_exim.overrides.purchase_invoice.set_merchant_export_due",
 		],
-		"on_submit": "india_exim.fema.payments.on_settlement_change",
-		"on_cancel": "india_exim.fema.payments.on_settlement_change",
+		"on_submit": [
+			"india_exim.fema.payments.on_settlement_change",
+			"india_exim.imports.doctype.import_shipment.import_shipment.on_purchase_invoice_submit",
+		],
+		"on_cancel": [
+			"india_exim.fema.payments.on_settlement_change",
+			"india_exim.imports.doctype.import_shipment.import_shipment.on_purchase_invoice_cancel",
+		],
 	},
-	"Payment Entry": SETTLEMENT_EVENTS,
+	"Payment Entry": {**SETTLEMENT_EVENTS, "validate": "india_exim.overrides.payment_entry.validate"},
 	"Journal Entry": {
 		**SETTLEMENT_EVENTS,
 		"on_cancel": [
@@ -118,9 +164,13 @@ doc_events = {
 		"on_submit": [
 			"india_exim.overrides.bill_of_entry.on_submit",
 			"india_exim.dgft_licences.authorisation.on_customs_document_change",
+			"india_exim.imports.doctype.import_shipment.import_shipment.on_bill_of_entry_change",
 		],
 		"before_cancel": "india_exim.overrides.bill_of_entry.before_cancel",
-		"on_cancel": "india_exim.dgft_licences.authorisation.on_customs_document_change",
+		"on_cancel": [
+			"india_exim.dgft_licences.authorisation.on_customs_document_change",
+			"india_exim.imports.doctype.import_shipment.import_shipment.on_bill_of_entry_change",
+		],
 	},
 }
 

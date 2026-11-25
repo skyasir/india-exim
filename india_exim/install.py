@@ -2,9 +2,24 @@ import click
 import frappe
 from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
 
+from india_exim.fema.periods import set_default_periods
 from india_exim.setup.accounts import setup_exim_accounts
 from india_exim.setup.custom_fields import CUSTOM_FIELDS
 from india_exim.setup.seed import seed_master_data
+from india_exim.setup.tariff_data import load_tariff_data
+
+# Frappe updates only the properties a definition states, so one removed from it would stay on the
+# field; these are stated empty unless the definition sets them.
+UNSET_PROPERTIES = {
+	"description": "",
+	"depends_on": "",
+	"mandatory_depends_on": "",
+	"read_only_depends_on": "",
+	"collapsible": 0,
+	"collapsible_depends_on": "",
+	"hide_border": 0,
+	"hidden": 0,
+}
 
 ROLES = ("EXIM Manager", "EXIM User")
 
@@ -19,6 +34,8 @@ def after_install():
 		for company in frappe.get_all("Company", pluck="name"):
 			setup_exim_accounts(company)
 		seed_master_data()
+		set_default_periods()
+		load_tariff_data()
 		enable_proforma_invoice()
 	except Exception:
 		click.secho(
@@ -34,6 +51,8 @@ def before_migrate():
 def after_migrate():
 	setup_custom_fields()
 	seed_master_data()
+	if summary := load_tariff_data():
+		click.secho(f"India EXIM tariff data loaded: {summary}", fg="green")
 
 
 def enable_proforma_invoice():
@@ -66,7 +85,13 @@ def create_roles():
 
 
 def setup_custom_fields():
-	create_custom_fields(CUSTOM_FIELDS, ignore_validate=True)
+	create_custom_fields(
+		{
+			doctype: [{**UNSET_PROPERTIES, **field} for field in fields]
+			for doctype, fields in CUSTOM_FIELDS.items()
+		},
+		ignore_validate=True,
+	)
 	delete_stale_custom_fields()
 
 

@@ -16,17 +16,21 @@
   "destination_country",
   "readiness_percent",
   "terms_section",
-  "incoterm",
-  "payment_terms_type",
-  "column_break_terms",
   "mode_of_transport",
-  "currency",
-  "route_section",
   "port_of_loading",
   "port_of_discharge",
-  "column_break_route",
   "final_destination",
   "transhipment_allowed",
+  "column_break_terms",
+  "incoterm",
+  "payment_terms_type",
+  "currency",
+  "invoices_section",
+  "invoices",
+  "notes_section",
+  "marks_and_numbers",
+  "remarks",
+  "booking_tab",
   "carrier_section",
   "freight_forwarder",
   "cha",
@@ -34,40 +38,40 @@
   "column_break_carrier",
   "booking_number",
   "vessel_voyage",
+  "etd",
+  "eta",
   "schedule_section",
   "cutoff_documents",
   "cutoff_vgm",
-  "cutoff_gate_in",
   "column_break_schedule",
-  "etd",
-  "eta",
-  "atd",
-  "ata",
-  "transport_document_section",
-  "bl_number",
-  "bl_date",
-  "column_break_bl",
-  "bl_type",
+  "cutoff_gate_in",
+  "containers_section",
+  "containers",
+  "total_gross_weight",
+  "total_packages",
   "cargo_section",
   "is_dangerous_goods",
   "un_number",
   "column_break_cargo",
   "is_reefer",
   "temperature_setting",
-  "invoices_tab",
-  "invoices",
-  "containers",
-  "total_gross_weight",
-  "total_packages",
+  "sailing_tab",
+  "departure_section",
+  "atd",
+  "column_break_departure",
+  "ata",
+  "transport_document_section",
+  "bl_number",
+  "bl_date",
+  "column_break_bl",
+  "bl_type",
   "documents_tab",
   "document_template",
   "documents",
   "charges_tab",
   "charges",
   "total_charges",
-  "notes_tab",
-  "marks_and_numbers",
-  "remarks"
+  "connections_tab"
  ],
  "fields": [
   {
@@ -115,7 +119,8 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Status",
-   "options": "Planned\nBooked\nStuffed\nCustoms Cleared\nShipped\nDocuments Sent\nDelivered\nClosed\nCancelled"
+   "options": "Planned\nBooked\nStuffed\nCustoms Cleared\nShipped\nDocuments Sent\nDelivered\nClosed\nCancelled",
+   "description": "Moves by itself up to Shipped: booking, container, LEO, then departure or B/L."
   },
   {
    "fieldname": "destination_country",
@@ -137,7 +142,39 @@
   {
    "fieldname": "terms_section",
    "fieldtype": "Section Break",
-   "label": "Terms"
+   "label": "Route and Terms"
+  },
+  {
+   "default": "Sea FCL",
+   "fieldname": "mode_of_transport",
+   "fieldtype": "Select",
+   "label": "Mode",
+   "options": "Sea FCL\nSea LCL\nAir\nCourier\nRoad\nRail"
+  },
+  {
+   "fieldname": "port_of_loading",
+   "fieldtype": "Data",
+   "label": "Port of Loading (Port Code)",
+   "length": 15
+  },
+  {
+   "fieldname": "port_of_discharge",
+   "fieldtype": "Data",
+   "label": "Port of Discharge"
+  },
+  {
+   "fieldname": "final_destination",
+   "fieldtype": "Data",
+   "label": "Final Destination"
+  },
+  {
+   "fieldname": "transhipment_allowed",
+   "fieldtype": "Check",
+   "label": "Transhipment Allowed"
+  },
+  {
+   "fieldname": "column_break_terms",
+   "fieldtype": "Column Break"
   },
   {
    "fieldname": "incoterm",
@@ -152,51 +189,42 @@
    "options": "Advance\nLetter of Credit\nDocuments against Payment (DP)\nDocuments against Acceptance (DA)\nOpen Account"
   },
   {
-   "fieldname": "column_break_terms",
-   "fieldtype": "Column Break"
-  },
-  {
-   "default": "Sea FCL",
-   "fieldname": "mode_of_transport",
-   "fieldtype": "Select",
-   "label": "Mode",
-   "options": "Sea FCL\nSea LCL\nAir\nCourier\nRoad\nRail"
-  },
-  {
    "fieldname": "currency",
    "fieldtype": "Link",
    "label": "Currency",
    "options": "Currency"
   },
   {
-   "fieldname": "route_section",
+   "fieldname": "invoices_section",
    "fieldtype": "Section Break",
-   "label": "Route"
+   "label": "Invoices"
   },
   {
-   "fieldname": "port_of_loading",
-   "fieldtype": "Data",
-   "label": "Port of Loading (Port Code)",
-   "length": 15
+   "fieldname": "invoices",
+   "fieldtype": "Table",
+   "label": "Sales Invoices",
+   "options": "Export Shipment Invoice"
   },
   {
-   "fieldname": "port_of_discharge",
-   "fieldtype": "Data",
-   "label": "Port of Discharge"
+   "fieldname": "notes_section",
+   "fieldtype": "Section Break",
+   "label": "Marks and Remarks",
+   "collapsible": 1
   },
   {
-   "fieldname": "column_break_route",
-   "fieldtype": "Column Break"
+   "fieldname": "marks_and_numbers",
+   "fieldtype": "Small Text",
+   "label": "Marks and Numbers"
   },
   {
-   "fieldname": "final_destination",
-   "fieldtype": "Data",
-   "label": "Final Destination"
+   "fieldname": "remarks",
+   "fieldtype": "Text Editor",
+   "label": "Remarks"
   },
   {
-   "fieldname": "transhipment_allowed",
-   "fieldtype": "Check",
-   "label": "Transhipment Allowed"
+   "fieldname": "booking_tab",
+   "fieldtype": "Tab Break",
+   "label": "Booking"
   },
   {
    "fieldname": "carrier_section",
@@ -235,9 +263,21 @@
    "label": "Vessel / Voyage or Flight"
   },
   {
+   "fieldname": "etd",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "ETD"
+  },
+  {
+   "fieldname": "eta",
+   "fieldtype": "Date",
+   "label": "ETA"
+  },
+  {
    "fieldname": "schedule_section",
    "fieldtype": "Section Break",
-   "label": "Cut-offs and Schedule"
+   "label": "Cut-offs",
+   "collapsible": 1
   },
   {
    "fieldname": "cutoff_documents",
@@ -250,29 +290,89 @@
    "label": "VGM Cut-off"
   },
   {
+   "fieldname": "column_break_schedule",
+   "fieldtype": "Column Break"
+  },
+  {
    "fieldname": "cutoff_gate_in",
    "fieldtype": "Datetime",
    "label": "Gate-in Cut-off"
   },
   {
-   "fieldname": "column_break_schedule",
+   "fieldname": "containers_section",
+   "fieldtype": "Section Break",
+   "label": "Containers",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "containers",
+   "fieldtype": "Table",
+   "label": "Containers / Packages",
+   "options": "Shipment Container"
+  },
+  {
+   "fieldname": "total_gross_weight",
+   "fieldtype": "Float",
+   "label": "Total Gross Weight (kg)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_packages",
+   "fieldtype": "Int",
+   "label": "Total Packages",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cargo_section",
+   "fieldtype": "Section Break",
+   "label": "Cargo",
+   "depends_on": "eval:[frappe.boot.exim_features?.special_cargo, doc.is_dangerous_goods, doc.is_reefer].some(Boolean)"
+  },
+  {
+   "fieldname": "is_dangerous_goods",
+   "fieldtype": "Check",
+   "label": "Dangerous Goods"
+  },
+  {
+   "depends_on": "is_dangerous_goods",
+   "fieldname": "un_number",
+   "fieldtype": "Data",
+   "label": "UN No. / IMDG Class"
+  },
+  {
+   "fieldname": "column_break_cargo",
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "etd",
-   "fieldtype": "Date",
-   "in_list_view": 1,
-   "label": "ETD"
+   "fieldname": "is_reefer",
+   "fieldtype": "Check",
+   "label": "Temperature Controlled (Reefer)"
   },
   {
-   "fieldname": "eta",
-   "fieldtype": "Date",
-   "label": "ETA"
+   "depends_on": "is_reefer",
+   "fieldname": "temperature_setting",
+   "fieldtype": "Data",
+   "label": "Temperature Setting"
+  },
+  {
+   "fieldname": "sailing_tab",
+   "fieldtype": "Tab Break",
+   "label": "Sailing and B/L"
+  },
+  {
+   "fieldname": "departure_section",
+   "fieldtype": "Section Break",
+   "label": "Departure and Arrival",
+   "collapsible": 1
   },
   {
    "fieldname": "atd",
    "fieldtype": "Date",
    "label": "Actual Departure"
+  },
+  {
+   "fieldname": "column_break_departure",
+   "fieldtype": "Column Break"
   },
   {
    "fieldname": "ata",
@@ -303,66 +403,6 @@
    "fieldtype": "Select",
    "label": "BL Type",
    "options": "\nOriginal BL\nTelex Release\nSeaway Bill\nAir Waybill\nCourier Waybill"
-  },
-  {
-   "fieldname": "cargo_section",
-   "fieldtype": "Section Break",
-   "label": "Cargo"
-  },
-  {
-   "fieldname": "is_dangerous_goods",
-   "fieldtype": "Check",
-   "label": "Dangerous Goods"
-  },
-  {
-   "depends_on": "is_dangerous_goods",
-   "fieldname": "un_number",
-   "fieldtype": "Data",
-   "label": "UN No. / IMDG Class"
-  },
-  {
-   "fieldname": "column_break_cargo",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "is_reefer",
-   "fieldtype": "Check",
-   "label": "Temperature Controlled (Reefer)"
-  },
-  {
-   "depends_on": "is_reefer",
-   "fieldname": "temperature_setting",
-   "fieldtype": "Data",
-   "label": "Temperature Setting"
-  },
-  {
-   "fieldname": "invoices_tab",
-   "fieldtype": "Tab Break",
-   "label": "Invoices and Containers"
-  },
-  {
-   "fieldname": "invoices",
-   "fieldtype": "Table",
-   "label": "Sales Invoices",
-   "options": "Export Shipment Invoice"
-  },
-  {
-   "fieldname": "containers",
-   "fieldtype": "Table",
-   "label": "Containers / Packages",
-   "options": "Shipment Container"
-  },
-  {
-   "fieldname": "total_gross_weight",
-   "fieldtype": "Float",
-   "label": "Total Gross Weight (kg)",
-   "read_only": 1
-  },
-  {
-   "fieldname": "total_packages",
-   "fieldtype": "Int",
-   "label": "Total Packages",
-   "read_only": 1
   },
   {
    "fieldname": "documents_tab",
@@ -403,23 +443,14 @@
    "read_only": 1
   },
   {
-   "fieldname": "notes_tab",
+   "fieldname": "connections_tab",
    "fieldtype": "Tab Break",
-   "label": "Notes"
-  },
-  {
-   "fieldname": "marks_and_numbers",
-   "fieldtype": "Small Text",
-   "label": "Marks and Numbers"
-  },
-  {
-   "fieldname": "remarks",
-   "fieldtype": "Text Editor",
-   "label": "Remarks"
+   "label": "Connections",
+   "show_dashboard": 1
   }
  ],
  "links": [],
- "modified": "2026-11-19 18:00:00.000000",
+ "modified": "2026-11-26 12:00:00.000000",
  "modified_by": "Administrator",
  "module": "Exports",
  "name": "Export Shipment",

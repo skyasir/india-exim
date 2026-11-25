@@ -152,31 +152,14 @@ class DocumentBoard {
 				ev.preventDefault();
 				const row = self.rows[ev.originalEvent.dataTransfer.getData("text/plain")];
 				const status = COLUMN_STATUS[$(this).data("status")];
-				if (row && status && status !== row.status) self.update(row, { status });
+				if (!row || !status || status === row.status) return;
+				// the certificate number is known when the document arrives
+				if (status === "Received" && !row.document_number) self.move(row, status);
+				else self.update(row, { status });
 			});
 		this.$body.find(".exim-move").on("click", function () {
 			const row = self.rows[$(this).closest(".exim-card").data("row")];
-			frappe.prompt(
-				{
-					fieldname: "status",
-					label: __("Status"),
-					fieldtype: "Select",
-					reqd: 1,
-					default: row.status,
-					options: [
-						"Pending",
-						"Applied",
-						"Received",
-						"Checked",
-						"Sent",
-						"Accepted",
-						"Discrepancy",
-						"Not Required",
-					],
-				},
-				({ status }) => self.update(row, { status }),
-				__("Move {0}", [row.document_type])
-			);
+			self.move(row, row.status);
 		});
 		this.$body.find(".exim-attach").on("click", function () {
 			const row = self.rows[$(this).closest(".exim-card").data("row")];
@@ -191,6 +174,45 @@ class DocumentBoard {
 					}),
 			});
 		});
+	}
+
+	move(row, status) {
+		frappe.prompt(
+			[
+				{
+					fieldname: "status",
+					label: __("Status"),
+					fieldtype: "Select",
+					reqd: 1,
+					default: status,
+					options: [
+						"Pending",
+						"Applied",
+						"Received",
+						"Checked",
+						"Sent",
+						"Accepted",
+						"Discrepancy",
+						"Not Required",
+					],
+				},
+				{
+					fieldname: "document_number",
+					label: __("Document No."),
+					fieldtype: "Data",
+					default: row.document_number,
+					description: __("Printed on the bank covering letter."),
+				},
+				{
+					fieldname: "document_date",
+					label: __("Document Date"),
+					fieldtype: "Date",
+					default: row.document_date,
+				},
+			],
+			(values) => this.update(row, values),
+			__("Move {0}", [row.document_type])
+		);
 	}
 
 	update(row, values) {

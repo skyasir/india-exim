@@ -14,10 +14,11 @@ Status: **Done** = built and covered by automated tests. **Data** = the app hold
 | Export value on FOB basis (CIF/CFR invoices less freight and insurance) | FOB worked out per line from the Incoterm; freight and insurance spread by value | Shipping Bill | Done |
 | Customs exchange rate notified by CBIC for the date of the shipping bill / bill of entry | Dated export and import rates; picked by document date | Customs Exchange Rate | Data |
 | ITC-HS classification of goods | 8-digit tariff item on Item, carried to every document and print | Customs Tariff Item, Item | Data |
+| Quantity in the tariff's unit (UQC) on the shipping bill; per-unit incentive caps on that quantity | UQC and conversion from the stock unit kept on the item; shipping bill lines filled from it | Item > Export & Import, Shipping Bill | Done |
 | Assessable value and duty on imports (BCD, SWS, AIDC, other duties) by tariff and date | Duty breakup on India Compliance's Bill of Entry, rates by date | Bill of Entry > EXIM fields, Customs Tariff Rate | Done |
 | Let Export Order, EGM | LEO and EGM dates and status on the shipping bill | Shipping Bill | Done |
 | Landed cost of imports | Landed Cost Voucher from the Bill of Entry (customs duty into stock value) | Bill of Entry, Landed Cost Voucher | Done |
-| Duty Drawback (Section 75, Drawback Rules 2017) at All Industry Rates with caps | Drawback rate by tariff and date, per-unit cap, accrued at LEO, claim / scroll / receipt | Export Incentive Rate, Shipping Bill, Export Incentive Claim | Done |
+| Duty Drawback (Section 75, Drawback Rules 2017) at All Industry Rates with caps | All Industry Rates (77/2023 as amended by 33/2024, jewellery left out) and RoSCTL schedules loaded by serial number; per-unit cap in the schedule's unit, brand rate per item, accrued at LEO, claim / scroll / receipt; the item says which schedule entry applies and whether drawback and RoDTEP are claimed | Export Incentive Rate, Item > Export & Import, Shipping Bill, Export Incentive Claim | Done |
 | Records for post-clearance audit | Evidence pack: every document as PDF, attachments, payments, journals and change history in one ZIP | Shipping Bill / Bill of Entry > View > Evidence Pack | Done |
 
 ## Foreign Trade Policy 2023 and Handbook of Procedures (DGFT)
@@ -26,7 +27,7 @@ Status: **Done** = built and covered by automated tests. **Data** = the app hold
 |---|---|---|---|
 | IEC, RCMC and status holder details | Registration fields; RCMC expiry tracked | Company > Export & Import | Done |
 | Export policy of goods (Free / Restricted / Prohibited / STE), SCOMET | Policy and SCOMET flag on the tariff item; pre-shipment check on quotations, orders and invoices | Customs Tariff Item, India EXIM Settings > Pre-shipment Controls | Done |
-| RoDTEP rates and e-scrips | RoDTEP rate by tariff and date with cap, accrual at LEO, e-scrip ledger, scrip used against import duty | Export Incentive Rate, RoDTEP Scrip, Bill of Entry | Done |
+| RoDTEP rates and e-scrips | RoDTEP rate by tariff and date with cap (or fixed amount per unit), loaded from Appendix 4R as published; accrual at LEO, e-scrip ledger, scrip used against import duty | Export Incentive Rate (tariff data: RoDTEP Appendix 4R), RoDTEP Scrip, Bill of Entry | Done |
 | Incentive only on realised exports; recovery when proceeds are reduced or written off | Proportionate reversal for credit notes after shipment and write-offs, posted to Export Incentive Recovery | Shipping Bill (Drawback / RoDTEP Reversed) | Done |
 | Merchant exporter buying at concessional GST, export within 90 days | Purchase flag, export-by date, shipping bill link, proof to supplier, alert and register | Purchase Invoice, Merchant Export Register | Done |
 
@@ -43,11 +44,11 @@ Status: **Done** = built and covered by automated tests. **Data** = the app hold
 
 | Requirement | Feature | Where | Status |
 |---|---|---|---|
-| Realise export proceeds within the period RBI allows (a setting, so a change in the period is a settings change) | Realisation due date and status from ordinary payments and credit notes; ageing report; alerts before and after the due date | Shipping Bill, Export Realisation Ageing, notifications | Done |
+| Realise export proceeds within the period RBI allows: 9 months, 15 months for exports from 14.11.2025 (FEM (Export of Goods and Services) (Second Amendment) Regulations, 2025) | Dated RBI periods; each shipping bill takes the period in force on its date; realisation status from ordinary payments and credit notes; ageing report; alerts before and after the due date | India EXIM Settings > FEMA / RBI, Shipping Bill, Export Realisation Ageing, notifications | Done |
 | EDPMS: shipping bills outstanding with the AD bank | Outstanding per shipping bill, by AD code | Export Realisation Ageing, Shipping Bill Register | Done |
 | Extension and write-off of unrealised proceeds (AD bank / RBI / self) | Realisation actions with approving authority and reference; incentives reversed on write-off | Shipping Bill > Realisation Actions | Done |
 | Agency commission to overseas agents | Commission recorded on the shipping bill, not counted as unrealised | Shipping Bill > Overseas Agent / Agency Commission | Done |
-| Advance against exports: ship within the period RBI allows (a setting) | Advance register from payment entries; alerts at 30 days and when overdue | Export Advance Register, daily alert | Done |
+| Advance against exports: ship within the period RBI allows (1 year; 3 years for advances from 14.11.2025) | Dated RBI periods by advance date; advance register from payment entries; alerts at 30 days and when overdue | India EXIM Settings > FEMA / RBI, Export Advance Register, daily alert | Done |
 | Free of cost / sample exports need no realisation | Export type "Free of Cost / Sample" | Shipping Bill | Done |
 | Inward remittance reference (IRM / FIRC), purpose code | Fields on Payment Entry | Payment Entry > Foreign Remittance | Done |
 | Documents to AD bank for collection / negotiation | Bank covering letter, bill of exchange, beneficiary certificate | Print formats | Done |
@@ -74,13 +75,13 @@ Status: **Done** = built and covered by automated tests. **Data** = the app hold
 | Requirement | Feature | Where | Status |
 |---|---|---|---|
 | Verified Gross Mass per container before loading | VGM on each container; VGM declaration print; VGM cut-off | Export Shipment, VGM Declaration | Done |
-| Shipping instructions, cut-offs, dangerous goods and reefer details | Shipment with booking, cut-offs, DG/UN number, reefer temperature; shipping instructions print | Export Shipment, Shipping Instructions | Done |
+| Shipping instructions, cut-offs, dangerous goods and reefer details | Shipment with booking, cut-offs, DG/UN number, reefer temperature (filled from the items' DG class, UN number and temperature); shipping instructions print | Export Shipment, Item > Export & Import, Shipping Instructions | Done |
 
 ## Destination-country and buyer requirements
 
 | Requirement | Feature | Where | Status |
 |---|---|---|---|
-| Documents each destination, product, Incoterm, payment term and buyer requires | Rule-based checklist merged per shipment; readiness %; optional gate; due-date alerts | Document Requirement Template, Export Shipment | Done |
+| Documents each destination, product, Incoterm, payment term and buyer requires | Rule-based checklist merged per shipment, plus the documents set on each item; readiness %; optional gate; due-date alerts | Document Requirement Template, Item > Export & Import, Export Shipment | Done |
 | Sanctioned or high-risk destinations; denied-party screening of buyers | Country risk flags; buyer screening date and result; ECGC buyer limit; checks on export orders | Country > Export Controls, Customer > Export Details | Done |
 
 ## Go-live and audit

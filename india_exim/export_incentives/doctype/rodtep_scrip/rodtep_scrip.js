@@ -34,7 +34,7 @@ function utilise_dialog(frm, utilisation_type) {
 				fieldtype: "Currency",
 				label: __("Scrip Value Used"),
 				reqd: 1,
-				default: frm.doc.balance_amount,
+				default: is_sale ? frm.doc.balance_amount : 0,
 			},
 			{
 				fieldname: "bill_of_entry",
@@ -43,7 +43,25 @@ function utilise_dialog(frm, utilisation_type) {
 				label: __("Bill of Entry"),
 				reqd: !is_sale,
 				hidden: is_sale,
-				get_query: () => ({ filters: { company: frm.doc.company, docstatus: 1 } }),
+				get_query: () => ({
+					filters: {
+						company: frm.doc.company,
+						docstatus: 1,
+						total_customs_duty: [">", 0],
+					},
+				}),
+				onchange() {
+					const bill_of_entry = dialog.get_value("bill_of_entry");
+					if (is_sale || !bill_of_entry) return;
+					frappe
+						.xcall(
+							"india_exim.export_incentives.doctype.rodtep_scrip.rodtep_scrip.get_duty_left",
+							{ bill_of_entry }
+						)
+						.then((duty) =>
+							dialog.set_value("amount", Math.min(duty, frm.doc.balance_amount))
+						);
+				},
 			},
 			{
 				fieldname: "sale_value",

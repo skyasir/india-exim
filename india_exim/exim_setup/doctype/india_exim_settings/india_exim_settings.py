@@ -8,6 +8,21 @@ from frappe.model.document import Document
 
 class IndiaEXIMSettings(Document):
 	def validate(self):
-		for fieldname in ("export_realisation_months", "import_payment_months"):
-			if (self.get(fieldname) or 0) <= 0:
-				frappe.throw(_("{0} must be greater than zero.").format(_(self.meta.get_label(fieldname))))
+		self.validate_fema_periods()
+
+	def validate_fema_periods(self):
+		seen = set()
+		for row in self.fema_periods:
+			if (row.months or 0) <= 0:
+				frappe.throw(_("Row {0}: Months must be greater than zero.").format(row.idx))
+			key = (row.period_for, str(row.effective_from))
+			if key in seen:
+				frappe.throw(
+					_("Row {0}: {1} from {2} is listed twice.").format(
+						row.idx, _(row.period_for), frappe.format(row.effective_from, {"fieldtype": "Date"})
+					)
+				)
+			seen.add(key)
+		self.fema_periods.sort(key=lambda row: (row.period_for, str(row.effective_from)))
+		for index, row in enumerate(self.fema_periods, start=1):
+			row.idx = index

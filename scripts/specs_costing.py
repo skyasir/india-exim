@@ -26,6 +26,7 @@ doctype(
 		"column_break_rates:Column Break",
 		"drawback_rate:Percent:Drawback %|desc=Fetched from Export Incentive Rate for the ITC-HS code; per-unit caps are not applied here.",
 		"rodtep_rate:Percent:RoDTEP %",
+		"rosctl_rate:Percent:RoSCTL % (State + Central)",
 		"costs_section:Section Break:Build-up (INR)",
 		"exw_amount:Currency:EXW|opt=" + INR + "|ro",
 		"fob_amount:Currency:FOB|opt=" + INR + "|ro",

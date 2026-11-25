@@ -7,9 +7,9 @@ const CLAIM_MODULE =
 frappe.ui.form.on("Export Incentive Claim", {
 	refresh(frm) {
 		if (frm.doc.docstatus !== 1 || frm.doc.outstanding_amount <= 0) return;
-		if (frm.doc.scheme === "RoDTEP") {
+		if (["RoDTEP", "RoSCTL"].includes(frm.doc.scheme)) {
 			frm.add_custom_button(
-				__("Create RoDTEP Scrip"),
+				__("Create e-Scrip"),
 				() => create_scrip_dialog(frm),
 				__("Create")
 			);
@@ -34,6 +34,8 @@ frappe.ui.form.on("Export Incentive Claim", {
 				},
 			})
 			.then(({ message }) => {
+				// the empty row a new table starts with
+				frm.doc.items = (frm.doc.items || []).filter((row) => row.shipping_bill);
 				const existing = new Set((frm.doc.items || []).map((row) => row.shipping_bill));
 				const rows = (message || []).filter((row) => !existing.has(row.shipping_bill));
 				rows.forEach((row) =>
@@ -100,7 +102,7 @@ function receipt_dialog(frm) {
 
 function create_scrip_dialog(frm) {
 	const dialog = new frappe.ui.Dialog({
-		title: __("Record RoDTEP e-Scrip"),
+		title: __("Record {0} e-Scrip", [frm.doc.scheme]),
 		fields: [
 			{ fieldname: "scrip_number", fieldtype: "Data", label: __("e-Scrip No."), reqd: 1 },
 			{

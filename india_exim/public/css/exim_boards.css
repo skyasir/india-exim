@@ -17,3 +17,17 @@
 .exim-chip-red { background: var(--bg-red); color: var(--text-on-red); }
 .exim-empty { padding: 40px; text-align: center; color: var(--text-muted); }
 .exim-card-actions { display: flex; gap: 6px; margin-top: 6px; }
+
+/* Item > Export & Import */
+[data-doctype="Item"] textarea[data-fieldname="exim_customs_description"],
+.frappe-control[data-fieldname="exim_customs_description"] textarea {
+	height: 72px !important;
+}
+.frappe-control[data-fieldname="exim_incentive_rates"],
+.frappe-control[data-fieldname="exim_duty_rates"],
+.frappe-control[data-fieldname="exim_tariff_summary"] {
+	margin-bottom: var(--margin-md);
+}
+.exim-no-rates {
+	margin: 0;
+}

@@ -1,5 +1,6 @@
 """Custom fields India EXIM adds to ERPNext and India Compliance doctypes."""
 
+from india_exim.features import when
 from india_exim.setup.accounts import EXIM_ACCOUNTS
 
 STATUS_HOLDER_OPTIONS = "\nOne Star Export House\nTwo Star Export House\nThree Star Export House\nFour Star Export House\nFive Star Export House"
@@ -38,6 +39,7 @@ def get_company_fields():
 			"fieldname": "exim_ecgc_policy_number",
 			"fieldtype": "Data",
 			"label": "ECGC Policy No.",
+			"depends_on": when("ecgc", "exim_ecgc_policy_number"),
 			"insert_after": "exim_status_holder",
 		},
 		{
@@ -80,6 +82,7 @@ def get_company_fields():
 				"fieldname": section_field,
 				"fieldtype": "Section Break",
 				"label": f"{section} Accounts",
+				"collapsible": 1,
 				"description": description,
 				"insert_after": previous,
 			}
@@ -107,7 +110,8 @@ def get_company_fields():
 		{
 			"fieldname": "exim_common_section",
 			"fieldtype": "Section Break",
-			"label": "Common",
+			"label": "Cost Center and Exchange Difference",
+			"collapsible": 1,
 			"insert_after": previous,
 		},
 		{
@@ -134,18 +138,211 @@ def get_company_fields():
 	return fields
 
 
-CUSTOM_FIELDS = {
-	"Company": get_company_fields(),
-	"Item": [
+def chain(fields: list[dict], first_insert_after: str) -> list[dict]:
+	"""Give each field insert_after = the previous field, so a block keeps its order."""
+	previous = first_insert_after
+	for field in fields:
+		field.setdefault("insert_after", previous)
+		previous = field["fieldname"]
+	return fields
+
+
+IMDG_CLASSES = (
+	"\n1 - Explosives\n2.1 - Flammable Gases\n2.2 - Non-flammable Gases\n2.3 - Toxic Gases"
+	"\n3 - Flammable Liquids\n4.1 - Flammable Solids\n4.2 - Spontaneously Combustible"
+	"\n4.3 - Dangerous When Wet\n5.1 - Oxidizers\n5.2 - Organic Peroxides\n6.1 - Toxic Substances"
+	"\n6.2 - Infectious Substances\n7 - Radioactive\n8 - Corrosives\n9 - Miscellaneous"
+)
+
+
+def get_item_fields() -> list[dict]:
+	"""The Export & Import tab, after the Purchasing tab. Frappe adds a custom tab after the whole
+	tab its insert_after is in, so ERPNext's Foreign Trade Details (Country of Origin, Customs
+	Tariff Number) stays in Purchasing. Rates and trade policy stay on the Customs Tariff Item and
+	are only shown here, since the law sets them per tariff code."""
+	tab = {
+		"fieldname": "exim_tab",
+		"fieldtype": "Tab Break",
+		"label": "Export & Import",
+		"insert_after": "customs_tariff_number",
+	}
+	fields = [
+		{
+			"fieldname": "exim_classification_section",
+			"fieldtype": "Section Break",
+			"label": "Customs Classification",
+		},
 		{
 			"fieldname": "exim_customs_tariff_item",
 			"fieldtype": "Link",
-			"label": "Customs Tariff Item (ITC-HS)",
+			"label": "ITC-HS Code",
 			"options": "Customs Tariff Item",
-			"insert_after": "gst_hsn_code",
-			"description": "8-digit ITC-HS code used on shipping bills and bills of entry.",
 		},
-	],
+		# the law's unit for the code; asked about only when it is not the stock unit
+		{
+			"fieldname": "exim_uqc",
+			"fieldtype": "Link",
+			"label": "Customs Unit (UQC)",
+			"options": "UOM",
+			"fetch_from": "exim_customs_tariff_item.uqc",
+			"read_only": 1,
+			"hidden": 1,
+		},
+		{
+			"fieldname": "exim_uqc_conversion_factor",
+			"fieldtype": "Float",
+			"label": "UQC per Stock Unit",
+			"depends_on": "eval:doc.exim_uqc && doc.exim_uqc != doc.stock_uom",
+			"description": "How many customs units one stock unit is, e.g. 12 when 1 Box = 12 KGS.",
+		},
+		{"fieldname": "exim_classification_column", "fieldtype": "Column Break"},
+		{"fieldname": "exim_tariff_summary", "fieldtype": "HTML", "label": "Tariff Summary"},
+		{
+			"fieldname": "exim_incentives_section",
+			"fieldtype": "Section Break",
+			"label": "Export Incentives",
+			"hide_border": 1,
+			"depends_on": when("incentives"),
+		},
+		{"fieldname": "exim_incentive_rates", "fieldtype": "HTML", "label": "Incentive Rates"},
+		{
+			"fieldname": "exim_claims_section",
+			"fieldtype": "Section Break",
+			"depends_on": when("incentives"),
+		},
+		{
+			"fieldname": "exim_claim_drawback",
+			"fieldtype": "Check",
+			"label": "Claim Duty Drawback",
+			"default": "1",
+		},
+		{
+			"fieldname": "exim_drawback_serial_no",
+			"fieldtype": "Autocomplete",
+			"label": "Drawback Schedule Serial No.",
+			"depends_on": "exim_claim_drawback",
+			"description": "This code has more than one drawback entry; pick the one for this item.",
+		},
+		{"fieldname": "exim_incentives_column", "fieldtype": "Column Break"},
+		{
+			"fieldname": "exim_claim_rodtep",
+			"fieldtype": "Check",
+			"label": "Claim RoDTEP",
+			"default": "1",
+		},
+		{
+			"fieldname": "exim_claim_rosctl",
+			"fieldtype": "Check",
+			"label": "Claim RoSCTL",
+			"default": "1",
+			"depends_on": "eval:['61', '62', '63'].includes((doc.exim_customs_tariff_item || '').slice(0, 2))",
+		},
+		{
+			"fieldname": "exim_duty_section",
+			"fieldtype": "Section Break",
+			"label": "Import Duty",
+			"depends_on": when("imports"),
+		},
+		{"fieldname": "exim_duty_rates", "fieldtype": "HTML", "label": "Import Duty Rates"},
+		{
+			"fieldname": "exim_packing_section",
+			"fieldtype": "Section Break",
+			"label": "Packing and Printed Description",
+			"collapsible": 1,
+			"collapsible_depends_on": "eval:doc.exim_gross_weight_per_unit || doc.exim_units_per_package || doc.exim_customs_description",
+		},
+		{
+			"fieldname": "exim_gross_weight_per_unit",
+			"fieldtype": "Float",
+			"label": "Gross Weight Per Unit",
+			"description": "Packing included, in the Weight UOM of the Inventory tab.",
+		},
+		{"fieldname": "exim_units_per_package", "fieldtype": "Float", "label": "Stock Units per Package"},
+		{
+			"fieldname": "exim_package_type",
+			"fieldtype": "Data",
+			"label": "Package Type",
+			"placeholder": "Carton, Bag, Drum, Pallet",
+		},
+		{"fieldname": "exim_packing_column", "fieldtype": "Column Break"},
+		{"fieldname": "exim_package_length", "fieldtype": "Float", "label": "Length (cm)"},
+		{"fieldname": "exim_package_width", "fieldtype": "Float", "label": "Width (cm)"},
+		{"fieldname": "exim_package_height", "fieldtype": "Float", "label": "Height (cm)"},
+		{"fieldname": "exim_description_column", "fieldtype": "Column Break"},
+		{
+			"fieldname": "exim_package_volume",
+			"fieldtype": "Float",
+			"label": "Volume (CBM)",
+			"read_only": 1,
+			"precision": "4",
+		},
+		{
+			"fieldname": "exim_customs_description",
+			"fieldtype": "Small Text",
+			"label": "Description for Customs",
+			"description": "Printed on the export invoice and packing list instead of the item description.",
+		},
+		{
+			"fieldname": "exim_handling_section",
+			"fieldtype": "Section Break",
+			"label": "Dangerous Goods and Handling",
+			"depends_on": when("special_cargo", "exim_is_dangerous_goods", "exim_is_reefer"),
+			"collapsible": 1,
+			"collapsible_depends_on": "eval:doc.exim_is_dangerous_goods || doc.exim_is_reefer",
+		},
+		{"fieldname": "exim_is_dangerous_goods", "fieldtype": "Check", "label": "Dangerous Goods"},
+		{
+			"fieldname": "exim_un_number",
+			"fieldtype": "Data",
+			"label": "UN Number",
+			"depends_on": "exim_is_dangerous_goods",
+			"mandatory_depends_on": "exim_is_dangerous_goods",
+		},
+		{
+			"fieldname": "exim_imdg_class",
+			"fieldtype": "Select",
+			"label": "IMDG Class",
+			"options": IMDG_CLASSES,
+			"depends_on": "exim_is_dangerous_goods",
+			"mandatory_depends_on": "exim_is_dangerous_goods",
+		},
+		{
+			"fieldname": "exim_packing_group",
+			"fieldtype": "Select",
+			"label": "Packing Group",
+			"options": "\nI\nII\nIII",
+			"depends_on": "exim_is_dangerous_goods",
+		},
+		{"fieldname": "exim_handling_column", "fieldtype": "Column Break"},
+		{"fieldname": "exim_is_reefer", "fieldtype": "Check", "label": "Needs Temperature Control"},
+		{
+			"fieldname": "exim_temperature_setting",
+			"fieldtype": "Data",
+			"label": "Temperature Setting",
+			"depends_on": "exim_is_reefer",
+			"description": "e.g. +2 to +8 °C",
+		},
+		{
+			"fieldname": "exim_licences_section",
+			"fieldtype": "Section Break",
+			"label": "DGFT Licences",
+			"collapsible": 1,
+			"collapsible_depends_on": "exim_sion_reference",
+			"depends_on": when("licences", "exim_sion_reference"),
+		},
+		{
+			"fieldname": "exim_sion_reference",
+			"fieldtype": "Data",
+			"label": "SION / Norms Reference",
+			"description": "Standard Input Output Norm used for Advance Authorisations.",
+		},
+	]
+	return [tab, *chain(fields, "exim_tab")]
+
+
+CUSTOM_FIELDS = {
+	"Company": get_company_fields(),
+	"Item": get_item_fields(),
 	"Journal Entry": [
 		{
 			"fieldname": "exim_reference_type",
@@ -210,15 +407,6 @@ PAYMENT_TERMS = "\nAdvance\nLetter of Credit\nDocuments against Payment (DP)\nDo
 MODES = "\nSea FCL\nSea LCL\nAir\nCourier\nRoad\nRail"
 
 
-def chain(fields: list[dict], first_insert_after: str) -> list[dict]:
-	"""Give each field insert_after = the previous field, so a block keeps its order."""
-	previous = first_insert_after
-	for field in fields:
-		field.setdefault("insert_after", previous)
-		previous = field["fieldname"]
-	return fields
-
-
 def get_party_fields() -> list[dict]:
 	"""Consignee | Buyer | Notify Party side by side: pick a Customer, then one of
 	its Addresses and Contacts. The text under each link is filled from it
@@ -227,7 +415,9 @@ def get_party_fields() -> list[dict]:
 		{
 			"fieldname": "exim_parties_section",
 			"fieldtype": "Section Break",
-			"label": "Consignee, Buyer & Notify Party",
+			"label": "Different Consignee, Buyer or Notify Party",
+			"collapsible": 1,
+			"collapsible_depends_on": "eval:doc.exim_consignee || doc.exim_buyer || doc.exim_notify",
 		}
 	]
 	for index, (party, label) in enumerate(
@@ -290,9 +480,10 @@ def get_order_and_invoice_fields(
 			{"fieldname": "exim_summary_section", "fieldtype": "Section Break", "label": "Export Status"},
 			{"fieldname": "exim_summary", "fieldtype": "HTML", "label": "Export Status"},
 		]
-	fields += get_party_fields()
+	lc = "eval:doc.exim_payment_terms_type == 'Letter of Credit'"
+	# what every export needs, first and open; the rest stays closed until it is used
 	fields += [
-		{"fieldname": "exim_route_section", "fieldtype": "Section Break", "label": "Route"},
+		{"fieldname": "exim_route_section", "fieldtype": "Section Break", "label": "Route and Terms"},
 		*(
 			[
 				{
@@ -311,53 +502,53 @@ def get_order_and_invoice_fields(
 			"fieldtype": "Link",
 			"label": "Destination Country",
 			"options": "Country",
+			"ignore_user_permissions": 1,
 		},
 		{"fieldname": "exim_port_of_discharge", "fieldtype": "Data", "label": "Port of Discharge"},
-		{"fieldname": "exim_final_destination", "fieldtype": "Data", "label": "Final Destination"},
 		{"fieldname": "exim_route_column", "fieldtype": "Column Break"},
 		{"fieldname": "exim_mode_of_transport", "fieldtype": "Select", "label": "Mode", "options": MODES},
-		{"fieldname": "exim_pre_carriage_by", "fieldtype": "Data", "label": "Pre-carriage By"},
-		{
-			"fieldname": "exim_place_of_receipt",
-			"fieldtype": "Data",
-			"label": "Place of Receipt by Pre-carrier",
-		},
-		{"fieldname": "exim_terms_section", "fieldtype": "Section Break", "label": "Payment Terms"},
 		{
 			"fieldname": "exim_payment_terms_type",
 			"fieldtype": "Select",
 			"label": "Export Payment Terms",
 			"options": PAYMENT_TERMS,
 		},
-		{
-			"fieldname": "exim_lc_number",
-			"fieldtype": "Data",
-			"label": "LC No.",
-			"depends_on": "eval:doc.exim_payment_terms_type == 'Letter of Credit'",
-		},
-		{"fieldname": "exim_terms_column", "fieldtype": "Column Break"},
-		{
-			"fieldname": "exim_lc_date",
-			"fieldtype": "Date",
-			"label": "LC Date",
-			"depends_on": "eval:doc.exim_payment_terms_type == 'Letter of Credit'",
-		},
+		{"fieldname": "exim_lc_number", "fieldtype": "Data", "label": "LC No.", "depends_on": lc},
+		{"fieldname": "exim_lc_date", "fieldtype": "Date", "label": "LC Date", "depends_on": lc},
 		{
 			"fieldname": "exim_latest_shipment_date",
 			"fieldtype": "Date",
 			"label": "Latest Shipment Date",
-			"depends_on": "eval:doc.exim_payment_terms_type == 'Letter of Credit'",
+			"depends_on": lc,
 		},
 		{
 			"fieldname": "exim_value_section",
 			"fieldtype": "Section Break",
-			"label": "FOB Breakup",
-			"description": "Freight and insurance included in the invoice value. They are deducted to arrive at the FOB value on the shipping bill.",
+			"label": "Freight and Insurance in the Price",
+			"depends_on": "eval:(doc.incoterm && !['EXW', 'FCA', 'FAS', 'FOB'].includes(doc.incoterm)) || doc.exim_freight || doc.exim_insurance",
+			"description": "Deducted to arrive at the FOB value on the shipping bill.",
 		},
 		{"fieldname": "exim_freight", "fieldtype": "Currency", "label": "Freight", "options": "currency"},
 		{"fieldname": "exim_value_column", "fieldtype": "Column Break"},
 		{"fieldname": "exim_insurance", "fieldtype": "Currency", "label": "Insurance", "options": "currency"},
-		{"fieldname": "exim_marks_section", "fieldtype": "Section Break", "label": "Marks"},
+	]
+	fields += get_party_fields()
+	fields += [
+		{
+			"fieldname": "exim_marks_section",
+			"fieldtype": "Section Break",
+			"label": "More Transport Details",
+			"collapsible": 1,
+			"collapsible_depends_on": "eval:doc.exim_final_destination || doc.exim_pre_carriage_by || doc.exim_place_of_receipt || doc.exim_marks_and_numbers",
+		},
+		{"fieldname": "exim_final_destination", "fieldtype": "Data", "label": "Final Destination"},
+		{"fieldname": "exim_pre_carriage_by", "fieldtype": "Data", "label": "Pre-carriage By"},
+		{
+			"fieldname": "exim_place_of_receipt",
+			"fieldtype": "Data",
+			"label": "Place of Receipt by Pre-carrier",
+		},
+		{"fieldname": "exim_marks_column", "fieldtype": "Column Break"},
 		{"fieldname": "exim_marks_and_numbers", "fieldtype": "Small Text", "label": "Marks and Numbers"},
 	]
 	return chain(fields, insert_after)
@@ -378,17 +569,6 @@ CUSTOM_FIELDS["Customer"] = [
 			"fieldtype": "Section Break",
 			"label": "Buyer Document Instructions",
 		},
-		{"fieldname": "exim_notify_party", "fieldtype": "Small Text", "label": "Notify Party"},
-		{
-			"fieldname": "exim_consignee",
-			"fieldtype": "Small Text",
-			"label": "Consignee on Transport Document",
-			"description": "e.g. 'To Order of XYZ Bank' when it differs from the buyer.",
-		},
-		{"fieldname": "exim_documents_column", "fieldtype": "Column Break"},
-		{"fieldname": "exim_originals_required", "fieldtype": "Int", "label": "Sets of Originals Required"},
-		{"fieldname": "exim_preferred_courier", "fieldtype": "Data", "label": "Courier for Originals"},
-		{"fieldname": "exim_instructions_section", "fieldtype": "Section Break"},
 		{
 			"fieldname": "exim_marking_instructions",
 			"fieldtype": "Small Text",
@@ -418,9 +598,15 @@ CUSTOM_FIELDS["Customer"] = [
 			"fieldname": "exim_ecgc_buyer_limit",
 			"fieldtype": "Currency",
 			"label": "ECGC Buyer Limit (INR)",
+			"depends_on": when("ecgc", "exim_ecgc_buyer_limit"),
 			"description": "Credit limit approved by ECGC for this buyer. Export orders warn when the amount owed would exceed it.",
 		},
-		{"fieldname": "exim_ecgc_limit_valid_upto", "fieldtype": "Date", "label": "ECGC Limit Valid Upto"},
+		{
+			"fieldname": "exim_ecgc_limit_valid_upto",
+			"fieldtype": "Date",
+			"label": "ECGC Limit Valid Upto",
+			"depends_on": when("ecgc", "exim_ecgc_limit_valid_upto"),
+		},
 	],
 	"supplier_numbers",
 )
@@ -478,12 +664,6 @@ CUSTOM_FIELDS["Supplier"] = [
 			"depends_on": "exim_fta_eligible",
 			"description": "e.g. India-UAE CEPA, India-ASEAN TIG.",
 		},
-		{"fieldname": "exim_origin_column", "fieldtype": "Column Break"},
-		{
-			"fieldname": "exim_origin_documents",
-			"fieldtype": "Small Text",
-			"label": "Documents Usually Supplied",
-		},
 	],
 	"customer_numbers",
 )
@@ -515,7 +695,7 @@ CUSTOM_FIELDS["Purchase Invoice"] = [
 				"fieldname": MERCHANT_EXPORT,
 				"fieldtype": "Check",
 				"label": "Bought for Merchant Export (0.1% GST)",
-				"depends_on": "eval:!doc.exim_is_import",
+				"depends_on": "eval:!doc.exim_is_import && (frappe.boot.exim_features?.merchant_export || doc.exim_merchant_export)",
 				"description": "Goods bought from an Indian supplier at the concessional 0.1% GST for export by us as a merchant exporter.",
 			},
 			{
@@ -547,12 +727,23 @@ CUSTOM_FIELDS["Purchase Invoice"] = [
 ] + chain(
 	[
 		{"fieldname": "exim_tab", "fieldtype": "Tab Break", "label": IMPORT_TAB, "depends_on": SHOW_IMPORT},
+		{
+			"fieldname": "exim_import_shipment",
+			"fieldtype": "Link",
+			"label": "Import Shipment",
+			"options": "Import Shipment",
+			"read_only": 1,
+			"no_copy": 1,
+			"allow_on_submit": 1,
+			"description": "Transport details below follow the shipment.",
+		},
 		{"fieldname": "exim_origin_section", "fieldtype": "Section Break", "label": "Origin"},
 		{
 			"fieldname": "exim_origin_country",
 			"fieldtype": "Link",
 			"label": "Country of Origin",
 			"options": "Country",
+			"ignore_user_permissions": 1,
 		},
 		{"fieldname": "exim_fta_claimed", "fieldtype": "Check", "label": "FTA Concession to be Claimed"},
 		{
@@ -618,6 +809,22 @@ CUSTOM_FIELDS["Payment Entry"] = chain(
 			"fieldtype": "Data",
 			"label": "RBI Purpose Code",
 			"length": 10,
+			"allow_on_submit": 1,
+		},
+		{
+			"fieldname": "exim_ebrc_number",
+			"fieldtype": "Data",
+			"label": "e-BRC No.",
+			"allow_on_submit": 1,
+			"depends_on": "eval:doc.payment_type == 'Receive'",
+			"description": "Electronic Bank Realisation Certificate, once issued on the DGFT portal.",
+		},
+		{
+			"fieldname": "exim_ebrc_date",
+			"fieldtype": "Date",
+			"label": "e-BRC Date",
+			"allow_on_submit": 1,
+			"depends_on": "eval:doc.payment_type == 'Receive'",
 		},
 		{"fieldname": "exim_column", "fieldtype": "Column Break"},
 		{
@@ -661,8 +868,17 @@ CUSTOM_FIELDS["Bill of Entry"] = chain(
 			"fieldname": "exim_authorisation",
 			"fieldtype": "Link",
 			"label": "Import Under Authorisation",
+			"depends_on": when("licences", "exim_authorisation"),
 			"options": "Export Authorisation",
-			"description": "Advance Authorisation or EPCG. Basic customs duty is then recorded as duty foregone instead of payable, and the import is debited to the authorisation.",
+			"description": "Advance Authorisation or EPCG. Customs duty is then recorded as duty foregone instead of payable, and the import is debited to the authorisation. Fills every row; leave it empty to pick a licence on some rows only.",
+		},
+		{
+			"fieldname": "exim_igst_exempt",
+			"fieldtype": "Check",
+			"label": "IGST Also Exempt under Authorisation",
+			"default": "1",
+			"depends_on": "eval:(doc.items || []).some((row) => row.exim_authorisation) || doc.exim_authorisation",
+			"description": "Untick when IGST was paid on this import.",
 		},
 		{
 			"fieldname": "exim_total_duty_foregone",
@@ -670,7 +886,7 @@ CUSTOM_FIELDS["Bill of Entry"] = chain(
 			"label": "Duty Foregone under Authorisation",
 			"options": "Company:company:default_currency",
 			"read_only": 1,
-			"depends_on": "exim_authorisation",
+			"depends_on": "exim_total_duty_foregone",
 		},
 		{
 			"fieldname": "exim_currency",
@@ -752,6 +968,16 @@ CUSTOM_FIELDS["Bill of Entry Item"] = chain(
 			"fetch_from": "item_code.exim_customs_tariff_item",
 			"fetch_if_empty": 1,
 		},
+		{
+			"fieldname": "exim_authorisation",
+			"fieldtype": "Link",
+			"label": "Under Authorisation",
+			"options": "Export Authorisation",
+			"in_list_view": 1,
+			"columns": 2,
+			"depends_on": "eval:frappe.boot.exim_features?.licences || doc.exim_authorisation",
+			"description": "To split one line between a licence and duty payment, duplicate the row and share its quantity.",
+		},
 		{"fieldname": "exim_value_fc", "fieldtype": "Currency", "label": "Invoice Value (Invoice Currency)"},
 		{
 			"fieldname": "exim_manual_rates",
@@ -809,3 +1035,13 @@ CUSTOM_FIELDS["Bill of Entry Item"] = chain(
 	],
 	"cess_non_advol_amount",
 )
+
+CUSTOM_FIELDS["Purchase Order"] = [
+	flag(
+		"exim_is_import",
+		"Is Import",
+		"is_reverse_charge",
+		fetch_from="supplier.exim_is_import",
+		description="Overseas purchase. Create > Import Shipment follows it from booking to clearance.",
+	)
+]

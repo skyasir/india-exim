@@ -46,6 +46,8 @@ def get_columns() -> list[dict]:
 		{"label": _("Goods Cost"), "fieldname": "actual_goods_cost", **currency},
 		{"label": _("Goods Cost Basis"), "fieldname": "goods_cost_basis", "fieldtype": "Data", "width": 150},
 		{"label": _("Shipment Charges"), "fieldname": "actual_charges", **currency},
+		{"label": _("Charges Basis"), "fieldname": "charges_basis", "fieldtype": "Data", "width": 130},
+		{"label": _("Bank and ECGC"), "fieldname": "finance_charges", **currency},
 		{"label": _("Costed Incentives"), "fieldname": "costed_incentives", **currency},
 		{"label": _("Actual Incentives"), "fieldname": "actual_incentives", **currency},
 		{"label": _("Costed Margin"), "fieldname": "costed_margin", **currency},
@@ -74,6 +76,8 @@ def get_data(filters) -> list[dict]:
 			"total_incentives",
 			"margin_amount",
 			"total_exw",
+			"bank_charges_percent",
+			"ecgc_premium_percent",
 		],
 		order_by="posting_date desc",
 	)
@@ -105,9 +109,22 @@ def get_data(filters) -> list[dict]:
 				row.actual_goods_cost = get_costed_goods_cost(sheet, invoices)
 				row.goods_cost_basis = _("Costed (no valuation)")
 			row.actual_charges = get_shipment_charges(invoices)
+			row.charges_basis = _("Actual")
+			if not row.actual_charges:
+				# nothing recorded on the shipment yet: freight, insurance and FOB costs are not free
+				row.actual_charges = get_costed_charges(sheet, invoices)
+				row.charges_basis = _("Costed (none recorded)")
+			# not recorded per shipment, so taken at the costed percentages
+			row.finance_charges = (
+				row.actual_price * (flt(sheet.bank_charges_percent) + flt(sheet.ecgc_premium_percent)) / 100
+			)
 			row.actual_incentives = get_incentives(invoices)
 			row.actual_margin = (
-				row.actual_price + row.actual_incentives - row.actual_goods_cost - row.actual_charges
+				row.actual_price
+				+ row.actual_incentives
+				- row.actual_goods_cost
+				- row.actual_charges
+				- row.finance_charges
 			)
 			row.variance = row.actual_margin - flt(row.costed_margin)
 		data.append(row)
@@ -150,6 +167,16 @@ def get_goods_cost(invoices: list[str]) -> float:
 
 
 def get_costed_goods_cost(sheet, invoices: list[str]) -> float:
+	return flt(sheet.total_exw) * get_invoiced_share(sheet, invoices)
+
+
+def get_costed_charges(sheet, invoices: list[str]) -> float:
+	"""Everything costed between ex-works and the Incoterm, for the quantity invoiced."""
+	return (flt(sheet.total_cost_at_basis) - flt(sheet.total_exw)) * get_invoiced_share(sheet, invoices)
+
+
+def get_invoiced_share(sheet, invoices: list[str]) -> float:
+	"""Quantity invoiced, net of returns, as a share of the quantity costed."""
 	costed_qty = sum(
 		flt(qty) for qty in frappe.get_all("Export Costing Item", filters={"parent": sheet.name}, pluck="qty")
 	)
@@ -161,7 +188,7 @@ def get_costed_goods_cost(sheet, invoices: list[str]) -> float:
 			"Sales Invoice Item", filters={"parent": ("in", invoices)}, pluck="stock_qty"
 		)
 	)
-	return flt(sheet.total_exw) * invoiced_qty / costed_qty
+	return invoiced_qty / costed_qty
 
 
 def get_shipment_charges(invoices: list[str]) -> float:
@@ -193,9 +220,14 @@ def get_incentives(invoices: list[str]) -> float:
 	rows = frappe.get_all(
 		"Shipping Bill",
 		filters={"name": ("in", shipping_bills)},
-		fields=["total_drawback", "total_rodtep", "drawback_reversed", "rodtep_reversed"],
+		fields=[
+			f"{prefix}{scheme}{suffix}"
+			for scheme in ("drawback", "rodtep", "rosctl")
+			for prefix, suffix in (("total_", ""), ("", "_reversed"))
+		],
 	)
 	return sum(
-		flt(r.total_drawback) + flt(r.total_rodtep) - flt(r.drawback_reversed) - flt(r.rodtep_reversed)
-		for r in rows
+		flt(row[f"total_{scheme}"]) - flt(row[f"{scheme}_reversed"])
+		for row in rows
+		for scheme in ("drawback", "rodtep", "rosctl")
 	)

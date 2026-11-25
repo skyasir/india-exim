@@ -9,7 +9,9 @@ from frappe import _
 from frappe.utils import date_diff, flt, getdate, today
 
 OPEN_STATUSES = ("Pending", "Partly Realised")
-BUCKETS = ((90, "0-90"), (180, "91-180"), (270, "181-270"), (365, "271-365"))
+# up to about 15 months, the realisation period RBI allows for exports from 14.11.2025
+BUCKETS = ((90, "0-90"), (180, "91-180"), (270, "181-270"), (365, "271-365"), (455, "366-455"))
+BEYOND = "455+"
 
 
 def execute(filters: dict | None = None):
@@ -146,11 +148,11 @@ def get_bucket(age: int) -> str:
 	for limit, label in BUCKETS:
 		if age <= limit:
 			return label
-	return "365+"
+	return BEYOND
 
 
 def get_chart(data: list[dict]) -> dict:
-	labels = [label for _limit, label in BUCKETS] + ["365+"]
+	labels = [label for _limit, label in BUCKETS] + [BEYOND]
 	totals = dict.fromkeys(labels, 0.0)
 	for row in data:
 		totals[row.bucket] += flt(row.outstanding_inr)

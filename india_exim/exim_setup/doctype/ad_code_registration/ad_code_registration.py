@@ -25,6 +25,14 @@ class ADCodeRegistration(Document):
 			)
 
 
+def get_only_port(company: str) -> str | None:
+	"""The port, when the company has AD codes at just one."""
+	ports = set(
+		frappe.get_all("AD Code Registration", filters={"company": company, "disabled": 0}, pluck="port_code")
+	)
+	return ports.pop() if len(ports) == 1 else None
+
+
 def get_ad_code(company: str, port_code: str) -> str | None:
 	filters = {"company": company, "port_code": port_code, "disabled": 0}
 	return frappe.db.get_value(

@@ -27,7 +27,7 @@ frappe.query_reports["Export Incentive Register"] = {
 			fieldname: "scheme",
 			label: __("Scheme"),
 			fieldtype: "Select",
-			options: ["", "Duty Drawback", "RoDTEP"],
+			options: ["", "Duty Drawback", "RoDTEP", "RoSCTL"],
 		},
 		{ fieldname: "customer", label: __("Customer"), fieldtype: "Link", options: "Customer" },
 		{ fieldname: "pending_only", label: __("Receivable Only"), fieldtype: "Check" },

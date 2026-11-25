@@ -57,6 +57,14 @@
 {{- (frappe.db.get_value("Item", item.item_code, "exim_customs_tariff_item") if item.get("item_code") else None) or item.get("gst_hsn_code") or "" -}}
 {%- endmacro -%}
 
+{%- macro goods(item) -%}
+{#- The item's Description for Customs when set, else its name and description. -#}
+{%- set customs = exim_customs_description(item.item_code) if item.get("item_code") else "" -%}
+<b>{{ item.item_name }}</b>
+{%- if customs %}<br>{{ customs }}
+{%- elif item.description and item.description != item.item_name %}<br>{{ item.description }}{% endif %}
+{%- endmacro -%}
+
 {%- macro signature(company, label=_("Authorised Signatory")) -%}
 <div class="sign">{{ _("For") }} <b>{{ company }}</b></div>
 <div style="margin-top: 30px">{{ label }}</div>

@@ -9,3 +9,10 @@ india_exim.patches.v0_1.rename_document_rule_condition_fields
 india_exim.patches.v0_1.set_export_import_flags
 india_exim.patches.v0_1.enable_export_proforma_invoice
 india_exim.patches.v0_1.set_new_settings_defaults
+india_exim.patches.v0_2.dated_fema_periods
+india_exim.patches.v0_2.scrip_validity_two_years
+india_exim.patches.v0_2.enable_all_features
+india_exim.patches.v0_2.refresh_field_order
+india_exim.patches.v0_2.licence_on_bill_of_entry_rows
+india_exim.patches.v0_2.enable_shipment_tracking
+india_exim.patches.v0_2.keep_removed_field_text

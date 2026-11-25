@@ -46,12 +46,17 @@ def get_unclaimed_shipping_bills() -> int:
 	shipping_bills = frappe.get_all(
 		"Shipping Bill",
 		filters={"company": get_default_company(), "docstatus": 1, "leo_date": ("is", "set")},
-		fields=["name", "total_drawback", "total_rodtep"],
+		fields=["name", "total_drawback", "total_rodtep", "total_rosctl"],
 	)
 	count = 0
 	for row in shipping_bills:
-		pending = (flt(row.total_drawback) and not get_existing_claim(row.name, "Duty Drawback")) or (
-			flt(row.total_rodtep) and not get_existing_claim(row.name, "RoDTEP")
+		pending = any(
+			flt(row[field]) and not get_existing_claim(row.name, scheme)
+			for scheme, field in (
+				("Duty Drawback", "total_drawback"),
+				("RoDTEP", "total_rodtep"),
+				("RoSCTL", "total_rosctl"),
+			)
 		)
 		count += bool(pending)
 	return count

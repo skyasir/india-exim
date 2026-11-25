@@ -17,6 +17,20 @@ def is_zero_rated_export_without_tax(doc) -> bool:
 
 def validate(doc, method=None):
 	set_letter_of_undertaking(doc)
+	validate_destination(doc)
+
+
+def validate_destination(doc):
+	"""An export invoice cannot go out without saying where the goods go."""
+	if not doc.get("exim_is_export") or doc.get("is_return") or doc.get("_action") != "submit":
+		return
+	home = frappe.get_cached_value("Company", doc.company, "country")
+	destination = doc.exim_destination_country
+	if not destination or (destination == home and doc.get("gst_category") == "Overseas"):
+		frappe.throw(
+			_("Set the Destination Country on the Export Details tab, or the buyer's address."),
+			title=_("Destination Missing"),
+		)
 
 
 def set_letter_of_undertaking(doc):
@@ -94,6 +108,7 @@ def get_export_status(sales_invoice: str) -> dict:
 			"outstanding_value",
 			"total_drawback",
 			"total_rodtep",
+			"total_rosctl",
 		],
 	)
 	shipments = frappe.get_all(

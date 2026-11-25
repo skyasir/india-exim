@@ -14,6 +14,7 @@
   "qty",
   "uom",
   "uqc_qty",
+  "uqc",
   "value_section",
   "invoice_value",
   "freight",
@@ -24,6 +25,7 @@
   "currency",
   "drawback_section",
   "claim_drawback",
+  "drawback_serial_no",
   "drawback_rate",
   "drawback_cap",
   "drawback_amount",
@@ -31,7 +33,14 @@
   "claim_rodtep",
   "rodtep_rate",
   "rodtep_cap",
-  "rodtep_amount"
+  "rodtep_amount",
+  "column_break_rosctl",
+  "claim_rosctl",
+  "rosctl_rate",
+  "rosctl_cap",
+  "rosctl_central_rate",
+  "rosctl_central_cap",
+  "rosctl_amount"
  ],
  "fields": [
   {
@@ -91,10 +100,16 @@
    "options": "UOM"
   },
   {
-   "description": "Quantity in the unit the incentive cap is defined in (e.g. kg). Defaults to Qty.",
+   "description": "Filled from the item's UQC per Stock Unit; used for per-unit incentive caps. Defaults to Qty.",
    "fieldname": "uqc_qty",
    "fieldtype": "Float",
-   "label": "Qty in Cap Unit"
+   "label": "Qty in Customs Unit (UQC)"
+  },
+  {
+   "fieldname": "uqc",
+   "fieldtype": "Link",
+   "label": "Customs Unit (UQC)",
+   "options": "UOM"
   },
   {
    "fieldname": "value_section",
@@ -163,6 +178,12 @@
    "label": "Claim Drawback"
   },
   {
+   "description": "From the item. Pick the entry when the heading has more than one.",
+   "fieldname": "drawback_serial_no",
+   "fieldtype": "Autocomplete",
+   "label": "Drawback Schedule Serial No."
+  },
+  {
    "fieldname": "drawback_rate",
    "fieldtype": "Percent",
    "label": "Drawback %",
@@ -209,11 +230,52 @@
    "label": "RoDTEP Amount",
    "options": "Company:company:default_currency",
    "read_only": 1
+  },
+  {
+   "fieldname": "column_break_rosctl",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "claim_rosctl",
+   "fieldtype": "Check",
+   "label": "Claim RoSCTL",
+   "default": "1"
+  },
+  {
+   "fieldname": "rosctl_rate",
+   "fieldtype": "Percent",
+   "label": "RoSCTL State %",
+   "read_only": 1
+  },
+  {
+   "fieldname": "rosctl_cap",
+   "fieldtype": "Currency",
+   "label": "State Cap / Unit",
+   "read_only": 1
+  },
+  {
+   "fieldname": "rosctl_central_rate",
+   "fieldtype": "Percent",
+   "label": "RoSCTL Central %",
+   "read_only": 1
+  },
+  {
+   "fieldname": "rosctl_central_cap",
+   "fieldtype": "Currency",
+   "label": "Central Cap / Unit",
+   "read_only": 1
+  },
+  {
+   "fieldname": "rosctl_amount",
+   "fieldtype": "Currency",
+   "label": "RoSCTL Amount",
+   "options": "Company:company:default_currency",
+   "read_only": 1
   }
  ],
  "istable": 1,
  "links": [],
- "modified": "2026-11-19 18:00:00.000000",
+ "modified": "2026-11-26 14:00:00.000000",
  "modified_by": "Administrator",
  "module": "Exports",
  "name": "Shipping Bill Item",

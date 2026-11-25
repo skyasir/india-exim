@@ -1,4 +1,4 @@
-"""Journal entries for export incentives (Duty Drawback, RoDTEP)."""
+"""Journal entries for export incentives (Duty Drawback, RoDTEP, RoSCTL)."""
 
 import frappe
 from frappe import _
@@ -10,6 +10,7 @@ from india_exim.setup.accounts import get_exim_account
 ACCRUAL_HEADS = {
 	"Duty Drawback": ("total_drawback", "exim_drawback_receivable_account", "exim_drawback_income_account"),
 	"RoDTEP": ("total_rodtep", "exim_rodtep_receivable_account", "exim_rodtep_income_account"),
+	"RoSCTL": ("total_rosctl", "exim_rosctl_receivable_account", "exim_rosctl_income_account"),
 }
 
 
@@ -55,7 +56,7 @@ def make_journal_entry(
 
 
 def make_incentive_accrual(shipping_bill) -> str | None:
-	"""Book Drawback / RoDTEP receivable against incentive income on the LEO date."""
+	"""Book Drawback / RoDTEP / RoSCTL receivable against incentive income on the LEO date."""
 	rows = []
 	for _scheme, (total_field, receivable_field, income_field) in ACCRUAL_HEADS.items():
 		amount = flt(shipping_bill.get(total_field))
@@ -120,6 +121,7 @@ def on_journal_entry_cancel(doc, method=None):
 REVERSAL_FIELDS = {
 	"Duty Drawback": ("total_drawback", "drawback_reversed"),
 	"RoDTEP": ("total_rodtep", "rodtep_reversed"),
+	"RoSCTL": ("total_rosctl", "rosctl_reversed"),
 }
 
 

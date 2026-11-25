@@ -69,7 +69,7 @@ class TestReportsAndAlerts(IntegrationTestCase):
 		ageing, _summary = run_report("Export Realisation Ageing", as_on_date=later, overdue_only=1)
 		row = next(r for r in ageing if r["name"] == shipping_bill.name)
 		self.assertEqual(row["overdue_days"], 10)
-		self.assertEqual(row["bucket"], "271-365")
+		self.assertEqual(row["bucket"], "455+")  # 15 months + 10 days
 
 	def test_incentive_register_shows_unclaimed_accrual(self):
 		shipping_bill = self.make_submitted_shipping_bill(leo_date=today())

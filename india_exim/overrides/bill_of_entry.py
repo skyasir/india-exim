@@ -1,7 +1,8 @@
 import frappe
 from frappe import _
+from india_compliance.gst_india.constants import PORT_CODES
 
-from india_exim.dgft_licences.authorisation import set_igst_foregone
+from india_exim.dgft_licences.authorisation import exempt_taxes, set_igst_foregone, set_row_authorisations
 from india_exim.imports.customs_duty import set_customs_duties
 
 
@@ -9,10 +10,29 @@ class BillOfEntryEXIM:
 	"""Extends India Compliance's Bill of Entry: duty is computed before its taxes and totals."""
 
 	def before_validate(self):
+		self.fill_from_purchase_invoice()
+		set_row_authorisations(self)
 		set_customs_duties(self)
 		super().before_validate()
 		# IGST is worked out by India Compliance above; what was not charged under a licence is saved
 		set_igst_foregone(self)
+
+	def fill_from_purchase_invoice(self):
+		"""B/L number and port are already on the import invoice; only empty fields are filled."""
+		invoice = next((row.purchase_invoice for row in self.items if row.purchase_invoice), None)
+		if not invoice or (self.bill_of_lading_no and self.port_code):
+			return
+		details = frappe.db.get_value(
+			"Purchase Invoice", invoice, ["exim_bl_number", "exim_port_of_discharge"], as_dict=True
+		)
+		self.bill_of_lading_no = self.bill_of_lading_no or details.exim_bl_number
+		port_code = (details.exim_port_of_discharge or "").strip().upper()
+		if not self.port_code and port_code in PORT_CODES:
+			self.port_code = port_code
+
+	def calculate_totals(self):
+		exempt_taxes(self)
+		super().calculate_totals()
 
 
 def on_submit(doc, method=None):

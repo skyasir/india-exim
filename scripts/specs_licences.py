@@ -113,7 +113,14 @@ doctype(
 	search_fields="authorisation_number,scheme,status",
 	roles=ROLES,
 	links=[
-		{"group": "Customs", "link_doctype": "Bill of Entry", "link_fieldname": "exim_authorisation"},
+		{
+			"group": "Customs",
+			"link_doctype": "Bill of Entry Item",
+			"link_fieldname": "exim_authorisation",
+			"parent_doctype": "Bill of Entry",
+			"is_child_table": 1,
+			"table_fieldname": "items",
+		},
 		{"group": "Customs", "link_doctype": "Shipping Bill", "link_fieldname": "export_authorisation"},
 	],
 )

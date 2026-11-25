@@ -98,6 +98,7 @@ def get_documents(shipments: list[str]) -> dict[str, list]:
 			"due_date",
 			"responsible",
 			"document_number",
+			"document_date",
 			"attachment",
 		],
 		order_by="due_date asc, idx asc",
@@ -163,7 +164,12 @@ def get_document_board(
 
 @frappe.whitelist(methods=["POST"])
 def update_document(
-	shipment: str, row: str, status: str | None = None, attachment: str | None = None
+	shipment: str,
+	row: str,
+	status: str | None = None,
+	attachment: str | None = None,
+	document_number: str | None = None,
+	document_date: str | None = None,
 ) -> dict:
 	"""Move a checklist row to another status or attach its file, through the shipment."""
 	doc = frappe.get_doc("Export Shipment", shipment)
@@ -178,5 +184,9 @@ def update_document(
 		target.status = status
 	if attachment:
 		target.attachment = attachment
+	if document_number:
+		target.document_number = document_number
+	if document_date:
+		target.document_date = document_date
 	doc.save()
 	return {"readiness_percent": doc.readiness_percent}

@@ -1,0 +1,457 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "naming_series:",
+ "creation": "2026-11-26 10:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "company",
+  "supplier",
+  "supplier_name",
+  "column_break_head",
+  "status",
+  "origin_country",
+  "readiness_percent",
+  "terms_section",
+  "mode_of_transport",
+  "port_of_loading",
+  "port_of_discharge",
+  "column_break_terms",
+  "incoterm",
+  "currency",
+  "orders_section",
+  "orders",
+  "invoices",
+  "notes_section",
+  "remarks",
+  "booking_tab",
+  "carrier_section",
+  "freight_forwarder",
+  "cha",
+  "shipping_line",
+  "column_break_carrier",
+  "booking_number",
+  "vessel_voyage",
+  "etd",
+  "eta",
+  "containers_section",
+  "containers",
+  "total_gross_weight",
+  "total_packages",
+  "arrival_tab",
+  "transport_document_section",
+  "bl_number",
+  "bl_date",
+  "column_break_bl",
+  "bl_type",
+  "atd",
+  "arrival_section",
+  "ata",
+  "igm_number",
+  "igm_date",
+  "column_break_arrival",
+  "free_days",
+  "free_time_ends",
+  "documents_tab",
+  "documents",
+  "charges_tab",
+  "charges",
+  "total_charges",
+  "connections_tab"
+ ],
+ "fields": [
+  {
+   "default": "IMS-.YYYY.-.#####",
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "IMS-.YYYY.-.#####",
+   "print_hide": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Company",
+   "options": "Company",
+   "reqd": 1
+  },
+  {
+   "fieldname": "supplier",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Supplier",
+   "options": "Supplier",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "supplier.supplier_name",
+   "fieldname": "supplier_name",
+   "fieldtype": "Data",
+   "label": "Supplier Name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_head",
+   "fieldtype": "Column Break"
+  },
+  {
+   "bold": 1,
+   "default": "Planned",
+   "description": "Moves by itself up to Customs Cleared: booking, departure or B/L, arrival, then Bills of Entry.",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "options": "Planned\nBooked\nShipped\nArrived\nCustoms Cleared\nDelivered\nClosed\nCancelled"
+  },
+  {
+   "fieldname": "origin_country",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Country of Origin",
+   "options": "Country"
+  },
+  {
+   "fieldname": "readiness_percent",
+   "fieldtype": "Percent",
+   "in_list_view": 1,
+   "label": "Document Readiness",
+   "no_copy": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "terms_section",
+   "fieldtype": "Section Break",
+   "label": "Route and Terms"
+  },
+  {
+   "default": "Sea FCL",
+   "fieldname": "mode_of_transport",
+   "fieldtype": "Select",
+   "label": "Mode",
+   "options": "Sea FCL\nSea LCL\nAir\nCourier\nRoad\nRail"
+  },
+  {
+   "fieldname": "port_of_loading",
+   "fieldtype": "Data",
+   "label": "Port of Loading (Foreign)"
+  },
+  {
+   "fieldname": "port_of_discharge",
+   "fieldtype": "Data",
+   "label": "Port of Discharge (Indian Port Code)",
+   "length": 15
+  },
+  {
+   "fieldname": "column_break_terms",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "incoterm",
+   "fieldtype": "Link",
+   "label": "Incoterm",
+   "options": "Incoterm"
+  },
+  {
+   "fieldname": "currency",
+   "fieldtype": "Link",
+   "label": "Currency",
+   "options": "Currency"
+  },
+  {
+   "fieldname": "orders_section",
+   "fieldtype": "Section Break",
+   "label": "Orders and Invoices"
+  },
+  {
+   "fieldname": "orders",
+   "fieldtype": "Table",
+   "label": "Purchase Orders",
+   "options": "Import Shipment Order"
+  },
+  {
+   "fieldname": "invoices",
+   "fieldtype": "Table",
+   "label": "Purchase Invoices",
+   "options": "Import Shipment Invoice"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "notes_section",
+   "fieldtype": "Section Break",
+   "label": "Remarks"
+  },
+  {
+   "fieldname": "remarks",
+   "fieldtype": "Text Editor",
+   "label": "Remarks"
+  },
+  {
+   "fieldname": "booking_tab",
+   "fieldtype": "Tab Break",
+   "label": "Booking"
+  },
+  {
+   "fieldname": "carrier_section",
+   "fieldtype": "Section Break",
+   "label": "Carrier and Booking"
+  },
+  {
+   "fieldname": "freight_forwarder",
+   "fieldtype": "Link",
+   "label": "Freight Forwarder",
+   "options": "Supplier"
+  },
+  {
+   "fieldname": "cha",
+   "fieldtype": "Link",
+   "label": "Customs Broker (CHA)",
+   "options": "Supplier"
+  },
+  {
+   "fieldname": "shipping_line",
+   "fieldtype": "Data",
+   "label": "Shipping Line / Airline"
+  },
+  {
+   "fieldname": "column_break_carrier",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "booking_number",
+   "fieldtype": "Data",
+   "label": "Booking No."
+  },
+  {
+   "fieldname": "vessel_voyage",
+   "fieldtype": "Data",
+   "label": "Vessel / Voyage or Flight"
+  },
+  {
+   "fieldname": "etd",
+   "fieldtype": "Date",
+   "label": "ETD"
+  },
+  {
+   "fieldname": "eta",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "ETA"
+  },
+  {
+   "fieldname": "containers_section",
+   "fieldtype": "Section Break",
+   "label": "Containers"
+  },
+  {
+   "fieldname": "containers",
+   "fieldtype": "Table",
+   "label": "Containers / Packages",
+   "options": "Shipment Container"
+  },
+  {
+   "fieldname": "total_gross_weight",
+   "fieldtype": "Float",
+   "label": "Total Gross Weight (kg)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_packages",
+   "fieldtype": "Int",
+   "label": "Total Packages",
+   "read_only": 1
+  },
+  {
+   "fieldname": "arrival_tab",
+   "fieldtype": "Tab Break",
+   "label": "B/L and Arrival"
+  },
+  {
+   "fieldname": "transport_document_section",
+   "fieldtype": "Section Break",
+   "label": "Bill of Lading / Airway Bill"
+  },
+  {
+   "fieldname": "bl_number",
+   "fieldtype": "Data",
+   "label": "BL / AWB No."
+  },
+  {
+   "fieldname": "bl_date",
+   "fieldtype": "Date",
+   "label": "BL / AWB Date"
+  },
+  {
+   "fieldname": "column_break_bl",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "bl_type",
+   "fieldtype": "Select",
+   "label": "BL Type",
+   "options": "\nOriginal BL\nTelex Release\nSeaway Bill\nAir Waybill\nCourier Waybill"
+  },
+  {
+   "fieldname": "atd",
+   "fieldtype": "Date",
+   "label": "Actual Departure"
+  },
+  {
+   "fieldname": "arrival_section",
+   "fieldtype": "Section Break",
+   "label": "Arrival"
+  },
+  {
+   "fieldname": "ata",
+   "fieldtype": "Date",
+   "label": "Actual Arrival"
+  },
+  {
+   "fieldname": "igm_number",
+   "fieldtype": "Data",
+   "label": "IGM No."
+  },
+  {
+   "fieldname": "igm_date",
+   "fieldtype": "Date",
+   "label": "IGM Date"
+  },
+  {
+   "fieldname": "column_break_arrival",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "free_days",
+   "fieldtype": "Int",
+   "label": "Free Days (Detention / Demurrage)"
+  },
+  {
+   "fieldname": "free_time_ends",
+   "fieldtype": "Date",
+   "label": "Free Time Ends",
+   "read_only": 1
+  },
+  {
+   "fieldname": "documents_tab",
+   "fieldtype": "Tab Break",
+   "label": "Documents"
+  },
+  {
+   "fieldname": "documents",
+   "fieldtype": "Table",
+   "label": "Document Checklist",
+   "options": "Shipment Document"
+  },
+  {
+   "fieldname": "charges_tab",
+   "fieldtype": "Tab Break",
+   "label": "Charges"
+  },
+  {
+   "fieldname": "charges",
+   "fieldtype": "Table",
+   "label": "Shipment Charges",
+   "options": "Shipment Charge"
+  },
+  {
+   "fieldname": "total_charges",
+   "fieldtype": "Currency",
+   "label": "Total Charges",
+   "options": "Company:company:default_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "connections_tab",
+   "fieldtype": "Tab Break",
+   "label": "Connections",
+   "show_dashboard": 1
+  }
+ ],
+ "links": [],
+ "modified": "2026-11-26 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Imports",
+ "name": "Import Shipment",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "EXIM Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "EXIM User",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Purchase User",
+   "share": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts User",
+   "share": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts Manager",
+   "share": 1
+  }
+ ],
+ "search_fields": "supplier,origin_country,booking_number,bl_number",
+ "show_name_in_global_search": 1,
+ "show_title_field_in_link": 0,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "supplier_name",
+ "track_changes": 1
+}

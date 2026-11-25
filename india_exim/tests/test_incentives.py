@@ -1,6 +1,6 @@
 import frappe
 from frappe.tests import IntegrationTestCase, change_settings
-from frappe.utils import today
+from frappe.utils import add_months, getdate, today
 
 from india_exim.export_incentives.doctype.export_incentive_claim.export_incentive_claim import (
 	create_rodtep_scrip,
@@ -137,6 +137,59 @@ class TestExportIncentives(IntegrationTestCase):
 		self.assertEqual(scrip.balance_amount, 500)
 		self.assertEqual(scrip.status, "Partly Used")
 		self.assertEqual(get_balance(self.company.exim_scrip_sale_loss_account, journal_entry), 9)
+
+	@change_settings("India EXIM Settings", {"incentive_accrual_point": "On LEO"})
+	def test_rosctl_from_shipping_bill_to_scrip(self):
+		frappe.db.savepoint("rosctl")
+		self.addCleanup(frappe.clear_cache)
+		self.addCleanup(frappe.db.rollback, save_point="rosctl")
+		rate = make_incentive_rate("RoSCTL", 2)
+		rate.update({"cap_per_unit": 100, "cap_uom": "Nos", "central_rate": 3, "central_cap_per_unit": 200})
+		rate.save()
+		shipping_bill = self.make_leo_shipping_bill()
+		row = shipping_bill.items[0]
+		# FOB 80,000 for 10: State 2% = 1,600 capped at 1,000; Central 3% = 2,400 capped at 2,000
+		expected = min(80000 * 0.02, 100 * row.uqc_qty) + min(80000 * 0.03, 200 * row.uqc_qty)
+		self.assertEqual(shipping_bill.total_rosctl, expected)
+		self.assertEqual(shipping_bill.total_rodtep, 0)  # not both on the same goods
+		self.assertEqual(
+			get_balance(self.company.exim_rosctl_receivable_account, shipping_bill.accrual_journal_entry),
+			expected,
+		)
+
+		claim = self.make_claim("RoSCTL", [shipping_bill])
+		self.assertEqual(claim.total_expected, expected)
+		self.assertRaisesRegex(
+			frappe.ValidationError, "e-scrip", record_receipt, claim.name, today(), 10, bank_account()
+		)
+		create_rodtep_scrip(claim.name, frappe.generate_hash(length=8), today(), expected)
+		claim.reload()
+		self.assertEqual(claim.status, "Received")
+
+	@change_settings("India EXIM Settings", {"incentive_accrual_point": "On LEO"})
+	def test_scrip_pays_no_more_than_the_duty(self):
+		from india_exim.export_incentives.doctype.rodtep_scrip.rodtep_scrip import get_duty_left
+		from india_exim.tests.fixtures import make_import_invoice
+		from india_exim.tests.test_imports_and_payments import make_bill_of_entry
+
+		claim = self.make_claim("RoDTEP", [self.make_leo_shipping_bill()])
+		scrip = create_rodtep_scrip(claim.name, frappe.generate_hash(length=8), today(), 800)
+		bill_of_entry = make_bill_of_entry(make_import_invoice(qty=1, rate=50))
+		bill_of_entry.save()
+		bill_of_entry.submit()
+		duty = get_duty_left(bill_of_entry.name)
+		self.assertEqual(duty, 451)  # 50 x 82 = 4,100 at BCD 10% + SWS 10% of BCD
+		pay = lambda amount: utilise_scrip(  # noqa: E731
+			scrip, "Customs Duty", today(), amount, bill_of_entry=bill_of_entry.name
+		)
+		self.assertRaisesRegex(frappe.ValidationError, "customs duty is left", pay, duty + 1)
+		pay(400)
+		self.assertRaisesRegex(frappe.ValidationError, "customs duty is left", pay, 52)
+		pay(51)
+		self.assertEqual(get_duty_left(bill_of_entry.name), 0)
+		self.assertEqual(
+			frappe.db.get_value("RoDTEP Scrip", scrip, "valid_upto"), getdate(add_months(today(), 24))
+		)
 
 	@change_settings("India EXIM Settings", {"incentive_accrual_point": "On Scroll"})
 	def test_on_scroll_books_full_sanction_as_income(self):

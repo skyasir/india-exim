@@ -38,6 +38,7 @@ def get_columns(filters) -> list[dict]:
 		{"label": _("Share %"), "fieldname": "share", "fieldtype": "Percent", "width": 90},
 		{"label": _("Drawback"), "fieldname": "drawback", "fieldtype": "Currency", "width": 120},
 		{"label": _("RoDTEP"), "fieldname": "rodtep", "fieldtype": "Currency", "width": 120},
+		{"label": _("RoSCTL"), "fieldname": "rosctl", "fieldtype": "Currency", "width": 120},
 		{
 			"label": _("Incentive % of FOB"),
 			"fieldname": "incentive_percent",
@@ -75,6 +76,7 @@ def get_data(filters) -> list[dict]:
 			item.fob_value_inr,
 			item.drawback_amount,
 			item.rodtep_amount,
+			item.rosctl_amount,
 		)
 		.where(sb.docstatus == 1)
 		.where(sb.company == filters.company)
@@ -98,6 +100,7 @@ def get_data(filters) -> list[dict]:
 				fob_inr=0,
 				drawback=0,
 				rodtep=0,
+				rosctl=0,
 				invoice=0,
 				realised=0,
 				outstanding_inr=0,
@@ -108,6 +111,7 @@ def get_data(filters) -> list[dict]:
 		group.fob_inr += flt(row.fob_value_inr)
 		group.drawback += flt(row.drawback_amount)
 		group.rodtep += flt(row.rodtep_amount)
+		group.rosctl += flt(row.rosctl_amount)
 		group.invoice += flt(row.invoice_value)
 		group.realised += flt(row.realised_value) * share
 		group.outstanding_inr += flt(row.outstanding_value) * share * flt(row.customs_exchange_rate)
@@ -118,7 +122,7 @@ def get_data(filters) -> list[dict]:
 		group.shipping_bills = len(bills[key])
 		group.share = group.fob_inr * 100 / total_fob
 		group.incentive_percent = (
-			(group.drawback + group.rodtep) * 100 / group.fob_inr if group.fob_inr else 0
+			(group.drawback + group.rodtep + group.rosctl) * 100 / group.fob_inr if group.fob_inr else 0
 		)
 		group.realised_percent = group.realised * 100 / group.invoice if group.invoice else 0
 		data.append(group)
