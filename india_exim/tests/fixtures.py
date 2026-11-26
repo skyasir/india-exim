@@ -13,7 +13,7 @@ FY_START = getdate("2000-01-01")
 def make_tariff_item(code: str = TARIFF_CODE, bcd: float = 10, sws: float = 10) -> str:
 	"""The tariff item with a duty rate. India EXIM's tariff data may already have created it
 	(without duty rates), so the rate is added when missing."""
-	rate = {"effective_from": FY_START, "bcd_rate": bcd, "sws_rate": sws, "notification": "TEST"}
+	rate = {"effective_from": FY_START, "bcd_rate": bcd, "sws_rate": sws}
 	if not frappe.db.exists("Customs Tariff Item", code):
 		frappe.get_doc(
 			{
@@ -44,7 +44,6 @@ def make_incentive_rate(
 			"cap_per_unit": cap,
 			"cap_uom": "Nos" if cap else None,
 			"effective_from": effective_from,
-			"notification": "TEST",
 		}
 	).insert(ignore_permissions=True)
 

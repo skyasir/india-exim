@@ -2,7 +2,7 @@
 DGFT / CBIC schedules (see scripts/data), loaded into each site so users only pick the ITC-HS code.
 
 Each pack is a CSV in setup/data/tariff with a version. A site loads a pack once per version, on
-install and on migrate. Every row keeps its dates and notification, so a later version adds the new
+install and on migrate. Every row keeps its dates, so a later version adds the new
 rates from their effective date and past documents keep the rate of their own date.
 
 Rates a user entered by hand are never touched: a pack row that would overlap one is skipped.
@@ -112,7 +112,6 @@ def get_notified_rates(scheme: str) -> dict[str, list[dict]]:
 					"rate": flt(row["rate"]),
 					"amount_per_unit": flt(row["amount_per_unit"]),
 					"cap_per_unit": flt(row["cap"]),
-					"notification": row["notification"],
 				}
 			)
 	return rates
@@ -198,7 +197,6 @@ def load_schedule(rows: list[dict], pack: dict) -> dict:
 			"central_rate": flt(row.get("central_rate")),
 			"central_cap_per_unit": flt(row.get("central_cap")),
 			"effective_to": getdate(row["effective_to"]) if row["effective_to"] else None,
-			"notification": row["notification"],
 		}
 		found = existing.get((row["serial"], getdate(row["effective_from"])))
 		if found:
@@ -315,7 +313,6 @@ def add_incentive_rates(rows: list[dict], pack: dict) -> tuple[int, int, int]:
 			"rate",
 			"amount_per_unit",
 			"cap_per_unit",
-			"notification",
 			"data_source",
 		],
 	)
@@ -340,7 +337,6 @@ def add_incentive_rates(rows: list[dict], pack: dict) -> tuple[int, int, int]:
 		"cap_uom",
 		"effective_from",
 		"effective_to",
-		"notification",
 		"data_source",
 		*base,
 	]
@@ -354,7 +350,6 @@ def add_incentive_rates(rows: list[dict], pack: dict) -> tuple[int, int, int]:
 			"amount_per_unit": flt(row["amount_per_unit"]),
 			"cap_per_unit": flt(row["cap"]),
 			"effective_to": effective_to,
-			"notification": row["notification"],
 		}
 		existing = from_pack.get((code, effective_from))
 		if existing:
@@ -382,7 +377,6 @@ def add_incentive_rates(rows: list[dict], pack: dict) -> tuple[int, int, int]:
 				unit,
 				effective_from,
 				effective_to,
-				row["notification"],
 				source,
 				*base.values(),
 			)

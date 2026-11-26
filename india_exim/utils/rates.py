@@ -40,7 +40,6 @@ def find_tariff_rate(customs_tariff_item: str, on_date) -> frappe._dict | None:
 			"sws_rate",
 			"aidc_rate",
 			"other_duty_rate",
-			"notification",
 		],
 		order_by="effective_from desc",
 	)
@@ -138,7 +137,6 @@ def find_incentive_rate(filters: dict, customs_tariff_item: str | None, on_date)
 			"central_cap_per_unit",
 			"effective_to",
 			"schedule_serial_no",
-			"notification",
 			"data_source",
 		],
 		order_by="effective_from desc",

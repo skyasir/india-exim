@@ -11,8 +11,7 @@
   "bcd_rate",
   "sws_rate",
   "aidc_rate",
-  "other_duty_rate",
-  "notification"
+  "other_duty_rate"
  ],
  "fields": [
   {
@@ -57,18 +56,11 @@
    "fieldname": "other_duty_rate",
    "fieldtype": "Percent",
    "label": "Other Duty %"
-  },
-  {
-   "columns": 2,
-   "fieldname": "notification",
-   "fieldtype": "Data",
-   "in_list_view": 1,
-   "label": "Notification No."
   }
  ],
  "istable": 1,
  "links": [],
- "modified": "2026-11-26 20:00:00.000000",
+ "modified": "2026-11-26 22:00:00.000000",
  "modified_by": "Administrator",
  "module": "EXIM Setup",
  "name": "Customs Tariff Rate",

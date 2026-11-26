@@ -9,7 +9,6 @@
  "field_order": [
   "currency",
   "effective_from",
-  "notification",
   "column_break_1",
   "export_rate",
   "import_rate"
@@ -30,11 +29,6 @@
    "in_list_view": 1,
    "label": "Effective From",
    "reqd": 1
-  },
-  {
-   "fieldname": "notification",
-   "fieldtype": "Data",
-   "label": "CBIC Notification No."
   },
   {
    "fieldname": "column_break_1",
@@ -60,7 +54,7 @@
   }
  ],
  "links": [],
- "modified": "2026-11-19 13:00:00.000000",
+ "modified": "2026-11-26 22:00:00.000000",
  "modified_by": "Administrator",
  "module": "EXIM Setup",
  "name": "Customs Exchange Rate",
