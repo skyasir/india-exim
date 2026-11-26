@@ -87,10 +87,10 @@ doctype(
 	"Port Master",
 	SETUP,
 	[
-		"port_code:Data:Port Code|reqd|list|length=15|desc=UN/LOCODE, e.g. AEJEA for Jebel Ali. Indian ports use their customs port code, e.g. INNSA1 for Nhava Sheva.",
+		"port_code:Data:Port Code|reqd|length=15|desc=UN/LOCODE, e.g. AEJEA for Jebel Ali. Indian ports use their customs port code, e.g. INNSA1 for Nhava Sheva.",
 		"port_name:Data:Port Name|reqd|list|bold",
 		"column_break_1:Column Break",
-		"port_country:Link:Country|opt=Country|list|filter|qe|desc=Taken from the first two letters of a UN/LOCODE when left empty.",
+		"port_country:Link:Country|opt=Country|list|filter|qe|iup|desc=Taken from the first two letters of a UN/LOCODE when left empty.",
 		"port_type:Select:Type|opt=\\nSea\\nAir\\nICD / CFS / SEZ\\nRail\\nLand Border\\nForeign Post Office|list|filter|qe",
 		"disabled:Check:Disabled",
 		{

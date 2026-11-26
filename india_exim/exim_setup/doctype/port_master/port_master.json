@@ -21,7 +21,6 @@
    "description": "UN/LOCODE, e.g. AEJEA for Jebel Ali. Indian ports use their customs port code, e.g. INNSA1 for Nhava Sheva.",
    "fieldname": "port_code",
    "fieldtype": "Data",
-   "in_list_view": 1,
    "label": "Port Code",
    "length": 15,
    "reqd": 1
@@ -46,7 +45,8 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Country",
-   "options": "Country"
+   "options": "Country",
+   "ignore_user_permissions": 1
   },
   {
    "allow_in_quick_entry": 1,
@@ -79,7 +79,7 @@
   }
  ],
  "links": [],
- "modified": "2026-11-26 14:00:00.000000",
+ "modified": "2026-11-26 16:00:00.000000",
  "modified_by": "Administrator",
  "module": "EXIM Setup",
  "name": "Port Master",
