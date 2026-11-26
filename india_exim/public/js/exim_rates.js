@@ -140,7 +140,6 @@ frappe.provide("india_exim.rates");
 				{ label: __("AIDC"), render: (row) => pct(row.aidc_rate) },
 				{ label: __("Other Duty"), render: (row) => pct(row.other_duty_rate) },
 				{ label: __("Valid"), render: validity },
-				{ label: __("Notification"), fieldname: "notification" },
 			],
 		});
 	};
@@ -214,7 +213,6 @@ frappe.provide("india_exim.rates");
 					label: __("Schedule Serial No."),
 					depends_on: "eval:doc.scheme != 'RoDTEP' && !doc.only_this_item",
 				},
-				{ fieldname: "notification", fieldtype: "Data", label: __("Notification No.") },
 				{ fieldtype: "Section Break" },
 				{
 					fieldname: "only_this_item",
@@ -289,7 +287,6 @@ frappe.provide("india_exim.rates");
 					fieldtype: "Percent",
 					label: __("Other Duty % (ADD / Safeguard)"),
 				},
-				{ fieldname: "notification", fieldtype: "Data", label: __("Notification No.") },
 			],
 			primary_action_label: __("Add"),
 			primary_action(values) {

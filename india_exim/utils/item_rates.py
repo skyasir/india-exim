@@ -55,7 +55,6 @@ def get_current_rates(filters: dict) -> list[dict]:
 			"central_cap_per_unit",
 			"effective_from",
 			"effective_to",
-			"notification",
 			"data_source",
 		],
 		order_by="scheme desc, effective_from asc",
@@ -78,7 +77,6 @@ def get_duty_rates(customs_tariff_item: str) -> list[dict]:
 			"other_duty_rate",
 			"effective_from",
 			"effective_to",
-			"notification",
 		],
 		order_by="effective_from asc",
 		limit=0,
@@ -113,7 +111,6 @@ def add_incentive_rate(customs_tariff_item: str, values: dict | str) -> str:
 			"central_rate": flt(values.central_rate),
 			"central_cap_per_unit": flt(values.central_cap_per_unit),
 			"effective_from": values.effective_from,
-			"notification": values.notification,
 		}
 	)
 	doc.insert()
@@ -138,7 +135,6 @@ def add_duty_rate(customs_tariff_item: str, values: dict | str) -> None:
 			"sws_rate": flt(values.sws_rate),
 			"aidc_rate": flt(values.aidc_rate),
 			"other_duty_rate": flt(values.other_duty_rate),
-			"notification": values.notification,
 		},
 	)
 	tariff.save()

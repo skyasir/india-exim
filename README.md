@@ -37,7 +37,7 @@ Export–import compliance for Indian businesses on ERPNext v16, built on top of
 See [docs/compliance-matrix.md](docs/compliance-matrix.md) for each legal requirement and where it is handled,
 and [india_exim/setup/import_templates](india_exim/setup/import_templates) for go-live templates.
 
-Law is stored as dated data (rate tables with effective dates and notification numbers), never hard-coded.
+Law is stored as dated data (rate tables with effective dates), never hard-coded.
 Rates shipped in tests are illustrative only — always load the notified schedules for real use.
 
 ## Screenshots

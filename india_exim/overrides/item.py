@@ -137,7 +137,7 @@ def get_tariff_summary(customs_tariff_item: str, drawback_serial_no: str | None 
 			"effective_from": ("<=", today()),
 		},
 		or_filters=[["effective_to", "is", "not set"], ["effective_to", ">=", today()]],
-		fields=["bcd_rate", "sws_rate", "aidc_rate", "other_duty_rate", "effective_from", "notification"],
+		fields=["bcd_rate", "sws_rate", "aidc_rate", "other_duty_rate", "effective_from"],
 		order_by="effective_from desc",
 		limit=1,
 	)

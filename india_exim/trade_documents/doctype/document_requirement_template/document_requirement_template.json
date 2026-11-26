@@ -12,7 +12,6 @@
   "enabled",
   "column_break_head",
   "is_statutory",
-  "verify_note",
   "match_section",
   "for_country",
   "for_country_group",
@@ -61,12 +60,6 @@
    "fieldname": "is_statutory",
    "fieldtype": "Check",
    "label": "Indian Statutory Set"
-  },
-  {
-   "description": "Where this requirement comes from and when it was last verified with the buyer, forwarder or embassy.",
-   "fieldname": "verify_note",
-   "fieldtype": "Small Text",
-   "label": "Source / Verification Note"
   },
   {
    "description": "Leave a condition empty to match any value. The more conditions a rule has, the higher its priority when two rules ask for the same document.",
@@ -159,7 +152,7 @@
   }
  ],
  "links": [],
- "modified": "2026-11-19 19:00:00.000000",
+ "modified": "2026-11-26 22:00:00.000000",
  "modified_by": "Administrator",
  "module": "Trade Documents",
  "name": "Document Requirement Template",

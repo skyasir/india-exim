@@ -13,7 +13,6 @@ doctype(
 		"enabled:Check:Enabled|default=1",
 		"column_break_head:Column Break",
 		"is_statutory:Check:Indian Statutory Set|desc=Applies to every shipment in this direction, before any country or buyer rule.",
-		"verify_note:Small Text:Source / Verification Note|desc=Where this requirement comes from and when it was last verified with the buyer, forwarder or embassy.",
 		"match_section:Section Break:Applies When|desc=Leave a condition empty to match any value. The more conditions a rule has, the higher its priority when two rules ask for the same document.",
 		"for_country:Link:Country|opt=Country|list|filter|depends=eval:!doc.is_statutory",
 		"for_country_group:Link:Country Group|opt=Country Group|list|filter|depends=eval:!doc.is_statutory",
@@ -34,6 +33,7 @@ doctype(
 	naming_rule="By fieldname",
 	search_fields="direction,for_country,for_country_group",
 	roles=[("System Manager", "full"), ("EXIM Manager", "full"), ("EXIM User", "read")],
+	extra={"creation": "2026-11-19 19:00:00.000000", "modified": "2026-11-26 22:00:00.000000"},
 )
 
 doctype(

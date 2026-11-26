@@ -103,11 +103,11 @@
    "label": "Policy Conditions"
   },
   {
-   "description": "Set when the tariff item was loaded from India EXIM's tariff data.",
    "fieldname": "data_source",
    "fieldtype": "Data",
    "label": "Source",
-   "read_only": 1
+   "hidden": 1,
+   "no_copy": 1
   },
   {
    "fieldname": "rates_section",
@@ -124,7 +124,7 @@
   }
  ],
  "links": [],
- "modified": "2026-11-24 23:00:00.000000",
+ "modified": "2026-11-26 22:00:00.000000",
  "modified_by": "Administrator",
  "module": "EXIM Setup",
  "name": "Customs Tariff Item",

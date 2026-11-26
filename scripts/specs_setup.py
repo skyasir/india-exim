@@ -63,10 +63,9 @@ doctype(
 		"period_for:Select:Period For|opt=Export Realisation\\nShipment Against Advance\\nImport Payment|reqd|list|width=3",
 		"effective_from:Date:Effective From|reqd|list|width=2|desc=Applies to documents dated on or after this date (shipping bill, advance receipt or bill of entry date).",
 		"months:Int:Months|reqd|list|width=1",
-		"reference:Data:RBI Reference|list|width=4|desc=e.g. FEM (Export of Goods and Services) (Second Amendment) Regulations, 2025",
 	],
 	istable=True,
-	extra={"creation": "2026-11-24 18:00:00.000000", "modified": "2026-11-24 18:00:00.000000"},
+	extra={"creation": "2026-11-24 18:00:00.000000", "modified": "2026-11-26 22:00:00.000000"},
 )
 
 doctype(
@@ -161,7 +160,7 @@ doctype(
 		"column_break_2:Column Break",
 		"is_scomet:Check:SCOMET / Dual-use Item",
 		"policy_notes:Small Text:Policy Conditions",
-		"data_source:Data:Source|ro|desc=Set when the tariff item was loaded from India EXIM's tariff data.",
+		"data_source:Data:Source|hidden|nocopy",
 		"rates_section:Section Break:Customs Duty Rates|depends=eval:[frappe.boot.exim_features?.imports, (doc.rates ?? []).length].some(Boolean)|desc=Import duty, used on Bills of Entry. Leave empty if you only export.",
 		"rates:Table:Rates|opt=Customs Tariff Rate",
 	],
@@ -170,7 +169,11 @@ doctype(
 	title_field="description",
 	search_fields="description,chapter",
 	roles=MANAGER_ONLY,
-	extra={"modified": "2026-11-24 22:00:00.000000"},
+	extra={
+		"creation": "2026-11-19 20:00:00.000000",
+		"modified": "2026-11-26 22:00:00.000000",
+		"show_title_field_in_link": 0,
+	},
 )
 
 doctype(
@@ -183,10 +186,9 @@ doctype(
 		"sws_rate:Percent:SWS % of BCD|default=10|list|width=1",
 		"aidc_rate:Percent:AIDC %|list|width=1",
 		"other_duty_rate:Percent:Other Duty %|width=1",
-		"notification:Data:Notification No.|list|width=2",
 	],
 	istable=True,
-	extra={"creation": "2026-11-19 13:00:00.000000", "modified": "2026-11-26 20:00:00.000000"},
+	extra={"creation": "2026-11-19 13:00:00.000000", "modified": "2026-11-26 22:00:00.000000"},
 )
 
 doctype(
@@ -208,14 +210,12 @@ doctype(
 		"validity_section:Section Break:Validity",
 		"effective_from:Date:Effective From|reqd|list",
 		"effective_to:Date:Effective To",
-		"column_break_2:Column Break",
-		"notification:Data:Notification No.",
-		"data_source:Data:Source|ro|desc=Set when the rate was loaded from India EXIM's tariff data.",
+		"data_source:Data:Source|hidden|nocopy",
 	],
 	autoname="hash",
 	search_fields="scheme,customs_tariff_item,schedule_serial_no",
 	roles=MANAGER_ONLY,
-	extra={"modified": "2026-11-25 18:00:00.000000"},
+	extra={"creation": "2026-11-19 20:00:00.000000", "modified": "2026-11-26 22:00:00.000000"},
 )
 
 doctype(
@@ -224,7 +224,6 @@ doctype(
 	[
 		"currency:Link:Currency|opt=Currency|reqd|list|filter",
 		"effective_from:Date:Effective From|reqd|list",
-		"notification:Data:CBIC Notification No.",
 		"column_break_1:Column Break",
 		"export_rate:Float:Export Rate (INR)|reqd|list|precision=4|desc=Rate notified by CBIC for exported goods; used for FOB in INR on shipping bills.",
 		"import_rate:Float:Import Rate (INR)|reqd|list|precision=4|desc=Rate notified by CBIC for imported goods; used for assessable value on bills of entry.",
@@ -233,6 +232,7 @@ doctype(
 	naming_rule="Expression",
 	sort_field="effective_from",
 	roles=MANAGER_ONLY,
+	extra={"creation": "2026-11-19 13:00:00.000000", "modified": "2026-11-26 22:00:00.000000"},
 )
 
 doctype(

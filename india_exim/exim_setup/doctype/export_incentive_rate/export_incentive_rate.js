@@ -9,9 +9,8 @@ frappe.ui.form.on("Export Incentive Rate", {
 			.then((notified) => {
 				if (!notified) return;
 				frm.dashboard.set_headline_alert(
-					__("This rate was entered by hand. The notified rate is {0} ({1}).", [
+					__("This rate was entered by hand. The notified rate is {0}.", [
 						notified.text,
-						notified.notification,
 					]),
 					"orange"
 				);

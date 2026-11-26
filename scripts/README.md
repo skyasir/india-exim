@@ -20,7 +20,7 @@ script after changing it.
 
 Converters that turn the published DGFT / CBIC schedules into India EXIM's tariff data packs in
 `india_exim/setup/data/tariff`. The source PDFs are not kept in the repo; download them from the
-DGFT / CBIC site named in each script. Every row carries its effective dates and notification.
+DGFT / CBIC site named in each script. Every row carries its effective dates.
 
 | Script | Source | Writes |
 |---|---|---|

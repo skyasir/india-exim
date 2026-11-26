@@ -6,7 +6,7 @@ Load them in this order:
 
 | Order | Template | What to enter |
 |---|---|---|
-| 1 | `customs_tariff_item.csv` | Each 8-digit ITC-HS code you trade, its export/import policy, and the duty rates (one row per rate, with the effective date and notification). |
+| 1 | `customs_tariff_item.csv` | Each 8-digit ITC-HS code you trade, its export/import policy, and the duty rates (one row per rate, with its effective date). |
 | 2 | `export_incentive_rate.csv` | Drawback (AIR) and RoDTEP rates for those codes, with caps per unit. |
 | 3 | `customs_exchange_rate.csv` | CBIC exchange rates from the start of the year (or at least the current fortnight). |
 | 4 | `letter_of_undertaking.csv` | The current year's LUT. |

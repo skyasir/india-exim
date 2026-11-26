@@ -205,7 +205,6 @@ class TestItemEximTab(IntegrationTestCase):
 					"schedule_serial_no": serial,
 					"rate": rate,
 					"effective_from": FY_START,
-					"notification": "TEST",
 				}
 			).insert()
 

@@ -12,17 +12,14 @@ EXPORT_REALISATION = "Export Realisation"
 ADVANCE_SHIPMENT = "Shipment Against Advance"
 IMPORT_PAYMENT = "Import Payment"
 
-EXPORT_REGULATION_2025 = (
-	"FEM (Export of Goods and Services) (Second Amendment) Regulations, 2025; RBI press release 14.11.2025"
-)
-
 # Shipped with the app and used when the settings hold no row for a date
 DEFAULT_PERIODS = (
-	(EXPORT_REALISATION, "2000-01-01", 9, "RBI Master Direction - Export of Goods and Services"),
-	(EXPORT_REALISATION, "2025-11-14", 15, EXPORT_REGULATION_2025),
-	(ADVANCE_SHIPMENT, "2000-01-01", 12, "RBI Master Direction - Export of Goods and Services"),
-	(ADVANCE_SHIPMENT, "2025-11-14", 36, EXPORT_REGULATION_2025),
-	(IMPORT_PAYMENT, "2000-01-01", 6, "RBI Master Direction - Import of Goods and Services"),
+	(EXPORT_REALISATION, "2000-01-01", 9),
+	# FEM (Export of Goods and Services) (Second Amendment) Regulations, 2025, from 14.11.2025
+	(EXPORT_REALISATION, "2025-11-14", 15),
+	(ADVANCE_SHIPMENT, "2000-01-01", 12),
+	(ADVANCE_SHIPMENT, "2025-11-14", 36),
+	(IMPORT_PAYMENT, "2000-01-01", 6),
 )
 
 
@@ -34,7 +31,7 @@ def get_periods() -> list[frappe._dict]:
 	)
 	return rows or [
 		frappe._dict(period_for=kind, effective_from=getdate(start), months=months)
-		for kind, start, months, _reference in DEFAULT_PERIODS
+		for kind, start, months in DEFAULT_PERIODS
 	]
 
 
@@ -49,7 +46,7 @@ def get_months(period_for: str, on_date) -> int:
 	if not applicable:
 		applicable = [
 			frappe._dict(effective_from=getdate(start), months=months)
-			for kind, start, months, _reference in DEFAULT_PERIODS
+			for kind, start, months in DEFAULT_PERIODS
 			if kind == period_for and getdate(start) <= on_date
 		]
 	return max(applicable, key=lambda row: getdate(row.effective_from)).months
@@ -64,11 +61,8 @@ def set_default_periods() -> None:
 	if frappe.db.exists("FEMA Period", {"parenttype": "India EXIM Settings"}):
 		return
 	settings = frappe.get_single("India EXIM Settings")
-	for kind, start, months, reference in DEFAULT_PERIODS:
-		settings.append(
-			"fema_periods",
-			{"period_for": kind, "effective_from": start, "months": months, "reference": reference},
-		)
+	for kind, start, months in DEFAULT_PERIODS:
+		settings.append("fema_periods", {"period_for": kind, "effective_from": start, "months": months})
 	settings.flags.ignore_permissions = True
 	settings.flags.ignore_mandatory = True
 	settings.save()

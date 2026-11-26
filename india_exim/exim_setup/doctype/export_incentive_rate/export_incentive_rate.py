@@ -92,13 +92,12 @@ class ExportIncentiveRate(Document):
 		if notified:
 			frappe.msgprint(
 				_(
-					"The notified {0} rate for {1} from {2} is {3} ({4}). This rate is {5}. Use the notified rate unless you have a later notification."
+					"The notified {0} rate for {1} from {2} is {3}. This rate is {4}. Use the notified rate unless you have a later notification."
 				).format(
 					self.scheme,
 					frappe.bold(self.customs_tariff_item),
 					frappe.format(notified["effective_from"], {"fieldtype": "Date"}),
 					describe(notified),
-					notified["notification"],
 					describe(self),
 				),
 				title=_("Differs from the Notified Rate"),
