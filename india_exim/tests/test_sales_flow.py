@@ -20,7 +20,7 @@ from india_exim.utils import render_print_format
 
 EXPORT_DETAILS = {
 	"exim_destination_country": "United States",
-	"exim_port_of_discharge": "New York",
+	"exim_port_of_discharge": "USNYC",
 	"exim_final_destination": "Chicago",
 	"exim_payment_terms_type": "Letter of Credit",
 	"exim_lc_number": "LC-TEST-001",
@@ -86,7 +86,7 @@ class TestSalesFlow(IntegrationTestCase):
 			proforma.name,
 			"AAQCA8719H",
 			TARIFF_CODE,
-			"New York",
+			"New York (USNYC)",
 			"LC-TEST-001",
 			"PO-ACME-7",
 		):

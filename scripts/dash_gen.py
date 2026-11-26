@@ -724,7 +724,7 @@ MODULE_WORKSPACES = [
 				"Letter of Undertaking",
 				"Customs Exchange Rate",
 				"Customs Tariff Item",
-				"AD Code Registration",
+				"Port Master",
 				"Company",
 				"Country",
 			)

@@ -117,7 +117,7 @@ SIDEBARS = {
 			("India EXIM Settings", "DocType", "India EXIM Settings", "sliders-horizontal"),
 			("Company", "DocType", "Company", "building"),
 			("Letter of Undertaking", "DocType", "Letter of Undertaking", "file-signature"),
-			("AD Code Registration", "DocType", "AD Code Registration", "building-2"),
+			("Port Master", "DocType", "Port Master", "anchor"),
 			("section", "Tariff and Rates", "percent"),
 			("Customs Tariff Item", "DocType", "Customs Tariff Item", None),
 			("Customs Exchange Rate", "DocType", "Customs Exchange Rate", None),

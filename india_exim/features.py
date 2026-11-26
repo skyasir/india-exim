@@ -1,5 +1,8 @@
 """Feature switches (India EXIM Settings): what this company does. They only decide what is shown.
 
+The Business Type (Export, Import or Both) comes first: switches for exports count only when the
+business exports.
+
 A field behind a switch also shows whenever it holds a value, so nothing already entered is hidden,
 and no check or calculation depends on a switch.
 """
@@ -7,9 +10,9 @@ and no check or calculation depends on a switch.
 import frappe
 from frappe.utils import cint
 
+BUSINESS_TYPES = ("Export", "Import", "Both")
 FEATURES = {
 	# switch in India EXIM Settings: key in frappe.boot.exim_features
-	"do_imports": "imports",
 	"claim_incentives": "incentives",
 	"track_shipments": "shipments",
 	"use_dgft_licences": "licences",
@@ -17,7 +20,9 @@ FEATURES = {
 	"ship_special_cargo": "special_cargo",
 	"use_ecgc": "ecgc",
 }
+EXPORT_ONLY = {"incentives", "shipments", "merchant_export", "special_cargo", "ecgc"}
 MODULES = {
+	"exports": "Exports",
 	"imports": "Imports",
 	"incentives": "Export Incentives",
 	"licences": "DGFT Licences",
@@ -27,7 +32,12 @@ MODULES = {
 
 def get_features() -> dict[str, bool]:
 	settings = frappe.get_cached_doc("India EXIM Settings")
-	return {key: bool(cint(settings.get(field))) for field, key in FEATURES.items()}
+	business_type = settings.get("business_type") or "Export"
+	features = {"exports": business_type != "Import", "imports": business_type != "Export"}
+	for field, key in FEATURES.items():
+		on = bool(cint(settings.get(field)))
+		features[key] = on and (features["exports"] or key not in EXPORT_ONLY)
+	return features
 
 
 def extend_bootinfo(bootinfo) -> None:

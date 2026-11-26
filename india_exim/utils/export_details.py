@@ -7,7 +7,7 @@ Get Items From, or by the API. Only empty fields are filled, so what the user ty
 
 import frappe
 
-from india_exim.exim_setup.doctype.ad_code_registration.ad_code_registration import get_only_port
+from india_exim.exim_setup.doctype.port_master.port_master import get_ad_codes, get_only_port
 
 ORDER_LINK = {"Delivery Note": "against_sales_order", "Sales Invoice": "sales_order"}
 # fields that describe this document rather than the order
@@ -109,9 +109,5 @@ def set_port_address(doc, method=None):
 		return
 	if doc.get("port_address") or not doc.meta.has_field("port_address"):
 		return
-	doc.port_address = frappe.db.get_value(
-		"AD Code Registration",
-		{"company": doc.company, "port_code": doc.port_code, "port_address": ("is", "set"), "disabled": 0},
-		"port_address",
-		order_by="is_default desc",
-	)
+	rows = get_ad_codes(doc.company, doc.port_code, ("port_address",))
+	doc.port_address = next((row.port_address for row in rows if row.port_address), None)

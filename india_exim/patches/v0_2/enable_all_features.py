@@ -6,7 +6,8 @@ from india_exim.features import FEATURES
 
 
 def execute():
-	for field in FEATURES:
+	# do_imports was a switch then; set_business_type turns it into the Business Type
+	for field in ["do_imports", *FEATURES]:
 		if field == "track_shipments":
 			continue  # came later: enable_shipment_tracking
 		frappe.db.set_single_value("India EXIM Settings", field, 1)

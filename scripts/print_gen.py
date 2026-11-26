@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 
 APP = Path(__file__).resolve().parents[1] / "india_exim"
-TS = "2026-11-25 14:00:00.000000"
+TS = "2026-11-26 14:00:00.000000"
 FORMATS = {
 	# name: (module folder, module, doc_type)
 	"Export Proforma Invoice": ("exports", "Exports", "Sales Order"),

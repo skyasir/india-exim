@@ -1,4 +1,4 @@
-from doctype_gen import doctype
+from doctype_gen import FOREIGN_PORTS, INDIAN_PORTS, doctype
 
 EXPORTS = "Exports"
 OPERATIONS = [
@@ -32,8 +32,8 @@ doctype(
 		"readiness_percent:Percent:Document Readiness|ro|list|nocopy",
 		"terms_section:Section Break:Route and Terms",
 		"mode_of_transport:Select:Mode|opt=" + MODES + "|default=Sea FCL",
-		"port_of_loading:Data:Port of Loading (Port Code)|length=15",
-		"port_of_discharge:Data:Port of Discharge",
+		"port_of_loading:Link:Port of Loading|opt=Port Master|link_filters=" + INDIAN_PORTS,
+		"port_of_discharge:Link:Port of Discharge|opt=Port Master|link_filters=" + FOREIGN_PORTS,
 		"final_destination:Data:Final Destination",
 		"transhipment_allowed:Check:Transhipment Allowed",
 		"column_break_terms:Column Break",
@@ -175,8 +175,8 @@ doctype(
 		"shipping_bill_date:Date:Shipping Bill Date|reqd|list",
 		"status:Select:Status|opt=Draft\\nFiled\\nLEO Granted\\nEGM Filed\\nCancelled|default=Draft|ro|list|filter|nocopy|aos",
 		"customs_section:Section Break:Customs",
-		"port_code:Data:Port Code|reqd|length=15",
-		"port_name:Data:Port Name|ro",
+		"port_code:Link:Port Code|opt=Port Master|reqd|link_filters=" + INDIAN_PORTS,
+		"port_name:Data:Port Name|ro|fetch=port_code.port_name",
 		"ad_code:Data:AD Code|length=20",
 		"column_break_customs:Column Break",
 		"iec:Data:IEC|ro|fetch=company.exim_iec",

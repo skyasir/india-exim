@@ -43,7 +43,12 @@ frappe.query_reports["Shipping Bill Register"] = {
 				"Free of Cost / Sample",
 			],
 		},
-		{ fieldname: "port_code", label: __("Port Code"), fieldtype: "Data" },
+		{
+			fieldname: "port_code",
+			label: __("Port Code"),
+			fieldtype: "Link",
+			options: "Port Master",
+		},
 		{
 			fieldname: "status",
 			label: __("Status"),

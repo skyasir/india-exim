@@ -5,10 +5,9 @@ import frappe
 from frappe import _
 from frappe.model.document import Document
 from frappe.utils import cint, flt, getdate
-from india_compliance.gst_india.constants import PORT_CODES
 
 from india_exim.dgft_licences.authorisation import apply_to_shipping_bill, on_customs_document_change
-from india_exim.exim_setup.doctype.ad_code_registration.ad_code_registration import get_ad_code, get_only_port
+from india_exim.exim_setup.doctype.port_master.port_master import get_ad_code, get_only_port, is_indian_port
 from india_exim.export_incentives.accounting import cancel_accrual, make_incentive_accrual
 from india_exim.fema.payments import update_shipping_bill_realisation
 from india_exim.fema.periods import EXPORT_REALISATION, get_due_date
@@ -100,12 +99,8 @@ class ShippingBill(Document):
 			)
 
 	def validate_port(self):
-		self.port_code = (self.port_code or "").strip().upper()
-		if self.port_code not in PORT_CODES:
-			frappe.throw(
-				_("{0} is not a valid Indian customs port code.").format(frappe.bold(self.port_code))
-			)
-		self.port_name = PORT_CODES[self.port_code]
+		if not is_indian_port(self.port_code):
+			frappe.throw(_("{0} is not an Indian customs port.").format(frappe.bold(self.port_code)))
 		if not self.ad_code:
 			self.ad_code = get_ad_code(self.company, self.port_code)
 
@@ -205,10 +200,10 @@ class ShippingBill(Document):
 		if not self.ad_code:
 			frappe.msgprint(
 				_(
-					"No AD code is registered for port {0}. Customs needs it to credit drawback and GST refunds. Add it under {1}."
+					"No AD code is registered for port {0}. Customs needs it to credit drawback and GST refunds. Add it to the port in the {1}."
 				).format(
 					self.port_code,
-					f'<a href="/desk/ad-code-registration/new?port_code={self.port_code}">{_("AD Code Registration")}</a>',
+					frappe.utils.get_link_to_form("Port Master", self.port_code, _("Port Master")),
 				),
 				title=_("AD Code Missing"),
 				indicator="orange",

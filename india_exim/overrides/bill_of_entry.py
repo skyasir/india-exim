@@ -1,8 +1,8 @@
 import frappe
 from frappe import _
-from india_compliance.gst_india.constants import PORT_CODES
 
 from india_exim.dgft_licences.authorisation import exempt_taxes, set_igst_foregone, set_row_authorisations
+from india_exim.exim_setup.doctype.port_master.port_master import get_indian_port
 from india_exim.imports.customs_duty import set_customs_duties
 
 
@@ -26,9 +26,7 @@ class BillOfEntryEXIM:
 			"Purchase Invoice", invoice, ["exim_bl_number", "exim_port_of_discharge"], as_dict=True
 		)
 		self.bill_of_lading_no = self.bill_of_lading_no or details.exim_bl_number
-		port_code = (details.exim_port_of_discharge or "").strip().upper()
-		if not self.port_code and port_code in PORT_CODES:
-			self.port_code = port_code
+		self.port_code = self.port_code or get_indian_port(details.exim_port_of_discharge)
 
 	def calculate_totals(self):
 		exempt_taxes(self)

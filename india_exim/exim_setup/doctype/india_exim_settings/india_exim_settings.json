@@ -7,7 +7,7 @@
  "engine": "InnoDB",
  "field_order": [
   "features_section",
-  "do_imports",
+  "business_type",
   "claim_incentives",
   "track_shipments",
   "use_dgft_licences",
@@ -38,25 +38,31 @@
  ],
  "fields": [
   {
-   "description": "Only what is ticked is shown on forms and in the menu. Nothing already entered is hidden, and no check depends on these.",
+   "description": "Only what you do is shown on forms, in settings and in the menu. Nothing already entered is hidden, and no check depends on these.",
    "fieldname": "features_section",
    "fieldtype": "Section Break",
    "label": "What You Do"
   },
   {
-   "default": "0",
-   "fieldname": "do_imports",
-   "fieldtype": "Check",
-   "label": "Imports"
+   "bold": 1,
+   "default": "Export",
+   "description": "Exports only, imports only, or both. Menus, fields and settings of the other side are hidden.",
+   "fieldname": "business_type",
+   "fieldtype": "Select",
+   "label": "Business Type",
+   "options": "Export\nImport\nBoth",
+   "reqd": 1
   },
   {
    "default": "1",
+   "depends_on": "eval:doc.business_type != 'Import'",
    "fieldname": "claim_incentives",
    "fieldtype": "Check",
    "label": "Duty Drawback, RoDTEP and Other Incentives"
   },
   {
    "default": "0",
+   "depends_on": "eval:doc.business_type != 'Import'",
    "fieldname": "track_shipments",
    "fieldtype": "Check",
    "label": "Shipment Tracking and Document Checklist (Export Shipment)"
@@ -73,18 +79,21 @@
   },
   {
    "default": "0",
+   "depends_on": "eval:doc.business_type != 'Import'",
    "fieldname": "do_merchant_export",
    "fieldtype": "Check",
    "label": "Merchant Export (buying at 0.1% GST)"
   },
   {
    "default": "0",
+   "depends_on": "eval:doc.business_type != 'Import'",
    "fieldname": "ship_special_cargo",
    "fieldtype": "Check",
    "label": "Dangerous Goods or Temperature-controlled Cargo"
   },
   {
    "default": "0",
+   "depends_on": "eval:doc.business_type != 'Import'",
    "fieldname": "use_ecgc",
    "fieldtype": "Check",
    "label": "ECGC Credit Cover"
@@ -96,6 +105,7 @@
   },
   {
    "default": "Block",
+   "depends_on": "eval:doc.business_type != 'Import'",
    "description": "Exports without IGST (Overseas / SEZ) require a valid Letter of Undertaking for the invoice date.",
    "fieldname": "lut_check",
    "fieldtype": "Select",
@@ -115,6 +125,7 @@
   },
   {
    "default": "Warn",
+   "depends_on": "eval:doc.business_type != 'Import'",
    "description": "Block stops a sanctioned destination, prohibited goods or an unscreened buyer; Warn only shows a message. Restricted goods and SCOMET items always warn.",
    "fieldname": "pre_shipment_checks",
    "fieldtype": "Select",
@@ -123,12 +134,12 @@
   },
   {
    "default": "On LEO",
+   "depends_on": "eval:doc.business_type != 'Import' && doc.claim_incentives",
    "description": "When Duty Drawback / RoDTEP is recognised as income. LEO is the usual choice because the entitlement is reasonably certain once the shipping bill carries the claim; confirm with your auditor.",
    "fieldname": "incentive_accrual_point",
    "fieldtype": "Select",
    "label": "Book Incentive Income On",
-   "options": "On LEO\nOn Scroll\nOn Receipt",
-   "depends_on": "claim_incentives"
+   "options": "On LEO\nOn Scroll\nOn Receipt"
   },
   {
    "fieldname": "advanced_tab",
@@ -136,6 +147,7 @@
    "label": "Advanced"
   },
   {
+   "depends_on": "eval:doc.business_type != 'Import' && doc.claim_incentives",
    "fieldname": "incentives_section",
    "fieldtype": "Section Break",
    "label": "Alerts and Incentives"
@@ -176,6 +188,7 @@
    "label": "Alert Before Realisation Due (Days)"
   },
   {
+   "depends_on": "eval:doc.business_type != 'Import' && doc.do_merchant_export",
    "fieldname": "gst_section",
    "fieldtype": "Section Break",
    "label": "GST on Exports"
@@ -188,10 +201,10 @@
    "label": "Merchant Export Within (Days)"
   },
   {
+   "depends_on": "eval:doc.business_type != 'Export'",
    "fieldname": "imports_section",
    "fieldtype": "Section Break",
-   "label": "Imports",
-   "depends_on": "do_imports"
+   "label": "Imports"
   },
   {
    "default": "1",
@@ -201,6 +214,7 @@
    "label": "Add Non-creditable Customs Duty to Stock Value"
   },
   {
+   "depends_on": "eval:doc.business_type != 'Import'",
    "fieldname": "controls_section",
    "fieldtype": "Section Break",
    "label": "Buyer Screening"
@@ -215,7 +229,7 @@
  ],
  "issingle": 1,
  "links": [],
- "modified": "2026-11-26 12:00:00.000000",
+ "modified": "2026-11-26 15:00:00.000000",
  "modified_by": "Administrator",
  "module": "EXIM Setup",
  "name": "India EXIM Settings",

@@ -10,7 +10,7 @@ Status: **Done** = built and covered by automated tests. **Data** = the app hold
 
 | Requirement | Feature | Where | Status |
 |---|---|---|---|
-| Shipping bill for every export, with port, AD code and IEC | Shipping Bill, port code validated against the customs port list, AD code picked by port | Shipping Bill, AD Code Registration, Company > Export & Import | Done |
+| Shipping bill for every export, with port, AD code and IEC | Shipping Bill, port picked from the Port Master (customs port list pre-loaded), AD code picked by port | Shipping Bill, Port Master (AD codes per port), Company > Export & Import | Done |
 | Export value on FOB basis (CIF/CFR invoices less freight and insurance) | FOB worked out per line from the Incoterm; freight and insurance spread by value | Shipping Bill | Done |
 | Customs exchange rate notified by CBIC for the date of the shipping bill / bill of entry | Dated export and import rates; picked by document date | Customs Exchange Rate | Data |
 | ITC-HS classification of goods | 8-digit tariff item on Item, carried to every document and print | Customs Tariff Item, Item | Data |

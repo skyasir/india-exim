@@ -3,6 +3,10 @@
 from india_exim.features import when
 from india_exim.setup.accounts import EXIM_ACCOUNTS
 
+# link_filters of a Link to Port Master: Indian customs ports, or ports abroad
+INDIAN_PORTS = '[["Port Master","port_country","=","India"],["Port Master","disabled","=",0]]'
+FOREIGN_PORTS = '[["Port Master","port_country","!=","India"],["Port Master","disabled","=",0]]'
+
 STATUS_HOLDER_OPTIONS = "\nOne Star Export House\nTwo Star Export House\nThree Star Export House\nFour Star Export House\nFive Star Export House"
 
 
@@ -34,6 +38,7 @@ def get_company_fields():
 			"label": "Status Holder Category",
 			"options": STATUS_HOLDER_OPTIONS,
 			"insert_after": "exim_iec",
+			"depends_on": when("exports", "exim_status_holder"),
 		},
 		{
 			"fieldname": "exim_ecgc_policy_number",
@@ -52,18 +57,21 @@ def get_company_fields():
 			"fieldtype": "Data",
 			"label": "RCMC No.",
 			"insert_after": "exim_registration_column",
+			"depends_on": when("exports", "exim_rcmc_number"),
 		},
 		{
 			"fieldname": "exim_rcmc_council",
 			"fieldtype": "Data",
 			"label": "Export Promotion Council",
 			"insert_after": "exim_rcmc_number",
+			"depends_on": when("exports", "exim_rcmc_council"),
 		},
 		{
 			"fieldname": "exim_rcmc_valid_upto",
 			"fieldtype": "Date",
 			"label": "RCMC Valid Upto",
 			"insert_after": "exim_rcmc_council",
+			"depends_on": when("exports", "exim_rcmc_valid_upto"),
 		},
 	]
 
@@ -85,6 +93,8 @@ def get_company_fields():
 				"collapsible": 1,
 				"description": description,
 				"insert_after": previous,
+				# set up by India EXIM for every company, so only the business type hides them
+				"depends_on": when(f"{section.lower()}s"),
 			}
 		)
 		previous = section_field
@@ -250,6 +260,9 @@ def get_item_fields() -> list[dict]:
 			"label": "Packing and Printed Description",
 			"collapsible": 1,
 			"collapsible_depends_on": "eval:doc.exim_gross_weight_per_unit || doc.exim_units_per_package || doc.exim_customs_description",
+			"depends_on": when(
+				"exports", "exim_gross_weight_per_unit", "exim_units_per_package", "exim_customs_description"
+			),
 		},
 		{
 			"fieldname": "exim_gross_weight_per_unit",
@@ -389,7 +402,8 @@ IMPORT_TAB = "Import Details"
 def flag(
 	fieldname: str, label: str, insert_after: str, fetch_from: str | None = None, description: str = ""
 ) -> dict:
-	"""The tick that shows the Export / Import Details tab. Kept outside the tab so it is always visible."""
+	"""The tick that shows the Export / Import Details tab. Kept outside the tab, and shown when the
+	Business Type includes that side (or the tick is already set)."""
 	field = {
 		"fieldname": fieldname,
 		"fieldtype": "Check",
@@ -397,6 +411,7 @@ def flag(
 		"insert_after": insert_after,
 		"in_standard_filter": 1,
 		"description": description,
+		"depends_on": when("exports" if fieldname == SHOW_EXPORT else "imports", fieldname),
 	}
 	if fetch_from:
 		field.update({"fetch_from": fetch_from, "fetch_if_empty": 1})
@@ -488,10 +503,12 @@ def get_order_and_invoice_fields(
 			[
 				{
 					"fieldname": "exim_port_of_loading",
-					"fieldtype": "Data",
-					"label": "Port of Loading (Port Code)",
-					"length": 6,
-					"description": "Indian customs port code, e.g. INNSA1. Becomes the Port Code on the delivery note and invoice.",
+					"fieldtype": "Link",
+					"label": "Port of Loading",
+					"options": "Port Master",
+					"link_filters": INDIAN_PORTS,
+					"ignore_user_permissions": 1,
+					"description": "Becomes the Port Code on the delivery note and invoice.",
 				}
 			]
 			if include_port_of_loading
@@ -504,7 +521,14 @@ def get_order_and_invoice_fields(
 			"options": "Country",
 			"ignore_user_permissions": 1,
 		},
-		{"fieldname": "exim_port_of_discharge", "fieldtype": "Data", "label": "Port of Discharge"},
+		{
+			"fieldname": "exim_port_of_discharge",
+			"fieldtype": "Link",
+			"label": "Port of Discharge",
+			"options": "Port Master",
+			"link_filters": FOREIGN_PORTS,
+			"ignore_user_permissions": 1,
+		},
 		{"fieldname": "exim_route_column", "fieldtype": "Column Break"},
 		{"fieldname": "exim_mode_of_transport", "fieldtype": "Select", "label": "Mode", "options": MODES},
 		{
@@ -753,11 +777,21 @@ CUSTOM_FIELDS["Purchase Invoice"] = [
 			"depends_on": "exim_fta_claimed",
 		},
 		{"fieldname": "exim_origin_column", "fieldtype": "Column Break"},
-		{"fieldname": "exim_port_of_loading", "fieldtype": "Data", "label": "Port of Loading (Foreign)"},
+		{
+			"fieldname": "exim_port_of_loading",
+			"fieldtype": "Link",
+			"label": "Port of Loading",
+			"options": "Port Master",
+			"link_filters": FOREIGN_PORTS,
+			"ignore_user_permissions": 1,
+		},
 		{
 			"fieldname": "exim_port_of_discharge",
-			"fieldtype": "Data",
-			"label": "Port of Discharge (Indian Port Code)",
+			"fieldtype": "Link",
+			"label": "Port of Discharge",
+			"options": "Port Master",
+			"link_filters": INDIAN_PORTS,
+			"ignore_user_permissions": 1,
 		},
 		{
 			"fieldname": "exim_cha",

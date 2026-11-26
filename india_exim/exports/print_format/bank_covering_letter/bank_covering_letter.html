@@ -2,7 +2,7 @@
     Collection under DP / DA, negotiation under LC, or regularisation of an advance received.
     The enclosures are the shipment checklist's documents that are ready. -#}
 {%- import "india_exim/templates/print_formats/exim_macros.html" as exim -%}
-{%- set ad = frappe.db.get_value("AD Code Registration", {"company": doc.company, "ad_code": doc.ad_code}, ["bank", "bank_account"], as_dict=True) if doc.ad_code else frappe.db.get_value("AD Code Registration", {"company": doc.company, "disabled": 0}, ["bank", "bank_account"], as_dict=True) -%}
+{%- set ad = frappe.db.get_value("Port AD Code", {"parenttype": "Port Master", "parent": doc.port_code, "company": doc.company, "ad_code": doc.ad_code}, ["bank", "bank_account"], as_dict=True) if doc.ad_code else frappe.db.get_value("Port AD Code", {"parenttype": "Port Master", "company": doc.company}, ["bank", "bank_account"], as_dict=True, order_by="is_default desc") -%}
 {%- set bank_account = (ad.bank_account if ad else None) or frappe.db.get_value("Bank Account", {"company": doc.company, "is_company_account": 1, "is_default": 1, "disabled": 0}) -%}
 {%- set bank = (ad.bank if ad else None) or (frappe.db.get_value("Bank Account", bank_account, "bank") if bank_account else None) -%}
 {%- set shipment = frappe.get_doc("Export Shipment", doc.export_shipment) if doc.export_shipment else None -%}

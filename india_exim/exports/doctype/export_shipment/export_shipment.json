@@ -153,14 +153,17 @@
   },
   {
    "fieldname": "port_of_loading",
-   "fieldtype": "Data",
-   "label": "Port of Loading (Port Code)",
-   "length": 15
+   "fieldtype": "Link",
+   "label": "Port of Loading",
+   "options": "Port Master",
+   "link_filters": "[[\"Port Master\",\"port_country\",\"=\",\"India\"],[\"Port Master\",\"disabled\",\"=\",0]]"
   },
   {
    "fieldname": "port_of_discharge",
-   "fieldtype": "Data",
-   "label": "Port of Discharge"
+   "fieldtype": "Link",
+   "label": "Port of Discharge",
+   "options": "Port Master",
+   "link_filters": "[[\"Port Master\",\"port_country\",\"!=\",\"India\"],[\"Port Master\",\"disabled\",\"=\",0]]"
   },
   {
    "fieldname": "final_destination",
@@ -450,7 +453,7 @@
   }
  ],
  "links": [],
- "modified": "2026-11-26 12:00:00.000000",
+ "modified": "2026-11-26 14:00:00.000000",
  "modified_by": "Administrator",
  "module": "Exports",
  "name": "Export Shipment",

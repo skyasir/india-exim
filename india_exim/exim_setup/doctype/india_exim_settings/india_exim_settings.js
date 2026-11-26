@@ -43,7 +43,13 @@ frappe.ui.form.on("India EXIM Settings", {
 
 function quick_setup() {
 	const METHOD = "india_exim.exim_setup.quick_setup";
-	const check = (fieldname, label) => ({ fieldname, fieldtype: "Check", label });
+	const exports = "eval:doc.business_type != 'Import'";
+	const check = (fieldname, label, depends_on) => ({
+		fieldname,
+		fieldtype: "Check",
+		label,
+		depends_on,
+	});
 	const dialog = new frappe.ui.Dialog({
 		title: __("Quick Setup"),
 		size: "large",
@@ -64,33 +70,48 @@ function quick_setup() {
 				label: __("Importer-Exporter Code (IEC)"),
 				description: __("10 characters, same as the company PAN."),
 			},
+			{
+				fieldname: "business_type",
+				fieldtype: "Select",
+				options: "Export\nImport\nBoth",
+				label: __("Business Type"),
+				default: "Export",
+				reqd: 1,
+				description: __("Only what you do is shown."),
+			},
 			{ fieldtype: "Section Break", label: __("Bank and Port") },
-			{ fieldname: "ad_code", fieldtype: "Data", label: __("AD Code") },
+			{ fieldname: "ad_code", fieldtype: "Data", label: __("AD Code"), depends_on: exports },
 			{ fieldname: "bank", fieldtype: "Link", options: "Bank", label: __("Bank") },
 			{ fieldtype: "Column Break" },
 			{
 				fieldname: "port_code",
-				fieldtype: "Data",
-				label: __("Main Port Code"),
-				description: __("Indian customs port code, e.g. INNSA1."),
+				fieldtype: "Link",
+				options: "Port Master",
+				label: __("Main Port"),
+				description: __("Where your shipping bills are filed, e.g. Nhava Sheva (INNSA1)."),
+				get_query: () => ({ filters: { port_country: "India", disabled: 0 } }),
 			},
 			{
 				fieldtype: "Section Break",
 				label: __("Letter of Undertaking (exports without IGST)"),
+				depends_on: exports,
 			},
 			{ fieldname: "arn", fieldtype: "Data", label: __("ARN") },
 			{ fieldtype: "Column Break" },
 			{ fieldname: "valid_from", fieldtype: "Date", label: __("Valid From") },
 			{ fieldname: "valid_upto", fieldtype: "Date", label: __("Valid Upto") },
 			{ fieldtype: "Section Break", label: __("What do you do?") },
-			check("do_imports", __("Imports")),
-			check("claim_incentives", __("Duty Drawback, RoDTEP and Other Incentives")),
-			check("track_shipments", __("Shipment Tracking and Document Checklist")),
+			check("claim_incentives", __("Duty Drawback, RoDTEP and Other Incentives"), exports),
+			check("track_shipments", __("Shipment Tracking and Document Checklist"), exports),
 			check("use_dgft_licences", __("DGFT Licences (Advance Authorisation, EPCG)")),
 			{ fieldtype: "Column Break" },
-			check("do_merchant_export", __("Merchant Export (buying at 0.1% GST)")),
-			check("ship_special_cargo", __("Dangerous Goods or Temperature-controlled Cargo")),
-			check("use_ecgc", __("ECGC Credit Cover")),
+			check("do_merchant_export", __("Merchant Export (buying at 0.1% GST)"), exports),
+			check(
+				"ship_special_cargo",
+				__("Dangerous Goods or Temperature-controlled Cargo"),
+				exports
+			),
+			check("use_ecgc", __("ECGC Credit Cover"), exports),
 		],
 		primary_action_label: __("Set Up"),
 		primary_action(values) {

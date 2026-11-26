@@ -1,0 +1,252 @@
+[
+ {
+  "port_code": "AEJEA",
+  "port_name": "Jebel Ali",
+  "port_type": "Sea"
+ },
+ {
+  "port_code": "AEKHL",
+  "port_name": "Khalifa Port (Abu Dhabi)",
+  "port_type": "Sea"
+ },
+ {
+  "port_code": "AESHJ",
+  "port_name": "Sharjah",
+  "port_type": "Sea"
+ },
+ {
+  "port_code": "AEDXB",
+  "port_name": "Dubai",
+  "port_type": "Air"
+ },
+ {
+  "port_code": "SAJED",
+  "port_name": "Jeddah",
+  "port_type": "Sea"
+ },
+ {
+  "port_code": "SADMM",
+  "port_name": "Dammam",
+  "port_type": "Sea"
+ },
+ {
+  "port_code": "OMSOH",
+  "port_name": "Sohar",
+  "port_type": "Sea"
+ },
+ {
+  "port_code": "QAHMD",
+  "port_name": "Hamad Port",
+  "port_type": "Sea"
+ },
+ {
+  "port_code": "SGSIN",
+  "port_name": "Singapore",
+  "port_type": "Sea"
+ },
+ {
+  "port_code": "MYPKG",
+  "port_name": "Port Klang",
+  "port_type": "Sea"
+ },
+ {
+  "port_code": "LKCMB",
+  "port_name": "Colombo",
+  "port_type": "Sea"
+ },
+ {
+  "port_code": "BDCGP",
+  "port_name": "Chattogram",
+  "port_type": "Sea"
+ },
+ {
+  "port_code": "CNSHA",
+  "port_name": "Shanghai",
+  "port_type": "Sea"
+ },
+ {
+  "port_code": "CNNGB",
+  "port_name": "Ningbo",
+  "port_type": "Sea"
+ },
+ {
+  "port_code": "CNSZX",
+  "port_name": "Shenzhen",
+  "port_type": "Sea"
+ },
+ {
+  "port_code": "CNTAO",
+  "port_name": "Qingdao",
+  "port_type": "Sea"
+ },
+ {
+  "port_code": "HKHKG",
+  "port_name": "Hong Kong",
+  "port_type": "Sea"
+ },
+ {
+  "port_code": "KRPUS",
+  "port_name": "Busan",
+  "port_type": "Sea"
+ },
+ {
+  "port_code": "JPTYO",
+  "port_name": "Tokyo",
+  "port_type": "Sea"
+ },
+ {
+  "port_code": "JPYOK",
+  "port_name": "Yokohama",
+  "port_type": "Sea"
+ },
+ {
+  "port_code": "VNSGN",
+  "port_name": "Ho Chi Minh City",
+  "port_type": "Sea"
+ },
+ {
+  "port_code": "THLCH",
+  "port_name": "Laem Chabang",
+  "port_type": "Sea"
+ },
+ {
+  "port_code": "IDTPP",
+  "port_name": "Tanjung Priok (Jakarta)",
+  "port_type": "Sea"
+ },
+ {
+  "port_code": "AUMEL",
+  "port_name": "Melbourne",
+  "port_type": "Sea"
+ },
+ {
+  "port_code": "AUSYD",
+  "port_name": "Sydney",
+  "port_type": "Sea"
+ },
+ {
+  "port_code": "NLRTM",
+  "port_name": "Rotterdam",
+  "port_type": "Sea"
+ },
+ {
+  "port_code": "BEANR",
+  "port_name": "Antwerp",
+  "port_type": "Sea"
+ },
+ {
+  "port_code": "DEHAM",
+  "port_name": "Hamburg",
+  "port_type": "Sea"
+ },
+ {
+  "port_code": "DEFRA",
+  "port_name": "Frankfurt",
+  "port_type": "Air"
+ },
+ {
+  "port_code": "GBFXT",
+  "port_name": "Felixstowe",
+  "port_type": "Sea"
+ },
+ {
+  "port_code": "GBLGP",
+  "port_name": "London Gateway",
+  "port_type": "Sea"
+ },
+ {
+  "port_code": "GBLHR",
+  "port_name": "London Heathrow",
+  "port_type": "Air"
+ },
+ {
+  "port_code": "FRLEH",
+  "port_name": "Le Havre",
+  "port_type": "Sea"
+ },
+ {
+  "port_code": "ESVLC",
+  "port_name": "Valencia",
+  "port_type": "Sea"
+ },
+ {
+  "port_code": "ITGOA",
+  "port_name": "Genoa",
+  "port_type": "Sea"
+ },
+ {
+  "port_code": "TRMER",
+  "port_name": "Mersin",
+  "port_type": "Sea"
+ },
+ {
+  "port_code": "EGPSD",
+  "port_name": "Port Said",
+  "port_type": "Sea"
+ },
+ {
+  "port_code": "KEMBA",
+  "port_name": "Mombasa",
+  "port_type": "Sea"
+ },
+ {
+  "port_code": "TZDAR",
+  "port_name": "Dar es Salaam",
+  "port_type": "Sea"
+ },
+ {
+  "port_code": "ZADUR",
+  "port_name": "Durban",
+  "port_type": "Sea"
+ },
+ {
+  "port_code": "NGAPP",
+  "port_name": "Apapa (Lagos)",
+  "port_type": "Sea"
+ },
+ {
+  "port_code": "USNYC",
+  "port_name": "New York",
+  "port_type": "Sea"
+ },
+ {
+  "port_code": "USSAV",
+  "port_name": "Savannah",
+  "port_type": "Sea"
+ },
+ {
+  "port_code": "USHOU",
+  "port_name": "Houston",
+  "port_type": "Sea"
+ },
+ {
+  "port_code": "USLAX",
+  "port_name": "Los Angeles",
+  "port_type": "Sea"
+ },
+ {
+  "port_code": "USLGB",
+  "port_name": "Long Beach",
+  "port_type": "Sea"
+ },
+ {
+  "port_code": "CAVAN",
+  "port_name": "Vancouver",
+  "port_type": "Sea"
+ },
+ {
+  "port_code": "CAMTR",
+  "port_name": "Montreal",
+  "port_type": "Sea"
+ },
+ {
+  "port_code": "BRSSZ",
+  "port_name": "Santos",
+  "port_type": "Sea"
+ },
+ {
+  "port_code": "MXZLO",
+  "port_name": "Manzanillo",
+  "port_type": "Sea"
+ }
+]

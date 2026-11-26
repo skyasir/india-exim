@@ -55,7 +55,10 @@ def set_erpnext_tariff_number(doc) -> None:
 			{
 				"doctype": "Customs Tariff Number",
 				"tariff_number": tariff,
-				"description": frappe.db.get_value("Customs Tariff Item", tariff, "description"),
+				# ERPNext's description is a Data field (140 characters); the tariff text can be longer
+				"description": (frappe.db.get_value("Customs Tariff Item", tariff, "description") or "")[
+					:140
+				],
 			}
 		).insert(ignore_permissions=True)
 	doc.customs_tariff_number = tariff

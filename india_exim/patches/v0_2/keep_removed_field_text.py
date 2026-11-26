@@ -26,10 +26,19 @@ def execute():
 	append("Shipment Document", "courier_reference", "remarks", "Courier AWB")
 
 	# the date of registration has no notes field beside it: kept as a comment
+	# (port_master moves these comments and the AD codes to the Port Master; the doctype has no code now)
+	if not frappe.db.table_exists("AD Code Registration"):
+		return
 	for row in get_rows("AD Code Registration", ["registered_on"], ["registered_on"]):
-		frappe.get_doc("AD Code Registration", row.name).add_comment(
-			"Info", f"Registered On: {frappe.format(row.registered_on, {'fieldtype': 'Date'})}"
-		)
+		frappe.get_doc(
+			{
+				"doctype": "Comment",
+				"comment_type": "Info",
+				"reference_doctype": "AD Code Registration",
+				"reference_name": row.name,
+				"content": f"Registered On: {frappe.format(row.registered_on, {'fieldtype': 'Date'})}",
+			}
+		).insert(ignore_permissions=True)
 
 
 def get_rows(doctype: str, fields: list[str], any_of) -> list:

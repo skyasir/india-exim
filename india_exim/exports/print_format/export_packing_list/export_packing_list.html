@@ -23,7 +23,7 @@
 		</tr>
 		<tr>
 			{{ exim.cell(_("Port of Loading"), exim_port(doc.get("port_code"))) }}
-			{{ exim.cell(_("Port of Discharge"), doc.get("exim_port_of_discharge")) }}
+			{{ exim.cell(_("Port of Discharge"), exim_port(doc.get("exim_port_of_discharge"))) }}
 			{{ exim.cell(_("Final Destination"), doc.get("exim_final_destination")) }}
 			{{ exim.cell(_("Vessel / Voyage"), shipment.vessel_voyage if shipment else "") }}
 		</tr>
