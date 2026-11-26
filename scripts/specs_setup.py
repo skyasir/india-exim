@@ -20,6 +20,7 @@ doctype(
 		"track_shipments:Check:Shipment Tracking and Document Checklist (Export Shipment)|default=0|depends="
 		+ EXPORTS,
 		"use_dgft_licences:Check:DGFT Licences (Advance Authorisation, EPCG)|default=0",
+		"use_trade_agreements:Check:Trade Agreements (FTA Certificates of Origin, Concessional Duty)|default=0",
 		"column_break_features:Column Break",
 		"do_merchant_export:Check:Merchant Export (buying at 0.1% GST)|default=0|depends=" + EXPORTS,
 		"ship_special_cargo:Check:Dangerous Goods or Temperature-controlled Cargo|default=0|depends="
@@ -52,7 +53,7 @@ doctype(
 	],
 	issingle=True,
 	roles=[("System Manager", "full"), ("EXIM Manager", "full"), ("EXIM User", "read")],
-	extra={"creation": "2026-11-19 13:00:00.000000", "modified": "2026-11-26 15:00:00.000000"},
+	extra={"creation": "2026-11-19 13:00:00.000000", "modified": "2026-11-26 18:00:00.000000"},
 )
 
 doctype(
@@ -185,6 +186,7 @@ doctype(
 		"notification:Data:Notification No.|list|width=2",
 	],
 	istable=True,
+	extra={"creation": "2026-11-19 13:00:00.000000", "modified": "2026-11-26 20:00:00.000000"},
 )
 
 doctype(

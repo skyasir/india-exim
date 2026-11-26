@@ -297,6 +297,29 @@ LICENCE_CARDS = [
 	),
 ]
 
+FTA_CARDS = [
+	card(
+		"Certificates of Origin Pending",
+		"Trade Agreements",
+		"Certificate of Origin",
+		filters=[("status", "in", ["Draft", "Applied"])],
+		dynamic=[("company", "=", 'frappe.defaults.get_user_default("Company")')],
+		color="#ECAD4B",
+		stats=False,
+	),
+	card(
+		"Duty Saved under Trade Agreements",
+		"Trade Agreements",
+		"Bill of Entry",
+		"Sum",
+		"exim_fta_duty_saved",
+		[*SUBMITTED, ("exim_trade_agreement", "is", "set")],
+		[("company", "=", 'frappe.defaults.get_user_default("Company")')],
+		"#29CD42",
+		stats=False,
+	),
+]
+
 # ---- Charts
 CHARTS = [
 	chart(
@@ -707,6 +730,24 @@ MODULE_WORKSPACES = [
 			),
 			("Bill of Entry", "Grey", "", "[]"),
 			("Shipping Bill", "Grey", "", "[]"),
+		],
+		"reports": [],
+	},
+	{
+		"name": "Trade Agreements",
+		"icon": "handshake",
+		"sequence": 35.5,
+		"cards": FTA_CARDS,
+		"charts": [],
+		"report_cards": [],
+		"doctypes": [
+			(
+				"Certificate of Origin",
+				"Orange",
+				"{} Pending",
+				open_stats("Certificate of Origin", ("status", "in", ["Draft", "Applied"])),
+			),
+			("Bill of Entry", "Grey", "", "[]"),
 		],
 		"reports": [],
 	},

@@ -5,9 +5,15 @@ so its IGST, ITC and GL logic keeps working unchanged.
 """
 
 import frappe
+from frappe import _
 from frappe.utils import flt
 
-from india_exim.utils.rates import get_customs_exchange_rate, get_tariff_rate, warn_stale_exchange_rate
+from india_exim.utils.rates import (
+	find_tariff_rate,
+	get_customs_exchange_rate,
+	get_tariff_rate,
+	warn_stale_exchange_rate,
+)
 
 RATE_FIELDS = ("bcd_rate", "sws_rate", "aidc_rate", "other_duty_rate")
 
@@ -31,6 +37,7 @@ def set_customs_duties(bill_of_entry) -> None:
 			item.exim_value_fc = get_invoice_value(item)
 
 	total_value = sum(flt(item.exim_value_fc) for item in items)
+	agreement = bill_of_entry.get("exim_trade_agreement")
 	for item in items:
 		share = flt(item.exim_value_fc) / total_value if total_value else 0
 		item.assessable_value = flt(
@@ -38,27 +45,55 @@ def set_customs_duties(bill_of_entry) -> None:
 			+ flt(bill_of_entry.exim_additional_value) * share,
 			2,
 		)
-		set_item_duty(item, bill_of_entry.bill_of_entry_date)
+		set_item_duty(item, bill_of_entry.bill_of_entry_date, agreement)
+	bill_of_entry.exim_fta_duty_saved = sum(flt(item.get("exim_fta_duty_saved")) for item in items)
+	if agreement and not any(item.get("exim_manual_rates") for item in items):
+		frappe.msgprint(
+			_(
+				"To claim {0}, tick Duty Rates Entered Manually on the items and enter the concessional rate from the agreement's notification."
+			).format(frappe.bold(agreement)),
+			indicator="orange",
+			alert=True,
+		)
 
 	from india_exim.dgft_licences.authorisation import set_duty_foregone
 
 	set_duty_foregone(bill_of_entry)
 
 
-def set_item_duty(item, on_date) -> None:
+def set_item_duty(item, on_date, trade_agreement: str | None = None) -> None:
+	"""Duty at the tariff rate in force, or at the rates entered on the row (an exemption notification or
+	a trade agreement's concessional rate). Under a trade agreement the duty saved against the
+	standard rate is recorded."""
 	if not item.get("exim_manual_rates"):
 		rate = get_tariff_rate(item.exim_customs_tariff_item, on_date)
 		for field in RATE_FIELDS:
 			item.set(f"exim_{field}", flt(rate.get(field)))
 
 	assessable = flt(item.assessable_value)
-	item.exim_bcd_amount = flt(assessable * flt(item.exim_bcd_rate) / 100, 2)
-	item.exim_sws_amount = flt(item.exim_bcd_amount * flt(item.exim_sws_rate) / 100, 2)
-	item.exim_aidc_amount = flt(assessable * flt(item.exim_aidc_rate) / 100, 2)
-	item.exim_other_duty_amount = flt(assessable * flt(item.exim_other_duty_rate) / 100, 2)
+	item.exim_bcd_amount, item.exim_sws_amount, item.exim_aidc_amount, item.exim_other_duty_amount = (
+		get_duty_amounts(assessable, {field: item.get(f"exim_{field}") for field in RATE_FIELDS})
+	)
 	item.customs_duty = (
 		item.exim_bcd_amount + item.exim_sws_amount + item.exim_aidc_amount + item.exim_other_duty_amount
 	)
+	standard = (
+		find_tariff_rate(item.exim_customs_tariff_item, on_date)
+		if trade_agreement and item.get("exim_manual_rates")
+		else None
+	)
+	item.exim_fta_duty_saved = (
+		max(flt(sum(get_duty_amounts(assessable, standard)) - item.customs_duty, 2), 0) if standard else 0
+	)
+
+
+def get_duty_amounts(assessable: float, rates) -> tuple[float, float, float, float]:
+	"""BCD, SWS (on BCD), AIDC and other duty."""
+	bcd = flt(assessable * flt(rates.get("bcd_rate")) / 100, 2)
+	sws = flt(bcd * flt(rates.get("sws_rate")) / 100, 2)
+	aidc = flt(assessable * flt(rates.get("aidc_rate")) / 100, 2)
+	other = flt(assessable * flt(rates.get("other_duty_rate")) / 100, 2)
+	return bcd, sws, aidc, other
 
 
 def get_invoice_currency(bill_of_entry) -> str | None:

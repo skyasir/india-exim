@@ -1,6 +1,6 @@
 # Compliance matrix
 
-Each row maps a legal or regulatory requirement to the India EXIM feature that handles it and the scenario that tests it. It covers Phase 1 (exports and imports of goods) and, from Phase 2, Advance Authorisation and EPCG. FTA rules of origin, trade finance, SEZ/EOU and portal integrations come later.
+Each row maps a legal or regulatory requirement to the India EXIM feature that handles it and the scenario that tests it. It covers Phase 1 (exports and imports of goods) and, from Phase 2, Advance Authorisation, EPCG and rules of origin under trade agreements. Trade finance, SEZ/EOU and portal integrations come later.
 
 > This is a working map for implementation, not legal advice. Rates, periods and forms change by notification; India EXIM keeps them as dated data or settings so they can be updated without code. Have a CA or customs broker review the setup for each client.
 
@@ -39,6 +39,17 @@ Status: **Done** = built and covered by automated tests. **Data** = the app hold
 | Export obligation within the EO period (AA: products and FOB; EPCG: a multiple of duty and taxes saved, with block-wise targets) | EO worked out per scheme, credited from shipping bills naming the authorisation, % fulfilled, status, alerts 60 days before the EO period ends | Export Authorisation, Shipping Bill > Export Under Authorisation, Authorisation Register | Done |
 | Incentives on exports discharging an obligation only where admissible | Drawback / RoDTEP admissible ticks on each authorisation, applied to its shipping bills | Export Authorisation | Done |
 | Redemption (EODC) or regularisation | EODC / regularisation fields set the status | Export Authorisation | Done |
+
+## Trade agreements: rules of origin, CAROTAR 2020 (Customs Tariff Act s. 28DA)
+
+| Requirement | Feature | Where | Status |
+|---|---|---|---|
+| Preferential Certificate of Origin for exports under an agreement (DGFT Common Digital Platform) | Certificate of Origin from a shipping bill or export invoice, for one of India's agreements; application, issue, 12-month validity and rejection | Certificate of Origin | Done |
+| Origin criterion and regional value content asked on the application | Origin criterion per item; RVC = (FOB - non-originating materials) / FOB from the default BOM and each material's country of origin, or entered by hand | Certificate of Origin > Goods | Done |
+| Non-preferential certificate of origin (Chamber of Commerce) | Certificate type Non-Preferential | Certificate of Origin | Done |
+| Concessional duty on imports with a valid certificate of origin | Bill of Entry claims an agreement: country of origin, CoO number and date required, CoO validity checked; the concessional rate from the notification is entered on the items | Bill of Entry > Trade Agreement | Data |
+| Importer holds origin-related information (CAROTAR 2020, Form I) | Confirmation needed before the Bill of Entry is submitted | Bill of Entry | Done |
+| Duty forgone under agreements | Duty saved per item and per Bill of Entry against the standard rate; number card | Bill of Entry, Trade Agreements page | Done |
 
 ## FEMA 1999, RBI Master Direction on Export of Goods and Services
 

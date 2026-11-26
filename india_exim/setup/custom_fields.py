@@ -2,6 +2,7 @@
 
 from india_exim.features import when
 from india_exim.setup.accounts import EXIM_ACCOUNTS
+from india_exim.trade_agreements import AGREEMENTS
 
 # link_filters of a Link to Port Master: Indian customs ports, or ports abroad
 INDIAN_PORTS = '[["Port Master","port_country","=","India"],["Port Master","disabled","=",0]]'
@@ -666,31 +667,9 @@ CUSTOM_FIELDS["Supplier"] = [
 		"exim_is_import",
 		"Import Supplier",
 		"supplier_type",
-		description="Overseas supplier. Shows the Import Details tab and is copied to purchase invoices.",
+		description="Overseas supplier. Copied to purchase invoices, which then show their Import Details tab.",
 	)
-] + chain(
-	[
-		{"fieldname": "exim_tab", "fieldtype": "Tab Break", "label": IMPORT_TAB, "depends_on": SHOW_IMPORT},
-		{
-			"fieldname": "exim_origin_section",
-			"fieldtype": "Section Break",
-			"label": "Origin and Trade Agreement",
-		},
-		{
-			"fieldname": "exim_fta_eligible",
-			"fieldtype": "Check",
-			"label": "Supplies Eligible for FTA Concession",
-		},
-		{
-			"fieldname": "exim_trade_agreement",
-			"fieldtype": "Data",
-			"label": "Trade Agreement",
-			"depends_on": "exim_fta_eligible",
-			"description": "e.g. India-UAE CEPA, India-ASEAN TIG.",
-		},
-	],
-	"customer_numbers",
-)
+]
 
 # Quotation -> Sales Order -> Delivery Note -> Sales Invoice: the same fieldnames on all of them, so ERPNext's
 # mappers carry the export details forward. A quotation's party can be a Lead, so the tick is
@@ -952,6 +931,57 @@ CUSTOM_FIELDS["Bill of Entry"] = chain(
 			"read_only": 1,
 			"no_copy": 1,
 		},
+		{
+			"fieldname": "exim_fta_section",
+			"fieldtype": "Section Break",
+			"label": "Trade Agreement (Concessional Duty)",
+			"depends_on": when("fta", "exim_trade_agreement"),
+			"collapsible": 1,
+			"collapsible_depends_on": "exim_trade_agreement",
+		},
+		{
+			"fieldname": "exim_trade_agreement",
+			"fieldtype": "Select",
+			"label": "Claim Concessional Duty Under",
+			"options": "\n" + "\n".join(AGREEMENTS),
+			"description": "FTA / CEPA whose concessional rate is claimed. Enter that rate on each item with Duty Rates Entered Manually; the duty saved against the standard rate is shown.",
+		},
+		{
+			"fieldname": "exim_origin_country",
+			"fieldtype": "Link",
+			"label": "Country of Origin",
+			"options": "Country",
+			"mandatory_depends_on": "exim_trade_agreement",
+			"ignore_user_permissions": 1,
+		},
+		{
+			"fieldname": "exim_coo_number",
+			"fieldtype": "Data",
+			"label": "Certificate of Origin No.",
+			"mandatory_depends_on": "exim_trade_agreement",
+		},
+		{
+			"fieldname": "exim_coo_date",
+			"fieldtype": "Date",
+			"label": "Certificate of Origin Date",
+			"mandatory_depends_on": "exim_trade_agreement",
+		},
+		{"fieldname": "exim_fta_column", "fieldtype": "Column Break"},
+		{
+			"fieldname": "exim_carotar_confirmed",
+			"fieldtype": "Check",
+			"label": "Origin Information Held (CAROTAR 2020)",
+			"depends_on": "exim_trade_agreement",
+			"description": "You hold the origin-related information (Form I of CAROTAR 2020) and can give it to Customs on request. Needed to submit.",
+		},
+		{
+			"fieldname": "exim_fta_duty_saved",
+			"fieldtype": "Currency",
+			"label": "Duty Saved under Trade Agreement",
+			"options": "Company:company:default_currency",
+			"read_only": 1,
+			"depends_on": "exim_trade_agreement",
+		},
 		{"fieldname": "exim_payment_section", "fieldtype": "Section Break", "label": "Import Payment (FEMA)"},
 		{
 			"fieldname": "exim_invoice_value",
@@ -1052,6 +1082,13 @@ CUSTOM_FIELDS["Bill of Entry Item"] = chain(
 			"fieldtype": "Currency",
 			"label": "Other Duty",
 			"read_only": 1,
+		},
+		{
+			"fieldname": "exim_fta_duty_saved",
+			"fieldtype": "Currency",
+			"label": "Duty Saved under Trade Agreement",
+			"read_only": 1,
+			"depends_on": "exim_fta_duty_saved",
 		},
 		{
 			"fieldname": "exim_duty_foregone",

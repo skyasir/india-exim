@@ -1,6 +1,6 @@
 {
  "app": "india_exim",
- "creation": "2026-11-26 10:00:00.000000",
+ "creation": "2026-11-26 20:00:00.000000",
  "docstatus": 0,
  "doctype": "Dock",
  "idx": 0,
@@ -56,13 +56,21 @@
   {
    "added": 0,
    "hidden": 0,
+   "icon": "handshake",
+   "link_to": "Trade Agreements",
+   "link_type": "Sidebar",
+   "title": "Trade Agreements"
+  },
+  {
+   "added": 0,
+   "hidden": 0,
    "icon": "settings",
    "link_to": "EXIM Setup",
    "link_type": "Sidebar",
    "title": "EXIM Setup"
   }
  ],
- "modified": "2026-11-26 10:00:00.000000",
+ "modified": "2026-11-26 20:00:00.000000",
  "modified_by": "Administrator",
  "name": "india_exim",
  "owner": "Administrator",

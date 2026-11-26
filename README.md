@@ -20,6 +20,10 @@ Export–import compliance for Indian businesses on ERPNext v16, built on top of
 - **Imports:** duty breakup on India Compliance's Bill of Entry, landed cost, RoDTEP scrip used against duty.
 - **DGFT licences (Phase 2):** Advance Authorisation and EPCG. Imports under a licence record duty foregone and
   are debited to it; shipping bills credit the export obligation; % fulfilled, status, EODC and alerts.
+- **Trade agreements (FTA / CEPA / CECA):** Certificate of Origin (preferential or non-preferential) from a
+  shipping bill, with the RVC worked out from the BOM and the materials' country of origin; issued
+  certificates tick the shipment's checklist. Bills of Entry claim the concessional rate with the CoO and
+  CAROTAR 2020 confirmation, and show the duty saved.
 - **Incentives and refunds:** Export Incentive Claim, RoDTEP Scrip ledger, GST Refund Claim, merchant export at
   0.1% GST.
 - **Controls:** LUT check on zero-rated invoices, destination and buyer screening, export policy and SCOMET

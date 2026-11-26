@@ -235,6 +235,7 @@ doctype(
 		("Accounts User", "read"),
 		("Accounts Manager", "read"),
 	],
+	links=[{"group": "Origin", "link_doctype": "Certificate of Origin", "link_fieldname": "shipping_bill"}],
 )
 
 doctype(

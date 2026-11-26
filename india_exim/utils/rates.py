@@ -10,6 +10,21 @@ STALE_RATE_DAYS = 16  # CBIC notifies customs exchange rates twice a month
 
 def get_tariff_rate(customs_tariff_item: str, on_date) -> frappe._dict:
 	"""Customs duty rates for a tariff item in force on a date."""
+	rate = find_tariff_rate(customs_tariff_item, on_date)
+	if rate:
+		return rate
+
+	frappe.throw(
+		_("No customs duty rate is set for Tariff Item {0} on {1}.").format(
+			frappe.bold(customs_tariff_item), formatdate(on_date)
+		)
+		+ "<br>"
+		+ _("Use Add Duty Rate on the Bill of Entry, or add it on the Item's Export & Import tab."),
+		title=_("Customs Duty Rate Missing"),
+	)
+
+
+def find_tariff_rate(customs_tariff_item: str, on_date) -> frappe._dict | None:
 	on_date = getdate(on_date)
 	rates = frappe.get_all(
 		"Customs Tariff Rate",
@@ -32,15 +47,7 @@ def get_tariff_rate(customs_tariff_item: str, on_date) -> frappe._dict:
 	for rate in rates:
 		if not rate.effective_to or getdate(rate.effective_to) >= on_date:
 			return rate
-
-	frappe.throw(
-		_("No customs duty rate is set for Tariff Item {0} on {1}.").format(
-			frappe.bold(customs_tariff_item), formatdate(on_date)
-		)
-		+ "<br>"
-		+ _("Use Add Duty Rate on the Bill of Entry, or add it on the Item's Export & Import tab."),
-		title=_("Customs Duty Rate Missing"),
-	)
+	return None
 
 
 def get_incentive_rate(

@@ -160,7 +160,11 @@ doc_events = {
 		],
 	},
 	"Bill of Entry": {
-		"validate": "india_exim.dgft_licences.authorisation.validate_bill_of_entry",
+		"validate": [
+			"india_exim.dgft_licences.authorisation.validate_bill_of_entry",
+			"india_exim.trade_agreements.concessional_duty.validate_bill_of_entry",
+		],
+		"before_submit": "india_exim.trade_agreements.concessional_duty.before_submit_bill_of_entry",
 		"on_submit": [
 			"india_exim.overrides.bill_of_entry.on_submit",
 			"india_exim.dgft_licences.authorisation.on_customs_document_change",
