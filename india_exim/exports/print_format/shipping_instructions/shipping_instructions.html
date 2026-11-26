@@ -34,7 +34,7 @@
 		</tr>
 		<tr>
 			{{ exim.cell(_("Port of Loading"), exim_port(doc.port_of_loading)) }}
-			{{ exim.cell(_("Port of Discharge"), doc.port_of_discharge) }}
+			{{ exim.cell(_("Port of Discharge"), exim_port(doc.port_of_discharge)) }}
 			{{ exim.cell(_("Final Destination"), (doc.final_destination or "") ~ (", " ~ doc.destination_country if doc.destination_country else "")) }}
 			{{ exim.cell(_("Mode"), doc.mode_of_transport) }}
 		</tr>

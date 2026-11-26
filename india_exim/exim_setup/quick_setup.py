@@ -4,7 +4,8 @@ import frappe
 from frappe import _
 from frappe.utils import cint
 
-from india_exim.features import FEATURES, get_features
+from india_exim.exim_setup.doctype.port_master.port_master import get_ad_codes
+from india_exim.features import BUSINESS_TYPES, FEATURES, get_features
 from india_exim.setup.accounts import setup_exim_accounts
 
 
@@ -12,13 +13,9 @@ from india_exim.setup.accounts import setup_exim_accounts
 def get_setup(company: str) -> dict:
 	"""What is already known, to fill the dialog with."""
 	frappe.only_for(("System Manager", "EXIM Manager"))
-	ad = frappe.db.get_value(
-		"AD Code Registration",
-		{"company": company, "disabled": 0},
-		["ad_code", "port_code", "bank"],
-		as_dict=True,
-		order_by="is_default desc",
-	)
+	ad = next(iter(get_ad_codes(company, fields=("ad_code", "bank"))), None)
+	if ad:
+		ad.port_code = ad.parent
 	lut = frappe.db.get_value(
 		"Letter of Undertaking",
 		{"company": company},
@@ -32,6 +29,7 @@ def get_setup(company: str) -> dict:
 		**(ad or {}),
 		**(lut or {}),
 		**{field: cint(settings.get(field)) for field in FEATURES},
+		"business_type": settings.business_type or "Export",
 	}
 
 
@@ -52,26 +50,24 @@ def run_setup(values: dict | str) -> dict:
 	done.append(_("Accounts"))
 
 	if values.ad_code and values.port_code:
-		port_code = values.port_code.strip().upper()
-		existing = frappe.db.get_value(
-			"AD Code Registration",
-			{"company": company.name, "port_code": port_code, "ad_code": values.ad_code},
+		port = frappe.get_doc("Port Master", values.port_code.strip().upper())
+		row = next(
+			(row for row in port.ad_codes if row.company == company.name and row.ad_code == values.ad_code),
+			None,
 		)
-		if not existing:
-			frappe.get_doc(
+		if not row:
+			port.append(
+				"ad_codes",
 				{
-					"doctype": "AD Code Registration",
 					"company": company.name,
 					"ad_code": values.ad_code,
-					"port_code": port_code,
 					"bank": values.bank,
-					"is_default": 1,
-				}
-			).insert()
-		elif values.bank and not frappe.db.get_value("AD Code Registration", existing, "bank"):
-			doc = frappe.get_doc("AD Code Registration", existing)
-			doc.bank = values.bank
-			doc.save()
+					"is_default": not any(row.company == company.name for row in port.ad_codes),
+				},
+			)
+		elif values.bank and not row.bank:
+			row.bank = values.bank
+		port.save()
 		done.append(_("AD code"))
 
 	if values.arn and values.valid_from and values.valid_upto:
@@ -92,6 +88,8 @@ def run_setup(values: dict | str) -> dict:
 		done.append(_("LUT"))
 
 	settings = frappe.get_single("India EXIM Settings")
+	if values.business_type in BUSINESS_TYPES:
+		settings.business_type = values.business_type
 	for field in FEATURES:
 		if field in values:
 			settings.set(field, cint(values[field]))

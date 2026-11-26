@@ -74,7 +74,7 @@
 		<tr>
 			<td><span class="exim-label">{{ _("Pre-carriage By") }}</span>{{ doc.get("exim_pre_carriage_by") or "" }}</td>
 			<td><span class="exim-label">{{ _("Place of Receipt by Pre-carrier") }}</span>{{ doc.get("exim_place_of_receipt") or "" }}</td>
-			<td><span class="exim-label">{{ _("Port of Discharge") }}</span>{{ doc.get("exim_port_of_discharge") or "" }}</td>
+			<td><span class="exim-label">{{ _("Port of Discharge") }}</span>{{ exim_port(doc.get("exim_port_of_discharge")) }}</td>
 			<td><span class="exim-label">{{ _("Final Destination") }}</span>{{ doc.get("exim_final_destination") or "" }}</td>
 		</tr>
 		<tr>

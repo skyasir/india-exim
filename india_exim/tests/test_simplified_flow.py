@@ -35,7 +35,7 @@ class TestSimplifiedFlow(IntegrationTestCase):
 	def test_switches_hide_modules_from_the_dock(self):
 		row = lambda module: {"link_type": "Sidebar", "link_to": module}  # noqa: E731
 		rows = [row("Exports"), row("Imports"), row("DGFT Licences")]
-		with change_settings("India EXIM Settings", {"do_imports": 0, "use_dgft_licences": 1}):
+		with change_settings("India EXIM Settings", {"business_type": "Export", "use_dgft_licences": 1}):
 			boot = frappe._dict(
 				app_data=[
 					{"app_name": "india_exim", "dock": list(rows)},
@@ -51,9 +51,25 @@ class TestSimplifiedFlow(IntegrationTestCase):
 		self.assertEqual([r["link_to"] for r in boot.dock["india_exim"]], expected)
 		self.assertEqual(len(boot.app_data[1]["dock"]), 3)
 
+	def test_import_only_business_hides_exports(self):
+		row = lambda module: {"link_type": "Sidebar", "link_to": module}  # noqa: E731
+		switches = {"business_type": "Import", "claim_incentives": 1, "use_ecgc": 1, "use_dgft_licences": 1}
+		with change_settings("India EXIM Settings", switches):
+			boot = frappe._dict(
+				dock={"india_exim": [row("Exports"), row("Imports"), row("Export Incentives")]}
+			)
+			extend_bootinfo(boot)
+		features = boot.exim_features
+		self.assertEqual((features["exports"], features["imports"]), (False, True))
+		# export switches left ticked count only when the business exports
+		self.assertEqual(
+			(features["incentives"], features["ecgc"], features["licences"]), (False, False, True)
+		)
+		self.assertEqual([r["link_to"] for r in boot.dock["india_exim"]], ["Imports"])
+
 	def test_quick_setup_can_be_run_again(self):
 		settings = frappe.get_single("India EXIM Settings")
-		before = {field: settings.get(field) for field in FEATURES}
+		before = {field: settings.get(field) for field in [*FEATURES, "business_type"]}
 		self.addCleanup(lambda: frappe.get_single("India EXIM Settings").update(before).save())
 		values = {
 			"company": COMPANY,
@@ -61,14 +77,15 @@ class TestSimplifiedFlow(IntegrationTestCase):
 			"ad_code": "6390999",
 			"port_code": "innsa1",
 			"use_ecgc": 1,
-			"do_imports": 1,
+			"business_type": "Both",
 		}
 		run_setup(values)
 		run_setup(values)
-		self.assertEqual(frappe.db.count("AD Code Registration", {"ad_code": "6390999"}), 1)
+		self.assertEqual(frappe.db.count("Port AD Code", {"ad_code": "6390999", "parent": "INNSA1"}), 1)
 		known = get_setup(COMPANY)
 		self.assertEqual(
-			(known["exim_iec"], known["port_code"], known["use_ecgc"]), ("AAQCA8719H", "INNSA1", 1)
+			(known["exim_iec"], known["port_code"], known["use_ecgc"], known["business_type"]),
+			("AAQCA8719H", "INNSA1", 1, "Both"),
 		)
 		self.assertTrue(known["arn"])
 
@@ -170,17 +187,12 @@ class TestSimplifiedFlow(IntegrationTestCase):
 		self.assertIn("(INNSA1)", exim_port("INNSA1"))
 		self.assertEqual((exim_port("XXXXXX"), exim_port(None)), ("XXXXXX", ""))
 		bank = frappe.get_doc({"doctype": "Bank", "bank_name": frappe.generate_hash(length=8)}).insert()
-		ad = frappe.get_doc(
-			{
-				"doctype": "AD Code Registration",
-				"company": COMPANY,
-				"ad_code": frappe.generate_hash(length=7),
-				"port_code": "INMAA1",
-				"bank": bank.name,
-				"is_default": 1,
-			}
-		).insert()
-		self.addCleanup(ad.delete)
+		port = frappe.get_doc("Port Master", "INMAA1")
+		port.append(
+			"ad_codes", {"company": COMPANY, "ad_code": frappe.generate_hash(length=7), "bank": bank.name}
+		)
+		port.save()
+		self.addCleanup(lambda: frappe.get_doc("Port Master", "INMAA1").update({"ad_codes": []}).save())
 		if not frappe.get_cached_doc("Company", COMPANY).get("bank_details_for_printing"):
 			self.assertTrue(exim_bank_lines(COMPANY, "INMAA1"))
 

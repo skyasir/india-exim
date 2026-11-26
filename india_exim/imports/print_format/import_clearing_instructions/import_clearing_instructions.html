@@ -34,8 +34,8 @@
 		<tr>
 			{{ exim.cell(_("BL / AWB No. & Date"), (doc.get("exim_bl_number") or "") ~ ((" / " ~ exim.date(doc.exim_bl_date)) if doc.get("exim_bl_date") else "")) }}
 			{{ exim.cell(_("IGM No. & Date"), (doc.get("exim_igm_number") or "") ~ ((" / " ~ exim.date(doc.exim_igm_date)) if doc.get("exim_igm_date") else "")) }}
-			{{ exim.cell(_("Port of Loading"), doc.get("exim_port_of_loading")) }}
-			{{ exim.cell(_("Port of Discharge"), doc.get("exim_port_of_discharge")) }}
+			{{ exim.cell(_("Port of Loading"), exim_port(doc.get("exim_port_of_loading"))) }}
+			{{ exim.cell(_("Port of Discharge"), exim_port(doc.get("exim_port_of_discharge"))) }}
 		</tr>
 		<tr>
 			{{ exim.cell(_("ETA"), exim.date(doc.get("exim_eta"))) }}

@@ -9,7 +9,7 @@ Export–import compliance for Indian businesses on ERPNext v16, built on top of
   Invoice, with the export details (consignee, buyer, notify party, route, payment and LC terms, marks)
   carried through every step.
 - **Foreign-trade masters:** ITC-HS tariff with dated duty rates and export policy, RoDTEP / Drawback rates
-  with per-unit caps, CBIC customs exchange rates, Letter of Undertaking, AD codes, EXIM accounts on Company.
+  with per-unit caps, CBIC customs exchange rates, Letter of Undertaking, Port Master with AD codes, EXIM accounts on Company.
 - **Shipments and documents:** Export Shipment (booking, cut-offs, containers, charges) with a document
   checklist built from country, product, Incoterm, payment-term and buyer rules. Shipment Control Tower and
   Document Board screens.

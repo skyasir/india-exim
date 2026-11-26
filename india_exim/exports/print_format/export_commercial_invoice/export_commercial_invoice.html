@@ -53,7 +53,7 @@
 			{{ exim.cell(_("Port of Loading"), exim_port(doc.get("port_code"))) }}
 		</tr>
 		<tr>
-			{{ exim.cell(_("Port of Discharge"), doc.get("exim_port_of_discharge")) }}
+			{{ exim.cell(_("Port of Discharge"), exim_port(doc.get("exim_port_of_discharge"))) }}
 			{{ exim.cell(_("Final Destination"), doc.get("exim_final_destination")) }}
 			{{ exim.cell(_("Shipping Bill No. & Date"), (doc.get("shipping_bill_number") or "") ~ ((" / " ~ exim.date(doc.shipping_bill_date)) if doc.get("shipping_bill_date") else "")) }}
 			{{ exim.cell(_("LC No. & Date"), (doc.get("exim_lc_number") or "") ~ ((" / " ~ exim.date(doc.exim_lc_date)) if doc.get("exim_lc_date") else "")) }}

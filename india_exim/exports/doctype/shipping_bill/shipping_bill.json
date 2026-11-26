@@ -160,16 +160,18 @@
   },
   {
    "fieldname": "port_code",
-   "fieldtype": "Data",
+   "fieldtype": "Link",
    "label": "Port Code",
-   "length": 15,
-   "reqd": 1
+   "reqd": 1,
+   "options": "Port Master",
+   "link_filters": "[[\"Port Master\",\"port_country\",\"=\",\"India\"],[\"Port Master\",\"disabled\",\"=\",0]]"
   },
   {
    "fieldname": "port_name",
    "fieldtype": "Data",
    "label": "Port Name",
-   "read_only": 1
+   "read_only": 1,
+   "fetch_from": "port_code.port_name"
   },
   {
    "fieldname": "ad_code",
@@ -525,7 +527,7 @@
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2026-11-26 12:00:00.000000",
+ "modified": "2026-11-26 14:00:00.000000",
  "modified_by": "Administrator",
  "module": "Exports",
  "name": "Shipping Bill",

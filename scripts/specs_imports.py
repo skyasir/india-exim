@@ -1,6 +1,6 @@
 """Import Shipment: from booking abroad to clearance here."""
 
-from doctype_gen import doctype
+from doctype_gen import FOREIGN_PORTS, INDIAN_PORTS, doctype
 
 IMPORTS = "Imports"
 ROLES = [
@@ -31,8 +31,8 @@ doctype(
 		"readiness_percent:Percent:Document Readiness|ro|list|nocopy",
 		"terms_section:Section Break:Route and Terms",
 		"mode_of_transport:Select:Mode|opt=" + MODES + "|default=Sea FCL",
-		"port_of_loading:Data:Port of Loading (Foreign)",
-		"port_of_discharge:Data:Port of Discharge (Indian Port Code)|length=15",
+		"port_of_loading:Link:Port of Loading|opt=Port Master|link_filters=" + FOREIGN_PORTS,
+		"port_of_discharge:Link:Port of Discharge|opt=Port Master|link_filters=" + INDIAN_PORTS,
 		"column_break_terms:Column Break",
 		"incoterm:Link:Incoterm|opt=Incoterm",
 		"currency:Link:Currency|opt=Currency",

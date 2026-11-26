@@ -14,11 +14,13 @@ def exim_customs_description(item_code: str | None) -> str:
 
 
 def exim_port(code: str | None) -> str:
-	"""Indian customs port as printed: its name with the code."""
-	from india_compliance.gst_india.constants import PORT_CODES
+	"""A port as printed: its name with the code, e.g. Jebel Ali (AEJEA)."""
+	from india_exim.exim_setup.doctype.port_master.port_master import get_port_name
 
-	name = PORT_CODES.get((code or "").strip().upper())
-	return f"{name} ({code})" if name else code or ""
+	name = get_port_name(code)
+	if not name or name.upper() == code.upper():
+		return code or ""
+	return f"{name} ({code})"
 
 
 def exim_bank_lines(company: str, port_code: str | None = None) -> list[tuple[str, str]]:
@@ -29,15 +31,11 @@ def exim_bank_lines(company: str, port_code: str | None = None) -> list[tuple[st
 	if lines:
 		return lines
 
+	from india_exim.exim_setup.doctype.port_master.port_master import get_ad_codes
+
 	ad = None
 	if port_code:
-		ad = frappe.db.get_value(
-			"AD Code Registration",
-			{"company": company, "port_code": port_code, "disabled": 0},
-			["bank", "bank_account"],
-			as_dict=True,
-			order_by="is_default desc",
-		)
+		ad = next(iter(get_ad_codes(company, port_code, ("bank", "bank_account"))), None)
 	account = (ad and ad.bank_account) or frappe.db.get_value(
 		"Bank Account", {"company": company, "is_company_account": 1, "is_default": 1, "disabled": 0}
 	)

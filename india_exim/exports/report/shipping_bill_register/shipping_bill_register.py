@@ -22,7 +22,13 @@ def get_columns() -> list[dict]:
 		{"label": _("SB No."), "fieldname": "shipping_bill_number", "fieldtype": "Data", "width": 100},
 		{"label": _("SB Date"), "fieldname": "shipping_bill_date", "fieldtype": "Date", "width": 100},
 		{"label": _("LEO Date"), "fieldname": "leo_date", "fieldtype": "Date", "width": 100},
-		{"label": _("Port"), "fieldname": "port_code", "fieldtype": "Data", "width": 80},
+		{
+			"label": _("Port"),
+			"fieldname": "port_code",
+			"fieldtype": "Link",
+			"options": "Port Master",
+			"width": 80,
+		},
 		{
 			"label": _("Customer"),
 			"fieldname": "customer",

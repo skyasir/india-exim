@@ -22,6 +22,9 @@ DOCUMENT_PRINT_FORMATS = {
 
 
 def seed_master_data():
+	from india_exim.exim_setup.doctype.port_master.port_master import seed_ports
+
+	seed_ports()
 	seed_trade_document_types()
 	seed_country_groups()
 	link_print_formats()

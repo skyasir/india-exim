@@ -19,6 +19,7 @@ UNSET_PROPERTIES = {
 	"collapsible_depends_on": "",
 	"hide_border": 0,
 	"hidden": 0,
+	"length": 0,
 }
 
 ROLES = ("EXIM Manager", "EXIM User")

@@ -11,6 +11,10 @@ from pathlib import Path
 APP_ROOT = Path(__file__).resolve().parents[1] / "india_exim"
 TS = "2026-11-19 20:00:00.000000"
 
+# link_filters of a Link to Port Master: Indian customs ports, or ports abroad
+INDIAN_PORTS = '[["Port Master","port_country","=","India"],["Port Master","disabled","=",0]]'
+FOREIGN_PORTS = '[["Port Master","port_country","!=","India"],["Port Master","disabled","=",0]]'
+
 FLAGS = {
 	"reqd": ("reqd", 1),
 	"ro": ("read_only", 1),
@@ -26,6 +30,7 @@ FLAGS = {
 	"phide": ("print_hide", 1),
 	"search": ("search_index", 1),
 	"translatable": ("translatable", 1),
+	"qe": ("allow_in_quick_entry", 1),
 }
 KEYS = {
 	"opt": "options",

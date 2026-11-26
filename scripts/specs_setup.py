@@ -1,6 +1,7 @@
-from doctype_gen import doctype
+from doctype_gen import doctype, perms
 
 SETUP = "EXIM Setup"
+EXPORTS = "eval:doc.business_type != 'Import'"
 DOCS = "Trade Documents"
 MANAGER_ONLY = [
 	("System Manager", "full"),
@@ -13,39 +14,45 @@ doctype(
 	"India EXIM Settings",
 	SETUP,
 	[
-		"features_section:Section Break:What You Do|desc=Only what is ticked is shown on forms and in the menu. Nothing already entered is hidden, and no check depends on these.",
-		"do_imports:Check:Imports|default=0",
-		"claim_incentives:Check:Duty Drawback, RoDTEP and Other Incentives|default=1",
-		"track_shipments:Check:Shipment Tracking and Document Checklist (Export Shipment)|default=0",
+		"features_section:Section Break:What You Do|desc=Only what you do is shown on forms, in settings and in the menu. Nothing already entered is hidden, and no check depends on these.",
+		"business_type:Select:Business Type|opt=Export\\nImport\\nBoth|default=Export|reqd|bold|desc=Exports only, imports only, or both. Menus, fields and settings of the other side are hidden.",
+		"claim_incentives:Check:Duty Drawback, RoDTEP and Other Incentives|default=1|depends=" + EXPORTS,
+		"track_shipments:Check:Shipment Tracking and Document Checklist (Export Shipment)|default=0|depends="
+		+ EXPORTS,
 		"use_dgft_licences:Check:DGFT Licences (Advance Authorisation, EPCG)|default=0",
 		"column_break_features:Column Break",
-		"do_merchant_export:Check:Merchant Export (buying at 0.1% GST)|default=0",
-		"ship_special_cargo:Check:Dangerous Goods or Temperature-controlled Cargo|default=0",
-		"use_ecgc:Check:ECGC Credit Cover|default=0",
+		"do_merchant_export:Check:Merchant Export (buying at 0.1% GST)|default=0|depends=" + EXPORTS,
+		"ship_special_cargo:Check:Dangerous Goods or Temperature-controlled Cargo|default=0|depends="
+		+ EXPORTS,
+		"use_ecgc:Check:ECGC Credit Cover|default=0|depends=" + EXPORTS,
 		"checks_section:Section Break:Checks",
-		"lut_check:Select:Check LUT on Zero-rated Exports|opt=Block\\nWarn\\nOff|default=Block|desc=Exports without IGST (Overseas / SEZ) require a valid Letter of Undertaking for the invoice date.",
+		"lut_check:Select:Check LUT on Zero-rated Exports|opt=Block\\nWarn\\nOff|default=Block|depends="
+		+ EXPORTS
+		+ "|desc=Exports without IGST (Overseas / SEZ) require a valid Letter of Undertaking for the invoice date.",
 		"checklist_gate:Select:When Mandatory Documents Are Pending|opt=Warn\\nBlock\\nOff|default=Warn",
 		"column_break_checks:Column Break",
-		"pre_shipment_checks:Select:Pre-shipment Checks|opt=Off\\nWarn\\nBlock|default=Warn|desc=Block stops a sanctioned destination, prohibited goods or an unscreened buyer; Warn only shows a message. Restricted goods and SCOMET items always warn.",
-		"incentive_accrual_point:Select:Book Incentive Income On|opt=On LEO\\nOn Scroll\\nOn Receipt|default=On LEO|depends=claim_incentives|desc=When Duty Drawback / RoDTEP is recognised as income. LEO is the usual choice because the entitlement is reasonably certain once the shipping bill carries the claim; confirm with your auditor.",
+		"pre_shipment_checks:Select:Pre-shipment Checks|opt=Off\\nWarn\\nBlock|default=Warn|depends="
+		+ EXPORTS
+		+ "|desc=Block stops a sanctioned destination, prohibited goods or an unscreened buyer; Warn only shows a message. Restricted goods and SCOMET items always warn.",
+		"incentive_accrual_point:Select:Book Incentive Income On|opt=On LEO\\nOn Scroll\\nOn Receipt|default=On LEO|depends=eval:doc.business_type != 'Import' && doc.claim_incentives|desc=When Duty Drawback / RoDTEP is recognised as income. LEO is the usual choice because the entitlement is reasonably certain once the shipping bill carries the claim; confirm with your auditor.",
 		"advanced_tab:Tab Break:Advanced",
-		"incentives_section:Section Break:Alerts and Incentives",
+		"incentives_section:Section Break:Alerts and Incentives|depends=eval:doc.business_type != 'Import' && doc.claim_incentives",
 		"incentive_unclaimed_alert_days:Int:Alert When Incentive Unclaimed For (Days)|default=60",
 		"column_break_inc:Column Break",
 		"scrip_validity_months:Int:RoDTEP Scrip Validity (Months)|default=24|desc=Two years since Notification 79/2022-Customs (N.T.). Used when an e-scrip is recorded.",
 		"fema_section:Section Break:FEMA / RBI|desc=RBI sets these periods by regulation and changes them from a date. Each row applies to shipping bills, advances or bills of entry dated on or after its Effective From, so older documents keep the period that applied to them.",
 		"fema_periods:Table:Periods|opt=FEMA Period",
 		"realisation_alert_days:Int:Alert Before Realisation Due (Days)|default=30",
-		"gst_section:Section Break:GST on Exports",
+		"gst_section:Section Break:GST on Exports|depends=eval:doc.business_type != 'Import' && doc.do_merchant_export",
 		"merchant_export_days:Int:Merchant Export Within (Days)|default=90|desc=Goods bought at 0.1% GST for merchant export must be exported within this period from the supplier's invoice date.",
-		"imports_section:Section Break:Imports|depends=do_imports",
+		"imports_section:Section Break:Imports|depends=eval:doc.business_type != 'Export'",
 		"capitalise_customs_duty:Check:Add Non-creditable Customs Duty to Stock Value|default=1|desc=BCD, SWS and other non-creditable duties computed on the Bill of Entry are moved into item valuation through a Landed Cost Voucher.",
-		"controls_section:Section Break:Buyer Screening",
+		"controls_section:Section Break:Buyer Screening|depends=" + EXPORTS,
 		"buyer_screening_months:Int:Buyer Screening Valid For (Months)|default=12|desc=How long a denied-party screening of a buyer counts. 0 turns the screening check off.",
 	],
 	issingle=True,
 	roles=[("System Manager", "full"), ("EXIM Manager", "full"), ("EXIM User", "read")],
-	extra={"creation": "2026-11-19 13:00:00.000000", "modified": "2026-11-24 20:00:00.000000"},
+	extra={"creation": "2026-11-19 13:00:00.000000", "modified": "2026-11-26 15:00:00.000000"},
 )
 
 doctype(
@@ -62,27 +69,79 @@ doctype(
 )
 
 doctype(
-	"AD Code Registration",
+	"Port AD Code",
 	SETUP,
 	[
-		"company:Link:Company|opt=Company|reqd|list|filter",
-		"ad_code:Data:AD Code|reqd|list|length=20|desc=Authorised Dealer code registered with Customs (ICEGATE) for this bank branch and port.",
-		"is_default:Check:Default for this Port",
-		"column_break_1:Column Break",
-		"port_code:Data:Port Code|reqd|list|filter|length=15",
-		"port_name:Data:Port Name|ro",
-		"port_address:Link:Port Address|opt=Address|desc=Used as the dispatch address on export e-Way Bills from this port.",
-		"bank_section:Section Break:Bank",
-		"bank:Link:Bank|opt=Bank|list",
-		"bank_account:Link:Bank Account|opt=Bank Account",
-		"column_break_2:Column Break",
-		"disabled:Check:Disabled",
+		"company:Link:Company|opt=Company|reqd|list|width=2",
+		"ad_code:Data:AD Code|reqd|list|length=20|width=2",
+		"bank:Link:Bank|opt=Bank|list|width=2",
+		"bank_account:Link:Bank Account|opt=Bank Account|width=2",
+		"port_address:Link:Port Address|opt=Address|width=2|desc=Used as the dispatch address on export e-Way Bills from this port.",
+		"is_default:Check:Default|list|width=1|desc=The AD code used when the company has more than one at this port.",
 	],
-	autoname="format:{port_code}-{ad_code}",
-	naming_rule="Expression",
-	title_field="ad_code",
-	search_fields="port_code,bank",
-	roles=MANAGER_ONLY,
+	istable=True,
+	extra={"creation": "2026-11-26 14:00:00.000000", "modified": "2026-11-26 14:00:00.000000"},
+)
+
+doctype(
+	"Port Master",
+	SETUP,
+	[
+		"port_code:Data:Port Code|reqd|list|length=15|desc=UN/LOCODE, e.g. AEJEA for Jebel Ali. Indian ports use their customs port code, e.g. INNSA1 for Nhava Sheva.",
+		"port_name:Data:Port Name|reqd|list|bold",
+		"column_break_1:Column Break",
+		"port_country:Link:Country|opt=Country|list|filter|qe|desc=Taken from the first two letters of a UN/LOCODE when left empty.",
+		"port_type:Select:Type|opt=\\nSea\\nAir\\nICD / CFS / SEZ\\nRail\\nLand Border\\nForeign Post Office|list|filter|qe",
+		"disabled:Check:Disabled",
+		{
+			"fieldname": "ad_codes_section",
+			"fieldtype": "Section Break",
+			"label": "AD Codes",
+			"depends_on": "eval:doc.port_country == 'India'",
+			"description": "Authorised Dealer codes registered with Customs (ICEGATE) at this port, one per bank branch. The shipping bill takes the AD code from here.",
+			"permlevel": 1,
+		},
+		{
+			"fieldname": "ad_codes",
+			"fieldtype": "Table",
+			"label": "AD Codes",
+			"options": "Port AD Code",
+			"permlevel": 1,
+		},
+	],
+	autoname="field:port_code",
+	naming_rule="By fieldname",
+	title_field="port_name",
+	search_fields="port_name,port_country",
+	sort_field="port_code",
+	quick_entry=True,
+	extra={
+		"allow_rename": 1,
+		"creation": "2026-11-26 14:00:00.000000",
+		"modified": "2026-11-26 14:00:00.000000",
+		# anyone who makes sales or purchase documents can add a port; AD codes are for EXIM managers
+		"permissions": perms(
+			[
+				("System Manager", "full"),
+				("EXIM Manager", "full"),
+				("EXIM User", "write"),
+				("Sales User", "write"),
+				("Purchase User", "write"),
+				("Accounts User", "read"),
+			]
+		)
+		+ [
+			{"role": role, "permlevel": 1, "read": 1, **({"write": 1} if write else {})}
+			for role, write in (
+				("System Manager", 1),
+				("EXIM Manager", 1),
+				("EXIM User", 0),
+				("Sales User", 0),
+				("Purchase User", 0),
+				("Accounts User", 0),
+			)
+		],
+	},
 )
 
 doctype(
