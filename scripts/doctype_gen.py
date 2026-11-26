@@ -31,6 +31,7 @@ FLAGS = {
 	"search": ("search_index", 1),
 	"translatable": ("translatable", 1),
 	"qe": ("allow_in_quick_entry", 1),
+	"iup": ("ignore_user_permissions", 1),
 }
 KEYS = {
 	"opt": "options",
