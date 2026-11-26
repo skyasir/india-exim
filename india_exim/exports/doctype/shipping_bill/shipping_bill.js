@@ -43,6 +43,24 @@ frappe.ui.form.on("Shipping Bill", {
 				__("Create")
 			);
 		}
+		if (
+			frm.doc.docstatus === 1 &&
+			frappe.boot.exim_features?.fta &&
+			frappe.model.can_create("Certificate of Origin")
+		) {
+			frm.add_custom_button(
+				__("Certificate of Origin"),
+				() =>
+					frappe.new_doc("Certificate of Origin", {
+						shipping_bill: frm.doc.name,
+						company: frm.doc.company,
+						customer: frm.doc.customer,
+						destination_country: frm.doc.destination_country,
+						export_shipment: frm.doc.export_shipment,
+					}),
+				__("Create")
+			);
+		}
 		if (frm.doc.docstatus === 1 && frm.doc.accrual_journal_entry) {
 			frm.add_custom_button(
 				__("Incentive Accrual"),

@@ -16,6 +16,7 @@ FEATURES = {
 	"claim_incentives": "incentives",
 	"track_shipments": "shipments",
 	"use_dgft_licences": "licences",
+	"use_trade_agreements": "fta",
 	"do_merchant_export": "merchant_export",
 	"ship_special_cargo": "special_cargo",
 	"use_ecgc": "ecgc",
@@ -26,6 +27,7 @@ MODULES = {
 	"imports": "Imports",
 	"incentives": "Export Incentives",
 	"licences": "DGFT Licences",
+	"fta": "Trade Agreements",
 	"shipments": "Trade Documents",
 }
 

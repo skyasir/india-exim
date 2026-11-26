@@ -1,0 +1,208 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "field:agreement_name",
+ "creation": "2026-11-19 20:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "agreement_name",
+  "agreement_type",
+  "in_force_from",
+  "disabled",
+  "column_break_head",
+  "partner_countries",
+  "notifications_section",
+  "tariff_notification",
+  "column_break_notifications",
+  "origin_notification",
+  "origin_section",
+  "origin_criterion",
+  "rvc_percent",
+  "column_break_origin",
+  "certificate_form",
+  "certificate_validity_months",
+  "verify_note"
+ ],
+ "fields": [
+  {
+   "bold": 1,
+   "description": "As the trade knows it, e.g. India-UAE CEPA, AIFTA, SAFTA.",
+   "fieldname": "agreement_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Agreement",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "default": "FTA",
+   "fieldname": "agreement_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Type",
+   "options": "FTA\nCEPA\nCECA\nECTA\nTEPA\nCECPA\nPTA"
+  },
+  {
+   "fieldname": "in_force_from",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "In Force From"
+  },
+  {
+   "fieldname": "disabled",
+   "fieldtype": "Check",
+   "label": "Disabled"
+  },
+  {
+   "fieldname": "column_break_head",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "Goods from these countries can get the concessional duty in India, and Indian goods going there can get theirs.",
+   "fieldname": "partner_countries",
+   "fieldtype": "Table MultiSelect",
+   "label": "Partner Countries",
+   "options": "Country Group Member",
+   "reqd": 1
+  },
+  {
+   "fieldname": "notifications_section",
+   "fieldtype": "Section Break",
+   "label": "Notifications"
+  },
+  {
+   "description": "Customs notification with the preferential rates, e.g. 22/2022-Customs for India-UAE CEPA.",
+   "fieldname": "tariff_notification",
+   "fieldtype": "Data",
+   "label": "Tariff Notification (Concessional Duty)"
+  },
+  {
+   "fieldname": "column_break_notifications",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "Customs (N.T.) notification with the rules of origin, e.g. 39/2022-Customs (N.T.).",
+   "fieldname": "origin_notification",
+   "fieldtype": "Data",
+   "label": "Rules of Origin Notification"
+  },
+  {
+   "description": "WO: wholly obtained or produced in India. RVC: regional value content of at least the agreement's minimum. CTH / CTSH: every non-originating material is under a different 4-digit heading / 6-digit sub-heading from the product. PSR: the product-specific rule in the agreement's annex.",
+   "fieldname": "origin_section",
+   "fieldtype": "Section Break",
+   "label": "General Rule of Origin"
+  },
+  {
+   "description": "The rule for products the agreement's product-specific rules do not cover.",
+   "fieldname": "origin_criterion",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Origin Criterion",
+   "options": "\nWO\nRVC\nCTH\nCTSH\nRVC + CTH\nRVC + CTSH\nRVC or CTH\nPSR"
+  },
+  {
+   "description": "Regional value content needed when the criterion includes RVC.",
+   "fieldname": "rvc_percent",
+   "fieldtype": "Percent",
+   "label": "Minimum RVC %"
+  },
+  {
+   "fieldname": "column_break_origin",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "e.g. Form AI (AIFTA). Applied for on the DGFT Common Digital Platform for Certificate of Origin.",
+   "fieldname": "certificate_form",
+   "fieldtype": "Data",
+   "label": "Certificate of Origin Form"
+  },
+  {
+   "default": "12",
+   "fieldname": "certificate_validity_months",
+   "fieldtype": "Int",
+   "label": "Certificate Valid For (Months)"
+  },
+  {
+   "fieldname": "verify_note",
+   "fieldtype": "Small Text",
+   "label": "Source / Verification Note"
+  }
+ ],
+ "links": [],
+ "modified": "2026-11-26 18:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Trade Agreements",
+ "name": "Trade Agreement",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "EXIM Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "EXIM User",
+   "share": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales User",
+   "share": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Purchase User",
+   "share": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts User",
+   "share": 1
+  }
+ ],
+ "search_fields": "agreement_type",
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

@@ -8,30 +8,12 @@ SCHEDULE_SCHEMES = ("Duty Drawback", "RoSCTL")
 STALE_RATE_DAYS = 16  # CBIC notifies customs exchange rates twice a month
 
 
-def get_tariff_rate(customs_tariff_item: str, on_date) -> frappe._dict:
-	"""Customs duty rates for a tariff item in force on a date."""
-	on_date = getdate(on_date)
-	rates = frappe.get_all(
-		"Customs Tariff Rate",
-		filters={
-			"parent": customs_tariff_item,
-			"parenttype": "Customs Tariff Item",
-			"effective_from": ("<=", on_date),
-		},
-		fields=[
-			"effective_from",
-			"effective_to",
-			"bcd_rate",
-			"sws_rate",
-			"aidc_rate",
-			"other_duty_rate",
-			"notification",
-		],
-		order_by="effective_from desc",
-	)
-	for rate in rates:
-		if not rate.effective_to or getdate(rate.effective_to) >= on_date:
-			return rate
+def get_tariff_rate(customs_tariff_item: str, on_date, trade_agreement: str | None = None) -> frappe._dict:
+	"""Customs duty rates for a tariff item in force on a date: the standard rate, or the concessional
+	rate under a trade agreement."""
+	rate = find_tariff_rate(customs_tariff_item, on_date, trade_agreement)
+	if rate:
+		return rate
 
 	frappe.throw(
 		_("No customs duty rate is set for Tariff Item {0} on {1}.").format(
@@ -41,6 +23,36 @@ def get_tariff_rate(customs_tariff_item: str, on_date) -> frappe._dict:
 		+ _("Use Add Duty Rate on the Bill of Entry, or add it on the Item's Export & Import tab."),
 		title=_("Customs Duty Rate Missing"),
 	)
+
+
+def find_tariff_rate(
+	customs_tariff_item: str, on_date, trade_agreement: str | None = None
+) -> frappe._dict | None:
+	on_date = getdate(on_date)
+	rates = frappe.get_all(
+		"Customs Tariff Rate",
+		filters={
+			"parent": customs_tariff_item,
+			"parenttype": "Customs Tariff Item",
+			"effective_from": ("<=", on_date),
+			"trade_agreement": trade_agreement or ("is", "not set"),
+		},
+		fields=[
+			"effective_from",
+			"effective_to",
+			"bcd_rate",
+			"sws_rate",
+			"aidc_rate",
+			"other_duty_rate",
+			"notification",
+			"trade_agreement",
+		],
+		order_by="effective_from desc",
+	)
+	for rate in rates:
+		if not rate.effective_to or getdate(rate.effective_to) >= on_date:
+			return rate
+	return None
 
 
 def get_incentive_rate(

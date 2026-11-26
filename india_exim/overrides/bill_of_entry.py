@@ -18,15 +18,19 @@ class BillOfEntryEXIM:
 		set_igst_foregone(self)
 
 	def fill_from_purchase_invoice(self):
-		"""B/L number and port are already on the import invoice; only empty fields are filled."""
+		"""B/L number, port and country of origin are already on the import invoice; only empty fields are filled."""
 		invoice = next((row.purchase_invoice for row in self.items if row.purchase_invoice), None)
-		if not invoice or (self.bill_of_lading_no and self.port_code):
+		if not invoice or (self.bill_of_lading_no and self.port_code and self.get("exim_origin_country")):
 			return
 		details = frappe.db.get_value(
-			"Purchase Invoice", invoice, ["exim_bl_number", "exim_port_of_discharge"], as_dict=True
+			"Purchase Invoice",
+			invoice,
+			["exim_bl_number", "exim_port_of_discharge", "exim_origin_country"],
+			as_dict=True,
 		)
 		self.bill_of_lading_no = self.bill_of_lading_no or details.exim_bl_number
 		self.port_code = self.port_code or get_indian_port(details.exim_port_of_discharge)
+		self.exim_origin_country = self.get("exim_origin_country") or details.exim_origin_country
 
 	def calculate_totals(self):
 		exempt_taxes(self)

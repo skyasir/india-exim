@@ -9,7 +9,7 @@ from pathlib import Path
 APP = Path(__file__).resolve().parents[1] / "india_exim"
 # apps folder of a bench with frappe, erpnext and india_compliance, to check that linked doctypes and reports exist
 UPSTREAM = Path(os.environ.get("BENCH_APPS", "~/frappe-bench/apps")).expanduser()
-TS = "2026-11-26 10:00:00.000000"
+TS = "2026-11-26 18:00:00.000000"
 HOME = "India EXIM"
 
 # module -> (dock icon, [items]); item = (label, link_type, link_to, icon) or ("section", label, icon)
@@ -107,6 +107,19 @@ SIDEBARS = {
 			("Export Authorisation", "DocType", "Export Authorisation", "stamp"),
 			("section", "Reports", "notepad-text"),
 			("Authorisation Register", "Report", "Authorisation Register", None),
+		],
+	),
+	"Trade Agreements": (
+		"handshake",
+		[
+			home("Trade Agreements"),
+			*TOP,
+			("Certificate of Origin", "DocType", "Certificate of Origin", "award"),
+			("Bill of Entry", "DocType", "Bill of Entry", "file-input"),
+			("section", "Setup", "database"),
+			("Trade Agreement", "DocType", "Trade Agreement", None),
+			("Customs Tariff Item", "DocType", "Customs Tariff Item", None),
+			("Item", "DocType", "Item", None),
 		],
 	),
 	"EXIM Setup": (

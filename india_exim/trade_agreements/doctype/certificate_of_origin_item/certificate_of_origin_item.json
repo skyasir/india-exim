@@ -1,0 +1,150 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "creation": "2026-11-19 20:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "item_code",
+  "item_name",
+  "customs_tariff_item",
+  "qty",
+  "uom",
+  "shipping_bill_item",
+  "column_break_values",
+  "fob_value",
+  "non_originating_value",
+  "rvc_percent",
+  "manual_values",
+  "criterion_section",
+  "origin_criterion",
+  "qualifies",
+  "column_break_criterion",
+  "origin_note"
+ ],
+ "fields": [
+  {
+   "columns": 2,
+   "fieldname": "item_code",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Item",
+   "options": "Item",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "item_code.item_name",
+   "fieldname": "item_name",
+   "fieldtype": "Data",
+   "label": "Item Name"
+  },
+  {
+   "columns": 1,
+   "fetch_from": "item_code.exim_customs_tariff_item",
+   "fetch_if_empty": 1,
+   "fieldname": "customs_tariff_item",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "ITC-HS",
+   "options": "Customs Tariff Item"
+  },
+  {
+   "columns": 1,
+   "fieldname": "qty",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Qty"
+  },
+  {
+   "fieldname": "uom",
+   "fieldtype": "Link",
+   "label": "UOM",
+   "options": "UOM"
+  },
+  {
+   "fieldname": "shipping_bill_item",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Shipping Bill Item",
+   "no_copy": 1
+  },
+  {
+   "fieldname": "column_break_values",
+   "fieldtype": "Column Break"
+  },
+  {
+   "columns": 1,
+   "fieldname": "fob_value",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "FOB Value (INR)",
+   "options": "Company:company:default_currency"
+  },
+  {
+   "fieldname": "non_originating_value",
+   "fieldtype": "Currency",
+   "label": "Non-originating Materials (INR)",
+   "options": "Company:company:default_currency",
+   "read_only_depends_on": "eval:!doc.manual_values"
+  },
+  {
+   "columns": 1,
+   "fieldname": "rvc_percent",
+   "fieldtype": "Percent",
+   "in_list_view": 1,
+   "label": "RVC %",
+   "read_only": 1
+  },
+  {
+   "description": "Tick to enter the FOB and non-originating values yourself instead of taking them from the shipping bill and the default BOM.",
+   "fieldname": "manual_values",
+   "fieldtype": "Check",
+   "label": "Values Entered Manually"
+  },
+  {
+   "fieldname": "criterion_section",
+   "fieldtype": "Section Break",
+   "label": "Origin"
+  },
+  {
+   "columns": 1,
+   "description": "WO: wholly obtained or produced in India. RVC: regional value content of at least the agreement's minimum. CTH / CTSH: every non-originating material is under a different 4-digit heading / 6-digit sub-heading from the product. PSR: the product-specific rule in the agreement's annex.",
+   "fieldname": "origin_criterion",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Origin Criterion",
+   "options": "\nWO\nRVC\nCTH\nCTSH\nRVC + CTH\nRVC + CTSH\nRVC or CTH\nPSR"
+  },
+  {
+   "columns": 1,
+   "description": "Worked out from the criterion. For a product-specific rule, tick it once you have checked the rule.",
+   "fieldname": "qualifies",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Meets the Rule of Origin",
+   "read_only_depends_on": "eval:doc.origin_criterion != 'PSR'"
+  },
+  {
+   "fieldname": "column_break_criterion",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "origin_note",
+   "fieldtype": "Small Text",
+   "label": "How It Was Worked Out",
+   "read_only": 1
+  }
+ ],
+ "istable": 1,
+ "links": [],
+ "modified": "2026-11-19 20:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Trade Agreements",
+ "name": "Certificate of Origin Item",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -526,8 +526,14 @@
   }
  ],
  "is_submittable": 1,
- "links": [],
- "modified": "2026-11-26 14:00:00.000000",
+ "links": [
+  {
+   "group": "Origin",
+   "link_doctype": "Certificate of Origin",
+   "link_fieldname": "shipping_bill"
+  }
+ ],
+ "modified": "2026-11-26 18:00:00.000000",
  "modified_by": "Administrator",
  "module": "Exports",
  "name": "Shipping Bill",

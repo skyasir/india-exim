@@ -19,9 +19,16 @@ class CustomsTariffItem(Document):
 			self.gst_hsn_code = self.tariff_code
 		for row in self.rates:
 			validate_period(row.effective_from, row.effective_to, _("Row {0}").format(row.idx))
-		validate_no_overlap(
-			[(row.effective_from, row.effective_to) for row in self.rates], _("Customs duty rates")
-		)
+		# the standard rates, and each trade agreement's concessional rates, are separate series
+		for agreement in {row.trade_agreement for row in self.rates}:
+			validate_no_overlap(
+				[
+					(row.effective_from, row.effective_to)
+					for row in self.rates
+					if row.trade_agreement == agreement
+				],
+				_("Concessional rates under {0}").format(agreement) if agreement else _("Customs duty rates"),
+			)
 		self.rates.sort(key=lambda row: row.effective_from)
 		for index, row in enumerate(self.rates, start=1):
 			row.idx = index

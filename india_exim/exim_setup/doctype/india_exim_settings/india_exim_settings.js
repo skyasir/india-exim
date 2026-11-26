@@ -104,6 +104,7 @@ function quick_setup() {
 			check("claim_incentives", __("Duty Drawback, RoDTEP and Other Incentives"), exports),
 			check("track_shipments", __("Shipment Tracking and Document Checklist"), exports),
 			check("use_dgft_licences", __("DGFT Licences (Advance Authorisation, EPCG)")),
+			check("use_trade_agreements", __("Trade Agreements (FTA Certificates of Origin)")),
 			{ fieldtype: "Column Break" },
 			check("do_merchant_export", __("Merchant Export (buying at 0.1% GST)"), exports),
 			check(
