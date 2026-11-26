@@ -47,6 +47,14 @@ def set_customs_duties(bill_of_entry) -> None:
 		)
 		set_item_duty(item, bill_of_entry.bill_of_entry_date, agreement)
 	bill_of_entry.exim_fta_duty_saved = sum(flt(item.get("exim_fta_duty_saved")) for item in items)
+	if agreement and not any(item.get("exim_manual_rates") for item in items):
+		frappe.msgprint(
+			_(
+				"To claim {0}, tick Duty Rates Entered Manually on the items and enter the concessional rate from the agreement's notification."
+			).format(frappe.bold(agreement)),
+			indicator="orange",
+			alert=True,
+		)
 
 	from india_exim.dgft_licences.authorisation import set_duty_foregone
 
@@ -54,20 +62,11 @@ def set_customs_duties(bill_of_entry) -> None:
 
 
 def set_item_duty(item, on_date, trade_agreement: str | None = None) -> None:
-	"""Duty at the tariff rate in force; under a trade agreement, at its concessional rate when the
-	tariff item has one (the standard rate otherwise), with the duty saved against the standard rate."""
-	standard = find_tariff_rate(item.exim_customs_tariff_item, on_date) if trade_agreement else None
+	"""Duty at the tariff rate in force, or at the rates entered on the row (an exemption notification or
+	a trade agreement's concessional rate). Under a trade agreement the duty saved against the
+	standard rate is recorded."""
 	if not item.get("exim_manual_rates"):
-		rate = trade_agreement and find_tariff_rate(item.exim_customs_tariff_item, on_date, trade_agreement)
-		if trade_agreement and not rate:
-			frappe.msgprint(
-				_("Tariff Item {0} has no concessional rate under {1}; the standard rate is used.").format(
-					frappe.bold(item.exim_customs_tariff_item), frappe.bold(trade_agreement)
-				),
-				indicator="orange",
-				alert=True,
-			)
-		rate = rate or get_tariff_rate(item.exim_customs_tariff_item, on_date)
+		rate = get_tariff_rate(item.exim_customs_tariff_item, on_date)
 		for field in RATE_FIELDS:
 			item.set(f"exim_{field}", flt(rate.get(field)))
 
@@ -77,6 +76,11 @@ def set_item_duty(item, on_date, trade_agreement: str | None = None) -> None:
 	)
 	item.customs_duty = (
 		item.exim_bcd_amount + item.exim_sws_amount + item.exim_aidc_amount + item.exim_other_duty_amount
+	)
+	standard = (
+		find_tariff_rate(item.exim_customs_tariff_item, on_date)
+		if trade_agreement and item.get("exim_manual_rates")
+		else None
 	)
 	item.exim_fta_duty_saved = (
 		max(flt(sum(get_duty_amounts(assessable, standard)) - item.customs_duty, 2), 0) if standard else 0

@@ -184,10 +184,9 @@ doctype(
 		"aidc_rate:Percent:AIDC %|list|width=1",
 		"other_duty_rate:Percent:Other Duty %|width=1",
 		"notification:Data:Notification No.|list|width=2",
-		"trade_agreement:Link:Preferential Rate Under|opt=Trade Agreement|list|width=2|desc=Leave empty for the standard rate. A row with a trade agreement is the concessional rate for goods of a partner country, used when a Bill of Entry claims that agreement.",
 	],
 	istable=True,
-	extra={"creation": "2026-11-19 13:00:00.000000", "modified": "2026-11-26 18:00:00.000000"},
+	extra={"creation": "2026-11-19 13:00:00.000000", "modified": "2026-11-26 20:00:00.000000"},
 )
 
 doctype(

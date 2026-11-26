@@ -3,14 +3,6 @@
 
 frappe.ui.form.on("Certificate of Origin", {
 	setup(frm) {
-		frm.set_query("trade_agreement", (doc) => ({
-			filters: [
-				["Trade Agreement", "disabled", "=", 0],
-				...(doc.destination_country
-					? [["Country Group Member", "country", "=", doc.destination_country]]
-					: []),
-			],
-		}));
 		frm.set_query("shipping_bill", (doc) => ({
 			filters: { docstatus: ["!=", 2], ...(doc.company ? { company: doc.company } : {}) },
 		}));
@@ -22,18 +14,6 @@ frappe.ui.form.on("Certificate of Origin", {
 	refresh(frm) {
 		const colour = { Draft: "gray", Applied: "blue", Issued: "green", Rejected: "red" };
 		if (!frm.is_new()) frm.page.set_indicator(__(frm.doc.status), colour[frm.doc.status]);
-		if (
-			!frm.is_new() &&
-			frm.doc.certificate_type === "Preferential" &&
-			frm.doc.items?.length
-		) {
-			frm.dashboard.add_indicator(
-				frm.doc.all_items_qualify
-					? __("All items meet the rule of origin")
-					: __("Some items do not show that they meet the rule of origin"),
-				frm.doc.all_items_qualify ? "green" : "orange"
-			);
-		}
 	},
 
 	shipping_bill(frm) {

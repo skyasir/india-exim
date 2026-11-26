@@ -1,7 +1,7 @@
 {
  "app": "india_exim",
  "charts": [],
- "content": "[{\"id\": \"n_certificat\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Certificates of Origin Pending\", \"col\": 6}}, {\"id\": \"n_duty_saved\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Duty Saved under Trade Agreements\", \"col\": 6}}, {\"id\": \"h_quick\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Quick Access</b></span>\", \"col\": 12}}, {\"id\": \"s_certificat\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Certificate of Origin\", \"col\": 4}}, {\"id\": \"s_trade_agre\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Trade Agreement\", \"col\": 4}}, {\"id\": \"s_bill_of_en\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Bill of Entry\", \"col\": 4}}]",
+ "content": "[{\"id\": \"n_certificat\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Certificates of Origin Pending\", \"col\": 6}}, {\"id\": \"n_duty_saved\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"Duty Saved under Trade Agreements\", \"col\": 6}}, {\"id\": \"h_quick\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>Quick Access</b></span>\", \"col\": 12}}, {\"id\": \"s_certificat\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Certificate of Origin\", \"col\": 4}}, {\"id\": \"s_bill_of_en\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Bill of Entry\", \"col\": 4}}]",
  "creation": "2026-11-21 10:00:00.000000",
  "custom_blocks": [],
  "docstatus": 0,
@@ -55,15 +55,6 @@
    "label": "Certificate of Origin",
    "link_to": "Certificate of Origin",
    "stats_filter": "[[\"Certificate of Origin\", \"status\", \"in\", [\"Draft\", \"Applied\"]]]",
-   "type": "DocType"
-  },
-  {
-   "color": "Grey",
-   "doc_view": "List",
-   "format": "",
-   "label": "Trade Agreement",
-   "link_to": "Trade Agreement",
-   "stats_filter": "[]",
    "type": "DocType"
   },
   {

@@ -19,7 +19,6 @@
   "manual_values",
   "criterion_section",
   "origin_criterion",
-  "qualifies",
   "column_break_criterion",
   "origin_note"
  ],
@@ -109,21 +108,12 @@
   },
   {
    "columns": 1,
-   "description": "WO: wholly obtained or produced in India. RVC: regional value content of at least the agreement's minimum. CTH / CTSH: every non-originating material is under a different 4-digit heading / 6-digit sub-heading from the product. PSR: the product-specific rule in the agreement's annex.",
+   "description": "As asked on the certificate application. WO: wholly obtained or produced in India. RVC: regional value content, worked out here; compare it with the agreement's minimum. CTH / CTSH: every imported material is under a different 4-digit heading / 6-digit sub-heading from the product. PSR: the product-specific rule in the agreement's annex.",
    "fieldname": "origin_criterion",
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Origin Criterion",
    "options": "\nWO\nRVC\nCTH\nCTSH\nRVC + CTH\nRVC + CTSH\nRVC or CTH\nPSR"
-  },
-  {
-   "columns": 1,
-   "description": "Worked out from the criterion. For a product-specific rule, tick it once you have checked the rule.",
-   "fieldname": "qualifies",
-   "fieldtype": "Check",
-   "in_list_view": 1,
-   "label": "Meets the Rule of Origin",
-   "read_only_depends_on": "eval:doc.origin_criterion != 'PSR'"
   },
   {
    "fieldname": "column_break_criterion",
@@ -132,7 +122,7 @@
   {
    "fieldname": "origin_note",
    "fieldtype": "Small Text",
-   "label": "How It Was Worked Out",
+   "label": "How the RVC Was Worked Out",
    "read_only": 1
   }
  ],

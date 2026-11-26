@@ -44,11 +44,10 @@ Status: **Done** = built and covered by automated tests. **Data** = the app hold
 
 | Requirement | Feature | Where | Status |
 |---|---|---|---|
-| Agreements in force, partner countries, tariff and rules of origin notifications | India's FTAs / CEPAs / CECAs loaded with partner countries, in-force date and general origin criterion; notifications and RVC % kept as data | Trade Agreement | Data |
-| Preferential Certificate of Origin for exports under an agreement (DGFT Common Digital Platform) | Certificate of Origin from a shipping bill or export invoice; destination checked against the partner countries; application, issue, validity and rejection | Certificate of Origin | Done |
-| Origin criterion met: wholly obtained, RVC, change in tariff heading / sub-heading, product-specific rule | RVC = (FOB - non-originating materials) / FOB from the default BOM and each material's country of origin (partner-country materials count as originating); CTH / CTSH against the materials' ITC-HS codes; PSR confirmed by the user | Certificate of Origin > Goods | Done |
+| Preferential Certificate of Origin for exports under an agreement (DGFT Common Digital Platform) | Certificate of Origin from a shipping bill or export invoice, for one of India's agreements; application, issue, 12-month validity and rejection | Certificate of Origin | Done |
+| Origin criterion and regional value content asked on the application | Origin criterion per item; RVC = (FOB - non-originating materials) / FOB from the default BOM and each material's country of origin, or entered by hand | Certificate of Origin > Goods | Done |
 | Non-preferential certificate of origin (Chamber of Commerce) | Certificate type Non-Preferential | Certificate of Origin | Done |
-| Concessional duty on imports only for goods of a partner country, with a valid certificate of origin | Bill of Entry claims an agreement: country of origin checked, CoO number and date required, CoO validity checked, preferential rate used from the tariff item | Bill of Entry > Trade Agreement, Customs Tariff Item > Preferential Rate Under | Done |
+| Concessional duty on imports with a valid certificate of origin | Bill of Entry claims an agreement: country of origin, CoO number and date required, CoO validity checked; the concessional rate from the notification is entered on the items | Bill of Entry > Trade Agreement | Data |
 | Importer holds origin-related information (CAROTAR 2020, Form I) | Confirmation needed before the Bill of Entry is submitted | Bill of Entry | Done |
 | Duty forgone under agreements | Duty saved per item and per Bill of Entry against the standard rate; number card | Bill of Entry, Trade Agreements page | Done |
 

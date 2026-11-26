@@ -4,13 +4,10 @@
 import frappe
 from frappe import _
 from frappe.model.document import Document
-from frappe.utils import add_months, flt, getdate, today
+from frappe.utils import add_months, flt, getdate
 
-from india_exim.trade_agreements.doctype.trade_agreement.trade_agreement import (
-	get_partner_countries,
-	validate_claim,
-)
-from india_exim.trade_agreements.origin import check_origin, get_non_originating_materials
+from india_exim.trade_agreements import CERTIFICATE_VALIDITY_MONTHS
+from india_exim.trade_agreements.origin import get_non_originating_materials
 
 # Trade Document Type ticked on the shipment's checklist
 CHECKLIST_DOCUMENTS = {
@@ -22,10 +19,10 @@ CHECKLIST_DOCUMENTS = {
 class CertificateofOrigin(Document):
 	def validate(self):
 		self.fill_from_export()
-		self.agreement = self.get_agreement()
+		if self.certificate_type != "Preferential":
+			self.trade_agreement = None
 		self.set_item_values()
 		self.set_status()
-		self.warn_if_items_do_not_qualify()
 
 	def on_update(self):
 		update_checklist(self)
@@ -83,22 +80,10 @@ class CertificateofOrigin(Document):
 			for row in rows:
 				self.append("items", row)
 
-	def get_agreement(self):
-		if self.certificate_type != "Preferential":
-			self.trade_agreement = None
-			return None
-		return validate_claim(
-			self.trade_agreement,
-			self.destination_country,
-			self.certificate_date or self.application_date or today(),
-			_("Destination Country"),
-		)
-
 	def set_item_values(self):
-		agreement = self.agreement
-		originating = {"India", *(get_partner_countries(agreement.name) if agreement else ())}
+		preferential = self.certificate_type == "Preferential"
 		for row in self.items:
-			materials = get_non_originating_materials(row, self.company, originating)
+			materials = get_non_originating_materials(row, self.company)
 			if not row.manual_values:
 				if row.shipping_bill_item:
 					row.fob_value = flt(
@@ -111,23 +96,14 @@ class CertificateofOrigin(Document):
 				if flt(row.fob_value) and (materials.has_bom or row.manual_values)
 				else 0
 			)
-			if not agreement:
-				row.origin_criterion, row.qualifies = None, 0
-				row.origin_note = materials.note
-				continue
-			row.origin_criterion = row.origin_criterion or agreement.origin_criterion
-			qualifies, note = check_origin(row, materials, agreement)
-			if row.origin_criterion != "PSR":
-				row.qualifies = int(qualifies)
-			row.origin_note = "\n".join(part for part in (note, materials.note) if part)
+			if not preferential:
+				row.origin_criterion = None
+			row.origin_note = materials.note
 
 		self.total_fob_value = sum(flt(row.fob_value) for row in self.items)
-		self.all_items_qualify = int(
-			bool(agreement and self.items and all(row.qualifies for row in self.items))
-		)
 		self.valid_upto = (
-			add_months(self.certificate_date, agreement.certificate_validity_months or 12)
-			if agreement and self.certificate_date
+			add_months(self.certificate_date, CERTIFICATE_VALIDITY_MONTHS)
+			if preferential and self.certificate_date
 			else None
 		)
 
@@ -143,18 +119,6 @@ class CertificateofOrigin(Document):
 		if self.certificate_date and self.application_date:
 			if getdate(self.certificate_date) < getdate(self.application_date):
 				frappe.throw(_("The certificate date is before the application date."))
-
-	def warn_if_items_do_not_qualify(self):
-		if not self.agreement or self.status not in ("Applied", "Issued") or self.all_items_qualify:
-			return
-		rows = ", ".join(str(row.idx) for row in self.items if not row.qualifies)
-		frappe.msgprint(
-			_(
-				"Rows {0} do not show that they meet the rule of origin of {1}. Check them before relying on the certificate: Customs at the destination can deny the concessional duty and ask the issuing agency to verify."
-			).format(rows, frappe.bold(self.trade_agreement)),
-			indicator="orange",
-			alert=True,
-		)
 
 
 def update_checklist(certificate) -> None:

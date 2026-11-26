@@ -747,7 +747,6 @@ MODULE_WORKSPACES = [
 				"{} Pending",
 				open_stats("Certificate of Origin", ("status", "in", ["Draft", "Applied"])),
 			),
-			("Trade Agreement", "Grey", "", "[]"),
 			("Bill of Entry", "Grey", "", "[]"),
 		],
 		"reports": [],

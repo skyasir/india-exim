@@ -12,8 +12,7 @@
   "sws_rate",
   "aidc_rate",
   "other_duty_rate",
-  "notification",
-  "trade_agreement"
+  "notification"
  ],
  "fields": [
   {
@@ -65,20 +64,11 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Notification No."
-  },
-  {
-   "columns": 2,
-   "description": "Leave empty for the standard rate. A row with a trade agreement is the concessional rate for goods of a partner country, used when a Bill of Entry claims that agreement.",
-   "fieldname": "trade_agreement",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "label": "Preferential Rate Under",
-   "options": "Trade Agreement"
   }
  ],
  "istable": 1,
  "links": [],
- "modified": "2026-11-26 18:00:00.000000",
+ "modified": "2026-11-26 20:00:00.000000",
  "modified_by": "Administrator",
  "module": "EXIM Setup",
  "name": "Customs Tariff Rate",

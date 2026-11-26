@@ -1,4 +1,4 @@
-"""Trade agreements: rules of origin on Certificates of Origin, concessional duty on Bills of Entry."""
+"""Certificates of Origin (RVC from the BOM) and concessional duty claimed on Bills of Entry."""
 
 import frappe
 from frappe.tests import IntegrationTestCase
@@ -7,7 +7,6 @@ from frappe.utils import add_months, getdate, today
 from india_exim.tests.fixtures import (
 	COMPANY,
 	FOREIGN_CUSTOMER,
-	FY_START,
 	TARIFF_CODE,
 	make_exchange_rate,
 	make_import_invoice,
@@ -15,11 +14,8 @@ from india_exim.tests.fixtures import (
 	setup_exim_company,
 )
 from india_exim.tests.test_imports_and_payments import make_bill_of_entry
-from india_exim.trade_agreements.doctype.trade_agreement.trade_agreement import seed_trade_agreements
-from india_exim.utils.rates import get_tariff_rate
 
 UAE = "India-UAE CEPA"
-SAFTA = "SAFTA"
 PRODUCT = "_Test EXIM Woven Fabric"
 
 
@@ -41,7 +37,7 @@ def make_item(code: str, tariff: str | None = None, country: str | None = None) 
 
 
 def make_bom(materials: list[tuple[str, float]]) -> str:
-	"""A default BOM for PRODUCT, one unit of each material at the given rate."""
+	"""A default BOM for PRODUCT, one unit of each material at the given cost."""
 	for name in frappe.get_all("BOM", {"item": PRODUCT, "docstatus": 1}, pluck="name"):
 		frappe.get_doc("BOM", name).cancel()
 	bom = frappe.get_doc(
@@ -62,7 +58,7 @@ def make_bom(materials: list[tuple[str, float]]) -> str:
 	return bom.name
 
 
-def make_certificate(agreement=UAE, destination="United Arab Emirates", **values):
+def make_certificate(agreement=UAE, **values):
 	return frappe.get_doc(
 		{
 			"doctype": "Certificate of Origin",
@@ -70,8 +66,8 @@ def make_certificate(agreement=UAE, destination="United Arab Emirates", **values
 			"trade_agreement": agreement,
 			"company": COMPANY,
 			"customer": FOREIGN_CUSTOMER,
-			"destination_country": destination,
-			"items": [{"item_code": PRODUCT, "qty": 10, "fob_value": 1000}],
+			"destination_country": "United Arab Emirates",
+			"items": [{"item_code": PRODUCT, "qty": 10, "fob_value": 1000, "origin_criterion": "RVC"}],
 			**values,
 		}
 	).insert()
@@ -82,68 +78,43 @@ class TestTradeAgreements(IntegrationTestCase):
 	def setUpClass(cls):
 		super().setUpClass()
 		setup_exim_company()
-		seed_trade_agreements()
 		make_tariff_item(bcd=10, sws=10)
 		make_exchange_rate("USD", export_rate=80, import_rate=82)
-		tariff = frappe.get_doc("Customs Tariff Item", TARIFF_CODE)
-		if not any(row.trade_agreement == UAE for row in tariff.rates):
-			tariff.append(
-				"rates",
-				{"effective_from": FY_START, "bcd_rate": 0, "sws_rate": 10, "trade_agreement": UAE},
-			)
-			tariff.save(ignore_permissions=True)
-
 		make_item(PRODUCT, TARIFF_CODE)
 		make_item("_Test EXIM Yarn from China", "52051100", "China")
 		make_item("_Test EXIM Dye from UAE", "32041100", "United Arab Emirates")
 		make_item("_Test EXIM Indian Thread", "52041100")
-		make_item("_Test EXIM Grey Fabric from China", "52081190", "China")
 
-	def test_standard_rate_leaves_out_concessional_rates(self):
-		self.assertEqual(get_tariff_rate(TARIFF_CODE, today()).bcd_rate, 10)
-		self.assertEqual(get_tariff_rate(TARIFF_CODE, today(), UAE).bcd_rate, 0)
-
-	def test_rvc_and_tariff_shift_from_bom(self):
+	def test_rvc_from_bom(self):
 		make_bom(
 			[
 				("_Test EXIM Yarn from China", 30),
-				("_Test EXIM Dye from UAE", 10),  # a partner country: originating
+				("_Test EXIM Dye from UAE", 10),
 				("_Test EXIM Indian Thread", 5),  # no country of origin: taken as Indian
 			]
 		)
-		certificate = make_certificate()
-		row = certificate.items[0]
-		self.assertEqual((row.non_originating_value, row.rvc_percent), (300, 70))
-		self.assertEqual(row.origin_criterion, "RVC + CTSH")
-		self.assertTrue(row.qualifies)
-		self.assertIn("_Test EXIM Indian Thread", row.origin_note)
-		self.assertTrue(certificate.all_items_qualify)
-
-	def test_material_in_the_same_heading_fails_change_in_tariff_heading(self):
-		make_bom([("_Test EXIM Grey Fabric from China", 20)])
-		# 5208 11 vs 5208 31: the sub-heading changes (CEPA) but the heading does not (SAFTA)
-		self.assertTrue(make_certificate().items[0].qualifies)
-		row = make_certificate(SAFTA, "Sri Lanka").items[0]
-		self.assertEqual(row.rvc_percent, 80)
-		self.assertFalse(row.qualifies)
-		self.assertIn("CTH not met", row.origin_note)
-
-	def test_low_rvc_does_not_qualify_and_manual_values_are_kept(self):
-		make_bom([("_Test EXIM Yarn from China", 70)])
 		row = make_certificate().items[0]
-		self.assertEqual(row.rvc_percent, 30)
-		self.assertFalse(row.qualifies)
+		# 10 units x (30 + 10) of imported materials on an FOB of 1000
+		self.assertEqual((row.non_originating_value, row.rvc_percent), (400, 60))
+		self.assertIn("_Test EXIM Indian Thread", row.origin_note)
 
+	def test_manual_values_are_kept(self):
+		make_bom([("_Test EXIM Yarn from China", 70)])
 		certificate = make_certificate()
+		self.assertEqual(certificate.items[0].rvc_percent, 30)
 		certificate.items[0].update({"manual_values": 1, "non_originating_value": 500})
 		certificate.save()
-		self.assertEqual((certificate.items[0].rvc_percent, certificate.items[0].qualifies), (50, 1))
+		self.assertEqual(certificate.items[0].rvc_percent, 50)
 
-	def test_destination_must_be_a_partner_country(self):
-		self.assertRaises(frappe.ValidationError, make_certificate, UAE, "Japan")
+	def test_no_bom_leaves_rvc_to_be_entered(self):
+		make_item("_Test EXIM Traded Rice")
+		certificate = make_certificate(
+			items=[{"item_code": "_Test EXIM Traded Rice", "qty": 1, "fob_value": 100}]
+		)
+		self.assertEqual(certificate.items[0].rvc_percent, 0)
+		self.assertIn("No default BOM", certificate.items[0].origin_note)
 
 	def test_status_and_validity(self):
-		make_bom([("_Test EXIM Yarn from China", 30)])
 		certificate = make_certificate(issuing_agency="Export Inspection Council (EIC)")
 		self.assertEqual(certificate.status, "Draft")
 		certificate.update({"application_number": "COO123", "application_date": today()})
@@ -155,7 +126,7 @@ class TestTradeAgreements(IntegrationTestCase):
 		self.assertEqual(getdate(certificate.valid_upto), getdate(add_months(today(), 12)))
 
 	def test_non_preferential_certificate_has_no_agreement(self):
-		certificate = make_certificate(None, "Japan")
+		certificate = make_certificate(None)
 		self.assertFalse(certificate.trade_agreement)
 		self.assertFalse(certificate.items[0].origin_criterion)
 
@@ -167,9 +138,11 @@ class TestTradeAgreements(IntegrationTestCase):
 			exim_coo_number="AE-COO-1",
 			exim_coo_date=today(),
 		)
+		for item in bill_of_entry.items:
+			item.update({"exim_manual_rates": 1, "exim_bcd_rate": 0, "exim_sws_rate": 10})
 		bill_of_entry.save()
 		item = bill_of_entry.items[0]
-		self.assertEqual((item.assessable_value, item.exim_bcd_rate, item.customs_duty), (82000, 0, 0))
+		self.assertEqual((item.assessable_value, item.customs_duty), (82000, 0))
 		# standard duty: BCD 10% = 8200, SWS 10% of BCD = 820
 		self.assertEqual(bill_of_entry.exim_fta_duty_saved, 9020)
 
@@ -188,8 +161,7 @@ class TestTradeAgreements(IntegrationTestCase):
 				**values,
 			).save()
 
-		# goods of a country outside the agreement
-		self.assertRaises(frappe.ValidationError, claim, exim_origin_country="China", exim_coo_date=today())
+		self.assertRaises(frappe.ValidationError, claim, exim_origin_country="India", exim_coo_date=today())
 		# certificate older than its 12 months' validity
 		self.assertRaises(
 			frappe.ValidationError,

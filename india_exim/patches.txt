@@ -18,3 +18,4 @@ india_exim.patches.v0_2.enable_shipment_tracking
 india_exim.patches.v0_2.keep_removed_field_text
 india_exim.patches.v0_2.port_master
 india_exim.patches.v0_2.set_business_type
+india_exim.patches.v0_2.keep_supplier_trade_agreement

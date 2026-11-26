@@ -2,6 +2,7 @@
 
 from india_exim.features import when
 from india_exim.setup.accounts import EXIM_ACCOUNTS
+from india_exim.trade_agreements import AGREEMENTS
 
 # link_filters of a Link to Port Master: Indian customs ports, or ports abroad
 INDIAN_PORTS = '[["Port Master","port_country","=","India"],["Port Master","disabled","=",0]]'
@@ -666,31 +667,9 @@ CUSTOM_FIELDS["Supplier"] = [
 		"exim_is_import",
 		"Import Supplier",
 		"supplier_type",
-		description="Overseas supplier. Shows the Import Details tab and is copied to purchase invoices.",
+		description="Overseas supplier. Copied to purchase invoices, which then show their Import Details tab.",
 	)
-] + chain(
-	[
-		{"fieldname": "exim_tab", "fieldtype": "Tab Break", "label": IMPORT_TAB, "depends_on": SHOW_IMPORT},
-		{
-			"fieldname": "exim_origin_section",
-			"fieldtype": "Section Break",
-			"label": "Origin and Trade Agreement",
-		},
-		{
-			"fieldname": "exim_fta_eligible",
-			"fieldtype": "Check",
-			"label": "Supplies Eligible for FTA Concession",
-		},
-		{
-			"fieldname": "exim_trade_agreement",
-			"fieldtype": "Data",
-			"label": "Trade Agreement",
-			"depends_on": "exim_fta_eligible",
-			"description": "e.g. India-UAE CEPA, India-ASEAN TIG.",
-		},
-	],
-	"customer_numbers",
-)
+]
 
 # Quotation -> Sales Order -> Delivery Note -> Sales Invoice: the same fieldnames on all of them, so ERPNext's
 # mappers carry the export details forward. A quotation's party can be a Lead, so the tick is
@@ -962,10 +941,10 @@ CUSTOM_FIELDS["Bill of Entry"] = chain(
 		},
 		{
 			"fieldname": "exim_trade_agreement",
-			"fieldtype": "Link",
+			"fieldtype": "Select",
 			"label": "Claim Concessional Duty Under",
-			"options": "Trade Agreement",
-			"description": "FTA / CEPA whose concessional rate is claimed. Each item's preferential rate under it is used where the tariff item has one.",
+			"options": "\n" + "\n".join(AGREEMENTS),
+			"description": "FTA / CEPA whose concessional rate is claimed. Enter that rate on each item with Duty Rates Entered Manually; the duty saved against the standard rate is shown.",
 		},
 		{
 			"fieldname": "exim_origin_country",

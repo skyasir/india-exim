@@ -8,10 +8,9 @@ SCHEDULE_SCHEMES = ("Duty Drawback", "RoSCTL")
 STALE_RATE_DAYS = 16  # CBIC notifies customs exchange rates twice a month
 
 
-def get_tariff_rate(customs_tariff_item: str, on_date, trade_agreement: str | None = None) -> frappe._dict:
-	"""Customs duty rates for a tariff item in force on a date: the standard rate, or the concessional
-	rate under a trade agreement."""
-	rate = find_tariff_rate(customs_tariff_item, on_date, trade_agreement)
+def get_tariff_rate(customs_tariff_item: str, on_date) -> frappe._dict:
+	"""Customs duty rates for a tariff item in force on a date."""
+	rate = find_tariff_rate(customs_tariff_item, on_date)
 	if rate:
 		return rate
 
@@ -25,9 +24,7 @@ def get_tariff_rate(customs_tariff_item: str, on_date, trade_agreement: str | No
 	)
 
 
-def find_tariff_rate(
-	customs_tariff_item: str, on_date, trade_agreement: str | None = None
-) -> frappe._dict | None:
+def find_tariff_rate(customs_tariff_item: str, on_date) -> frappe._dict | None:
 	on_date = getdate(on_date)
 	rates = frappe.get_all(
 		"Customs Tariff Rate",
@@ -35,7 +32,6 @@ def find_tariff_rate(
 			"parent": customs_tariff_item,
 			"parenttype": "Customs Tariff Item",
 			"effective_from": ("<=", on_date),
-			"trade_agreement": trade_agreement or ("is", "not set"),
 		},
 		fields=[
 			"effective_from",
@@ -45,7 +41,6 @@ def find_tariff_rate(
 			"aidc_rate",
 			"other_duty_rate",
 			"notification",
-			"trade_agreement",
 		],
 		order_by="effective_from desc",
 	)
